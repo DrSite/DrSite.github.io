@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دکتر سایت | آنالیز و عیب‌یابی فنی سئو</title>
+    
+    <!-- اضافه کردن کتابخانه آیکون‌های رسمی برای تلگرام، اینستا و... -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
             --bg-color: #0f172a;
@@ -38,9 +42,31 @@
         .features li { margin-bottom: 10px; color: var(--text-main); font-size: 15px; }
         .features li::before { content: "✔ "; color: var(--success); margin-left: 5px; }
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        .btn { display: block; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.2s; font-size: 16px; }
-        .btn-telegram { background-color: #0284c7; color: white; }
-        .btn-telegram:hover { background-color: #0369a1; }
+        
+        /* استایل جدید دکمه‌ها برای تنظیم دقیق آیکون کنار متن */
+        .btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            padding: 14px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            transition: all 0.2s; 
+            font-size: 16px; 
+        }
+        
+        /* رنگ‌بندی اختصاصی هر دکمه */
+        .btn-telegram { background-color: #229ED9; color: white; }
+        .btn-telegram:hover { background-color: #1c88ba; }
+        
+        .btn-instagram { 
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+            color: white; 
+        }
+        .btn-instagram:hover { filter: brightness(1.1); }
+        
         .btn-email { background-color: #475569; color: white; }
         .btn-email:hover { background-color: #334155; }
     </style>
@@ -60,11 +86,25 @@
         </div>
 
         <div class="btn-group">
-            <!-- آدرس تلگرامت را به جای your_username بذار -->
-            <a href="https://t.me/your_username" target="_blank" class="btn btn-telegram">ارتباط مستقیم در تلگرام</a>
+            <!-- کانال تلگرام -->
+            <a href="https://t.me/DrSite" target="_blank" class="btn btn-telegram">
+                <i class="fab fa-telegram"></i> کانال رسمی دکتر سایت
+            </a>
             
-            <!-- ایمیلت را به جای your_email بذار -->
-            <a href="mailto:your_email@gmail.com" class="btn btn-email">ارسال ایمیل به مشاور فنی</a>
+            <!-- ایدی شخصی/پشتیبانی تلگرام (آیدی خودت رو به جای Your_ID بذار) -->
+            <a href="https://t.me/DrSiteofficiall" target="_blank" class="btn btn-telegram">
+                <i class="fas fa-headset"></i> مشاوره و سفارش در تلگرام
+            </a>
+
+            <!-- اینستاگرام (آیدی اینستاگرامت رو به جای Your_Insta_ID بذار) -->
+            <a href="https://instagram.com/drsiteofficial" target="_blank" class="btn btn-instagram">
+                <i class="fab fa-instagram"></i> اینستاگرام دکتر سایت
+            </a>
+            
+            <!-- ایمیل (ایمیلت رو به جای your_email بذار) -->
+            <a href="mailto:your_email@gmail.com" class="btn btn-email">
+                <i class="fas fa-envelope"></i> ارسال ایمیل به پشتیبانی
+            </a>
         </div>
     </div>
 </body>
