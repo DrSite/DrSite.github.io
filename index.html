@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دکتر سایت | آنالیز و عیب‌یابی فنی سئو</title>
     
-    <!-- کد تایید مالکیت گوگل سرچ کنسول -->
     <meta name="google-site-verification" content="st6U3REVhCoywALz5KwKjrnzhQcvAwaQIiL1nGtrQto" />
     
-    <!-- اضافه کردن کتابخانه آیکون‌های رسمی برای تلگرام، اینستا و... -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
@@ -27,6 +25,11 @@
             text-align: center; 
             padding: 40px 20px; 
             margin: 0;
+            /* غیرفعال کردن انتخاب متن در CSS برای مرورگرهای مختلف */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         .container { 
             max-width: 650px; 
@@ -90,26 +93,35 @@
         </div>
 
         <div class="btn-group">
-            <!-- کانال تلگرام -->
             <a href="https://t.me/DrSite" target="_blank" class="btn btn-telegram">
                 <i class="fab fa-telegram"></i> کانال رسمی دکتر سایت
             </a>
-            
-            <!-- ایدی شخصی/پشتیبانی تلگرام -->
             <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram">
                 <i class="fas fa-headset"></i> مشاوره و سفارش در تلگرام
             </a>
-
-            <!-- اینستاگرام -->
             <a href="https://instagram.com/drsiteofficial" target="_blank" class="btn btn-instagram">
                 <i class="fab fa-instagram"></i> اینستاگرام دکتر سایت
             </a>
-            
-            <!-- ایمیل -->
             <a href="mailto:drsiteofficial@gmail.com" class="btn btn-email">
                 <i class="fas fa-envelope"></i> ارسال ایمیل به پشتیبانی
             </a>
         </div>
     </div>
+
+    <script>
+        // قفل کردن راست‌کلیک
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // قفل کردن کلیدهای کپی (Ctrl+C, Ctrl+A, Ctrl+U, F12)
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65) || // Ctrl+C, V, U, A
+                e.keyCode === 123 // F12
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>
