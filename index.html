@@ -181,9 +181,11 @@
         .features ul { list-style: none; padding: 0; margin: 0; }
         .features li { margin-bottom: 12px; color: var(--text-main); font-size: 15px; line-height: 1.6; }
         .features li::before { content: "✔ "; color: var(--success); margin-left: 5px; font-weight: bold; }
-        .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
-        .btn-telegram { background-color: #229ED9; color: white; }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: all 0.2s; }
+        .btn-telegram { background-color: #229ED9; color: white; box-shadow: 0 4px 12px rgba(34, 158, 217, 0.3); }
+        .btn-telegram:hover { filter: brightness(1.1); }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -216,7 +218,6 @@
                 </div>
             </div>
 
-            <!-- بخش نمایش هوشمند جدول گزارش ترکیبی اصلاح‌شده -->
             <div id="reportBox" class="report-box">
                 <h3 style="color: var(--primary); margin-top: 0; border-bottom: 1px solid #22d3ee; padding-bottom: 8px;"><i class="fas fa-poll-h"></i> نتایج مانیتورینگ لایه ۱ و وضعیت تله‌متری</h3>
                 <p style="font-size: 14px; margin-bottom: 15px;">دامنه بررسی شده: <strong id="analyzedDomain" style="color: white; font-family: monospace;"></strong></p>
@@ -229,7 +230,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- ۴ پارامتر ۱۰۰٪ زنده و واقعی فرانت -->
                         <tr>
                             <td>سرعت پاسخ‌دهی سرور (Response Time)</td>
                             <td><span id="liveSpeedScore" class="badge">محاسبه زنده...</span></td>
@@ -247,7 +247,6 @@
                             <td><span id="liveStabilityScore" class="badge">سنجش زنده...</span></td>
                         </tr>
                         
-                        <!-- پارامترهای قفل‌شده هماهنگ با توابع پایتون شما (جایگزینی کلمه خزش) -->
                         <tr>
                             <td>ساختار کدهای HTML و تگ‌های عناوین (H1-H6)</td>
                             <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
@@ -257,7 +256,7 @@
                             <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
                         </tr>
                         <tr>
-                            <td>وضعیت فایل دستورات خزنده وب (Robots.txt)</td>
+                            <td>وضعیت فایل دستورات ربات وب (Robots.txt)</td>
                             <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
                         </tr>
                         <tr>
@@ -285,6 +284,18 @@
         <div class="features">
             <h2>🏥 خدمات تخصصی و ویژگی‌های هسته عیب‌یابی دکتر سایت</h2>
             <p style="color: var(--text-main); text-align: right; margin-bottom: 15px; font-size: 14px;">سامانه هوشمند ما با بهره‌گیری از الگوریتم‌های پیشرفته، وب‌سایت شما را به صورت همه‌جانبه بررسی کرده و گزارش‌های فنی صادر می‌کند.</p>
+            <ul>
+                <li>تحلیل دقیق معماری کدهای هدینگ و متادیتاهای استاندارد موتورهای جستجو</li>
+                <li>ردیابی و مانیتورینگ بلادرنگ لینک‌های شکسته و بن‌بست‌های پاسخ شبکه</li>
+                <li>سنجش دقیق سرعت پاسخ‌دهی لایه‌های فرانت‌سایت و پایداری هدرهای سرور</li>
+                <li>تولید خروجی ساختاریافته در قالب سند رسمی رسمی جهت رفع مشکلات توسعه</li>
+            </ul>
+        </div>
+
+        <div class="btn-group">
+            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram">
+                <i class="fab fa-telegram-plane"></i> ارتباط با پشتیبانی و مشاوره تخصصی در تلگرام
+            </a>
         </div>
     </div>
 
@@ -362,7 +373,7 @@
                                 speedBadge.innerHTML = `<i class="fas fa-bolt"></i> Pass (${actualSpeed}s)`;
                             }
 
-                            // ۳. بررسی ساختار URL (جدید و هماهنگ با پایتون)
+                            // ۳. بررسی ساختار URL
                             const urlBadge = document.getElementById('liveUrlScore');
                             const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
                             if(urlPattern.test(urlInput)) {
@@ -373,7 +384,7 @@
                                 urlBadge.innerHTML = '<i class="fas fa-unlink"></i> غیر استاندارد';
                             }
 
-                            // ۴. سنجش پایداری اتصال سرور (جدید و هماهنگ با پایتون)
+                            // ۴. سنجش پایداری اتصال سرور
                             const stabilityBadge = document.getElementById('liveStabilityScore');
                             if(parseFloat(actualSpeed) < 1.0) {
                                 stabilityBadge.className = "badge badge-pass";
@@ -385,8 +396,7 @@
                             
                             reportBox.style.display = 'block';
                             
-                            // اصلاح کلمه چکاپ در متن ارسالی تلگرام
-                            const txt = `سلام، من آدرس سایت (${urlInput}) را در سامانه دکتر سایت بررسی کردم.\n\n📊 آمار لایه ۱ فرانت:\n- سرعت پاسخ: ${actualSpeed} ثانیه\n- وضعیت امنیتی: ${isHttps ? 'HTTPS OK' : 'HTTP Fail'}\n\nلطفاً اسکریپت را اجرا کنید و فایل جامع Word (تحلیل لایه‌های قفل شده سئو) را برای من ارسال کنید.`;
+                            const txt = `سلام، من آدرس سایت (${urlInput}) را در سامانه دکتر سایت بررسی کردم.\n\n📊 آمار لایه ۱ فرانت:\n- سرعت پاسخ: ${actualSpeed} ثانیه\n- وضعیت امنیتی: ${isHttps ? 'HTTPS OK' : 'HTTP Fail'}\n\nلطفاً اسکریپت را اجرا کنید و فایل جامع Word (تحلیل لایه‌های فنی سئو) را برای من ارسال کنید.`;
                             document.getElementById('telegramCta').href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent(txt);
                         }, 1000);
                     }
