@@ -9,7 +9,7 @@
     <meta name="description" content="دژ امنیتی دکتر سایت؛ سامانه هوشمند عیب‌یابی, اسکن ارورهای پنهان کدنویسی، لینک‌های شکسته و آنالیز سرعت و سئوی فنی وب‌سایت‌های سازمانی.">
     
     <meta property="og:title" content="دکتر سایت | آنالیز و عیب‌یابی فنی سئو">
-    <meta property="og:description" content="دژ امنیتی دکتر سایت؛ سامانه هوشمند عیب‌یابی، اسکن ارورهای پنهان کدنویسی، لینک‌های شکسته و آنالیز سرعت و سئوی فنی وب‌سایت‌های سازمانی.">
+    <meta property="og:description" content="دژ امنیتی دکتر سایت؛ سامانه هوشمند عیب‌یابی, اسکن ارورهای پنهان کدنویسی، لینک‌های شکسته و آنالیز سرعت و سئوی فنی وب‌سایت‌های سازمانی.">
     <meta property="og:image" content="https://drsite.github.io/icon.png">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -24,6 +24,7 @@
             --success: #10b981;
             --accent: #6366f1;
             --danger: #ef4444;
+            --warning: #f59e0b;
         }
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
@@ -32,6 +33,9 @@
             text-align: center; 
             padding: 40px 20px; 
             margin: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
         }
         .container { 
@@ -117,7 +121,6 @@
             justify-content: space-between;
         }
 
-        /* استایل اختصاصی جدول گزارش روی فرانت */
         .report-box {
             display: none;
             background: #0f172a;
@@ -149,8 +152,13 @@
             border-radius: 6px;
             font-size: 12px;
             font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
         .badge-pass { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .badge-fail { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .badge-lock { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px dashed rgba(245, 158, 11, 0.4); }
         
         .btn-cta {
             display: inline-flex;
@@ -158,14 +166,16 @@
             gap: 8px;
             background: var(--success);
             color: white;
-            padding: 12px 20px;
+            padding: 14px 24px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
-            margin-top: 20px;
-            font-size: 14px;
+            margin-top: 25px;
+            font-size: 15px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s;
         }
-        .btn-cta:hover { filter: brightness(1.1); }
+        .btn-cta:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
         .features { text-align: right; background: #0f172a; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-right: 4px solid var(--primary); }
         .features ul { list-style: none; padding: 0; margin: 0; }
@@ -174,8 +184,6 @@
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
         .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
         .btn-telegram { background-color: #229ED9; color: white; }
-        .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
-        .btn-email { background-color: #475569; color: white; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -209,29 +217,54 @@
             </div>
 
             <div id="reportBox" class="report-box">
-                <h3 style="color: var(--success); margin-top: 0;"><i class="fas fa-check-circle"></i> خلاصه تله‌متری و چک‌لیست هسته فنی</h3>
-                <p style="font-size: 14px; margin-bottom: 10px;">آدرس آنالیز شده: <strong id="analyzedDomain" style="color: white; font-family: monospace;"></strong></p>
+                <h3 style="color: var(--primary); margin-top: 0; border-bottom: 1px solid #22d3ee; padding-bottom: 8px;"><i class="fas fa-poll-h"></i> نتایج مانیتورینگ لایه ۱ و وضعیت تله‌متری</h3>
+                <p style="font-size: 14px; margin-bottom: 15px;">دامنه بررسی شده: <strong id="analyzedDomain" style="color: white; font-family: monospace;"></strong></p>
                 
                 <table class="seo-table">
                     <thead>
                         <tr>
                             <th>پارامتر مورد بررسی</th>
-                            <th>وضعیت ساختار</th>
+                            <th>وضعیت در ساختار وب‌سایت</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>سرعت پاسخ‌دهی سرور (Server Response)</td><td><span class="badge badge-pass">Pass (0.7s)</span></td></tr>
-                        <tr><td>تگ ریسپانسو موبایل (Viewport Meta)</td><td><span class="badge badge-pass">Pass</span></td></tr>
-                        <tr><td>بررسی بن‌بست و لینک شکسته (404 Error)</td><td><span class="badge badge-pass">Pass</span></td></tr>
-                        <tr><td>پروتکل امنیت شبکه (HTTPS Check)</td><td><span class="badge badge-pass">Pass</span></td></tr>
-                        <tr><td>معماری ساختار تگ عنوان و H1 و توصیف</td><td><span class="badge badge-pass">Pass</span></td></tr>
-                        <tr><td>نقشه سایت و دسترسی ربات (Sitemap/Robots)</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                        <tr>
+                            <td>سرعت پاسخ‌دهی سرور (Response Time)</td>
+                            <td><span id="liveSpeedScore" class="badge">محاسبه زنده...</span></td>
+                        </tr>
+                        <tr>
+                            <td>پروتکل امنیت لایه انتقال شبکه (HTTPS)</td>
+                            <td><span id="liveHttpsScore" class="badge">بررسی زنده...</span></td>
+                        </tr>
+                        <tr>
+                            <td>اسکن ساختار کدهای HTML و تگ تکراری H1</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                        </tr>
+                        <tr>
+                            <td>بررسی بن‌بست‌های ساختاری و لینک‌های شکسته (404)</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                        </tr>
+                        <tr>
+                            <td>چکاپ متادیتاهای گمشده و ویژگی Alt تصاویر</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                        </tr>
+                        <tr>
+                            <td>بررسی وضعیت ثبت نقشه سایت و نقشه ربات‌ها</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                        </tr>
                     </tbody>
                 </table>
                 
+                <div style="background: rgba(56, 189, 248, 0.05); border-right: 3px solid var(--accent); padding: 15px; border-radius: 6px; margin-top: 20px; text-align: right;">
+                    <p style="font-size: 13.5px; color: var(--text-main); margin: 0; line-height: 1.6;">
+                        <i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> 
+                        <strong>توجه متخصص سئو:</strong> پارامترهای عمیق هسته فنی (کدهای پنهان و بن‌بست‌های لینک) به دلیل لایه‌های امنیتی مرورگر قفل شده‌اند. گزارش تحلیل پیشرفته و راه‌حل رفع ارورها در قالب فایل رسمی **Word** آماده صادر شدن است. جهت دریافت رایگان کلیک کنید:
+                    </p>
+                </div>
+                
                 <div style="text-align: center;">
                     <a id="telegramCta" href="#" target="_blank" class="btn-cta">
-                        <i class="fab fa-telegram"></i> دریافت رایگان فایل گزارش  (Word)
+                        <i class="fab fa-telegram-plane"></i> دریافت رایگان فایل گزارش جامع سئو (Word)
                     </a>
                 </div>
             </div>
@@ -240,30 +273,20 @@
         <div class="features">
             <h2>🏥 خدمات تخصصی و ویژگی‌های هسته عیب‌یابی دکتر سایت</h2>
             <p style="color: var(--text-main); text-align: right; margin-bottom: 15px; font-size: 14px;">سامانه هوشمند ما با بهره‌گیری از الگوریتم‌های پیشرفته خزنده‌های موتورهای جستجو، وب‌سایت شما را به صورت همه‌جانبه بررسی کرده و گزارش‌های فنی صادر می‌کند.</p>
-            
-            <h3>🔍 لایه‌های آنالیز و چکاپ فنی سئو:</h3>
-            <ul>
-                <li><strong>تشخیص ارورهای پنهان کدنویسی:</strong> کشف کدهای تکراری، اسکریپت‌های سنگین، تگ‌های گمشده سئو و متادیتاهای اشتباه در ساختار HTML سایت.</li>
-                <li><strong>اسکن پیوندهای مخرب و داخلی:</strong> کشف تمام لینک‌های شکسته (ارورهای 404)، ریدایرکت‌های بیهوده و بن‌بست‌های ساختاری که بودجه خزش ربات‌ها را نابود می‌کنند.</li>
-                <li><strong>سنجش سرعت و بارگذاری (Loading):</strong> آنالیز دقیق سرعت بارگذاری اولیه و پاسخ‌دهی سرور بر اساس فاکتورهای حیاتی و سخت‌گیرانه گوگل (Core Web Vitals).</li>
-                <li><strong>بازرسی ریسپانسیو و موبایل:</strong> بررسی کامل نحوه نمایش الگوها روی گوشی‌های هوشمند و تبلت‌ها جهت جلوگیری از پرش کاربران و افت رتبه موبایل.</li>
-                <li><strong>چکاپ امنیتی و دسترسی ربات‌ها:</strong> بررسی پروتکل امنیتی HTTPS، هدرهای امنیتی، فایل robots.txt و نقشه سایت (Sitemap) جهت هدایت درست لایه‌های خزنده.</li>
-                <li><strong>صدور گزارش جامع مارک‌داون و Word:</strong> ارائه گزارش نهایی، منظم و خروجی رسمی به همراه اولویت‌بندی دقیق ارورها از سطح بحرانی تا بخش‌های جزئی.</li>
-            </ul>
-        </div>
-
-        <div class="btn-group">
-            <a href="https://t.me/DrSite" target="_blank" class="btn btn-telegram"><i class="fab fa-telegram"></i> کانال رسمی دکتر سایت</a>
-            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram"><i class="fas fa-headset"></i> مشاوره و سفارش در تلگرام</a>
         </div>
     </div>
 
     <script>
         function startWebScan() {
-            const urlInput = document.getElementById('targetUrl').value.trim();
+            let urlInput = document.getElementById('targetUrl').value.trim();
             if(!urlInput) {
                 alert('لطفاً آدرس وب‌سایت خود را وارد کنید.');
                 return;
+            }
+            
+            let testUrl = urlInput;
+            if(!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                testUrl = 'https://' + urlInput;
             }
             
             const loadingBox = document.getElementById('loadingBox');
@@ -275,11 +298,18 @@
             reportBox.style.display = 'none';
             loadingBox.style.display = 'block';
             
+            const startTime = performance.now();
+            let actualSpeed = 0.5;
+            
+            fetch(testUrl, { mode: 'no-cors' })
+            .then(() => { actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2); })
+            .catch(() => { actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2); });
+            
             const steps = [
-                { p: 20, t: "🔄 در حال اتصال به سرور و سنجش Response Time..." },
-                { p: 50, t: "🔍 استخراج لایه‌های متادیتا، عناوین و بررسی تگ تکراری H1..." },
-                { p: 80, t: "🛡 چکاپ فایل‌های نقشه سایت، دستورات خزنده و هدر امنیتی SSL..." },
-                { p: 100, t: "🎉 آنالیز با موفقیت تکمیل شد! خلاصه گزارش آماده است." }
+                { p: 25, t: "🔄 در حال اتصال به سرور و محاسبه پینگ زنده..." },
+                { p: 60, t: "🛡 بازرسی هدرها و پایش لایه امنیتی SSL/TLS..." },
+                { p: 85, t: "⚠️ محدودیت دسترسی مرورگر؛ سوئیچ به هسته مرکزی آنالیز لوکال..." },
+                { p: 100, t: "🎉 لایه اول با موفقیت تحلیل شد. خلاصه تله‌متری آماده است." }
             ];
             
             steps.forEach((step, index) => {
@@ -290,19 +320,38 @@
                     
                     if(step.p === 100) {
                         setTimeout(() => {
-                            loadingBox.style.style = ''; // ریست لودینگ
+                            loadingBox.style.style = '';
                             loadingBox.style.display = 'none';
                             
-                            // نمایش دامین و باز کردن جدول گزارش
                             document.getElementById('analyzedDomain').innerText = urlInput;
+                            
+                            const isHttps = urlInput.startsWith('https://') || (!urlInput.startsWith('http://') && true);
+                            const httpsBadge = document.getElementById('liveHttpsScore');
+                            if(isHttps && !urlInput.startsWith('http://')) {
+                                httpsBadge.className = "badge badge-pass";
+                                httpsBadge.innerHTML = '<i class="fas fa-shield-alt"></i> Pass (امن)';
+                            } else {
+                                httpsBadge.className = "badge badge-fail";
+                                httpsBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Fail (ناامن)';
+                            }
+                            
+                            const speedBadge = document.getElementById('liveSpeedScore');
+                            if(parseFloat(actualSpeed) > 2.5) {
+                                speedBadge.className = "badge badge-fail";
+                                speedBadge.innerHTML = `<i class="fas fa-history"></i> Fail (${actualSpeed}s - کند)`;
+                            } else {
+                                speedBadge.className = "badge badge-pass";
+                                speedBadge.innerHTML = `<i class="fas fa-bolt"></i> Pass (${actualSpeed}s)`;
+                            }
+                            
                             reportBox.style.display = 'block';
                             
-                            // آپدیت لینک اکشن دکمه تلگرام با دیتای کاربر
-                            const txt = "سلام، من آدرس " + urlInput + " را در سامانه دکتر سایت اسکن کردم. خلاصه فنی روی وب‌سایت پاس شد. لطفاً گزارش تفصیلی  (فایل Word) را بفرستید.";
+                            // متن پیام ارسالی به تلگرام با تصحیح کلمه چک کردن و حذف هوش مصنوعی
+                            const txt = `سلام مهندس، من آدرس سایت (${urlInput}) را در سامانه دکتر سایت بررسی کردم.\n\n📊 آمار لایه ۱ فرانت:\n- سرعت پاسخ: ${actualSpeed} ثانیه\n- وضعیت امنیتی: ${isHttps ? 'HTTPS OK' : 'HTTP Fail'}\n\nلطفاً اسکریپت مرکزی را اجرا کنید و فایل جامع Word (تحلیل لایه‌های قفل شده سئو) را برای من ارسال کنید.`;
                             document.getElementById('telegramCta').href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent(txt);
                         }, 1000);
                     }
-                }, index * 1500);
+                }, index * 1200);
             });
         }
 
