@@ -182,10 +182,34 @@
         .features li { margin-bottom: 12px; color: var(--text-main); font-size: 15px; line-height: 1.6; }
         .features li::before { content: "✔ "; color: var(--success); margin-left: 5px; font-weight: bold; }
         
-        .btn-group { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
-        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; transition: all 0.2s; }
-        .btn-telegram { background-color: #229ED9; color: white; box-shadow: 0 4px 12px rgba(34, 158, 217, 0.3); }
-        .btn-telegram:hover { filter: brightness(1.1); }
+        /* استایل بهینه شبکه ارتباطی انتهای صفحه */
+        .btn-group { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            margin-top: 20px; 
+        }
+        .btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            padding: 12px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            transition: all 0.2s; 
+        }
+        .btn-tg-chan { background-color: #24A1DE; color: white; box-shadow: 0 3px 8px rgba(36, 161, 222, 0.2); }
+        .btn-tg-id { background-color: #3498db; color: white; box-shadow: 0 3px 8px rgba(52, 152, 219, 0.2); }
+        .btn-instagram { background-color: #E1306C; color: white; box-shadow: 0 3px 8px rgba(225, 48, 108, 0.2); }
+        .btn-email { background-color: #475569; color: white; box-shadow: 0 3px 8px rgba(71, 85, 105, 0.2); }
+        .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        @media (max-width: 500px) {
+            .btn-group { grid-template-columns: 1fr; }
+        }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -246,7 +270,6 @@
                             <td>سنجش پایداری هدر اتصال شبکه (Stability Check)</td>
                             <td><span id="liveStabilityScore" class="badge">سنجش زنده...</span></td>
                         </tr>
-                        
                         <tr>
                             <td>ساختار کدهای HTML و تگ‌های عناوین (H1-H6)</td>
                             <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
@@ -288,13 +311,22 @@
                 <li>تحلیل دقیق معماری کدهای هدینگ و متادیتاهای استاندارد موتورهای جستجو</li>
                 <li>ردیابی و مانیتورینگ بلادرنگ لینک‌های شکسته و بن‌بست‌های پاسخ شبکه</li>
                 <li>سنجش دقیق سرعت پاسخ‌دهی لایه‌های فرانت‌سایت و پایداری هدرهای سرور</li>
-                <li>تولید خروجی ساختاریافته در قالب سند رسمی رسمی جهت رفع مشکلات توسعه</li>
+                <li>تولید خروجی ساختاریافته در قالب سند رسمی جهت رفع مشکلات توسعه</li>
             </ul>
         </div>
 
         <div class="btn-group">
-            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram">
-                <i class="fab fa-telegram-plane"></i> ارتباط با پشتیبانی و مشاوره تخصصی در تلگرام
+            <a href="https://t.me/DrSite" target="_blank" class="btn btn-tg-chan">
+                <i class="fas fa-bullhorn"></i> کانال تلگرام دکتر سایت
+            </a>
+            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-tg-id">
+                <i class="fab fa-telegram-plane"></i> پشتیبانی تلگرام
+            </a>
+            <a href="https://instagram.com/DrSiteofficial" target="_blank" class="btn btn-instagram">
+                <i class="fab fa-instagram"></i> اینستاگرام ما
+            </a>
+            <a href="mailto:info.drsiteofficial@gmail.com" class="btn btn-email">
+                <i class="fas fa-envelope"></i> ارتباط از طریق ایمیل
             </a>
         </div>
     </div>
