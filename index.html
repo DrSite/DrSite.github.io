@@ -25,6 +25,7 @@
             --text-muted: #94a3b8;
             --primary: #38bdf8;
             --success: #10b981;
+            --accent: #6366f1;
         }
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
@@ -33,7 +34,6 @@
             text-align: center; 
             padding: 40px 20px; 
             margin: 0;
-            /* غیرفعال کردن انتخاب متن در CSS برای مرورگرهای مختلف */
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
@@ -53,6 +53,86 @@
         h2 { color: var(--primary); font-size: 20px; margin-top: 20px; text-align: right; border-bottom: 1px solid #334155; padding-bottom: 10px; }
         h3 { color: var(--text-main); font-size: 16px; margin-top: 15px; text-align: right; }
         p { color: var(--text-muted); font-size: 16px; line-height: 1.8; margin-bottom: 30px; }
+        
+        /* استایل جدید بخش باکس اسکن هوشمند */
+        .search-section {
+            background: #111827;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px dashed #475569;
+        }
+        .search-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 14px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background: #1f2937;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            text-align: left;
+            direction: ltr;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus {
+            border-color: var(--primary);
+        }
+        .btn-scan {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-scan:hover {
+            background: #4f46e5;
+            transform: translateY(-1px);
+        }
+        
+        /* انیمیشن و استایل وضعیت لودینگ اسکن */
+        .loading-box {
+            display: none;
+            margin-top: 20px;
+            text-align: right;
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #334155;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            transition: width 0.4s ease;
+        }
+        .status-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
         .features { text-align: right; background: #0f172a; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-right: 4px solid var(--primary); }
         .features ul { list-style: none; padding: 0; margin: 0; }
         .features li { margin-bottom: 12px; color: var(--text-main); font-size: 15px; line-height: 1.6; }
@@ -91,6 +171,26 @@
         <h1>به دژ امنیتی دکتر سایت خوش آمدید</h1>
         <p>ما ساختار فنی و ارورهای پنهان وب‌سایت شما را اسکن می‌کنیم تا قبل از جریمه شدن توسط گوگل، آن‌ها را ریشه‌کن کنید.</p>
         
+        <div class="search-section">
+            <h3 style="margin: 0; color: var(--primary);"><i class="fas fa-search-dollar"></i> شروع آنالیز آنی و رایگان سئوی فنی</h3>
+            <div class="search-group">
+                <input type="text" id="targetUrl" class="search-input" placeholder="example.com یا https://...">
+                <button onclick="startWebScan()" class="btn-scan">
+                    <i class="fas fa-bolt"></i> اسکن فنی
+                </button>
+            </div>
+            
+            <div id="loadingBox" class="loading-box">
+                <div class="status-text">
+                    <span id="progressStatus">در حال برقراری اتصال امن با دامنه...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="features">
             <h2>🏥 خدمات تخصصی و ویژگی‌های هسته عیب‌یابی دکتر سایت</h2>
             <p style="color: var(--text-main); text-align: right; margin-bottom: 15px; font-size: 14px;">سامانه هوشمند ما با بهره‌گیری از الگوریتم‌های پیشرفته خزنده‌های موتورهای جستجو، وب‌سایت شما را به صورت همه‌جانبه بررسی کرده و گزارش‌های فنی صادر می‌کند.</p>
@@ -126,14 +226,53 @@
     </div>
 
     <script>
+        // اسکریپت شبیه‌ساز مراحل اسکن و هدایت کاربر به پشتیبانی
+        function startWebScan() {
+            const urlInput = document.getElementById('targetUrl').value.strip ? document.getElementById('targetUrl').value.strip() : document.getElementById('targetUrl').value;
+            if(!urlInput) {
+                alert('لطفاً آدرس وب‌سایت خود را وارد کنید.');
+                return;
+            }
+            
+            const loadingBox = document.getElementById('loadingBox');
+            const progressFill = document.getElementById('progressFill');
+            const progressStatus = document.getElementById('progressStatus');
+            const progressPercent = document.getElementById('progressPercent');
+            
+            loadingBox.style.display = 'block';
+            
+            const steps = [
+                { p: 15, t: "🔄 در حال اتصال به سرور و سنجش Response Time..." },
+                { p: 40, t: "🔍 استخراج لایه‌های متادیتا، عناوین و بررسی تگ تکراری H1..." },
+                { p: 65, t: "🛡 چکاپ فایل‌های نقشه سایت، دستورات خزنده و هدر امنیتی SSL..." },
+                { p: 85, t: "🤖 ارسال اطلاعات به هوش مصنوعی دکتر سایت جهت تولید گزارش مدیریتی..." },
+                { p: 100, t: "🎉 آنالیز با موفقیت تکمیل شد! در حال انتقال به بخش دریافت فایل..." }
+            ];
+            
+            steps.forEach((step, index) => {
+                setTimeout(() => {
+                    progressFill.style.width = step.p + '%';
+                    progressStatus.innerText = step.t;
+                    progressPercent.innerText = step.p + '%';
+                    
+                    if(step.p === 100) {
+                        setTimeout(() => {
+                            // انتقال هوشمند کاربر به آیدی تلگرام برای تحویل گزارش نهایی
+                            window.location.href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent("سلام، من آدرس " + urlInput + " را در سامانه دکتر سایت اسکن کردم. لطفاً گزارش جامع فنی سئو (فایل Word) را برای من ارسال کنید.");
+                        }, 1200);
+                    }
+                }, index * 2000); // هر مرحله ۲ ثانیه طول می‌کشد تا جلوه کاملاً واقعی داشته باشد
+            });
+        }
+
         // قفل کردن راست‌کلیک
         document.addEventListener('contextmenu', event => event.preventDefault());
 
         // قفل کردن کلیدهای کپی (Ctrl+C, Ctrl+A, Ctrl+U, F12)
         document.addEventListener('keydown', function(e) {
             if (
-                e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65) || // Ctrl+C, V, U, A
-                e.keyCode === 123 // F12
+                e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65) || 
+                e.keyCode === 123 
             ) {
                 e.preventDefault();
                 return false;
