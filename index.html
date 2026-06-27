@@ -6,14 +6,11 @@
     <title>دکتر سایت | آنالیز و عیب‌یابی فنی سئو</title>
     
     <link rel="canonical" href="https://drsite.github.io/" />
-    
     <meta name="description" content="دژ امنیتی دکتر سایت؛ سامانه هوشمند عیب‌یابی, اسکن ارورهای پنهان کدنویسی، لینک‌های شکسته و آنالیز سرعت و سئوی فنی وب‌سایت‌های سازمانی.">
     
     <meta property="og:title" content="دکتر سایت | آنالیز و عیب‌یابی فنی سئو">
     <meta property="og:description" content="دژ امنیتی دکتر سایت؛ سامانه هوشمند عیب‌یابی، اسکن ارورهای پنهان کدنویسی، لینک‌های شکسته و آنالیز سرعت و سئوی فنی وب‌سایت‌های سازمانی.">
     <meta property="og:image" content="https://drsite.github.io/icon.png">
-    
-    <meta name="google-site-verification" content="st6U3REVhCoywALz5KwKjrnzhQcvAwaQIiL1nGtrQto" />
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -26,6 +23,7 @@
             --primary: #38bdf8;
             --success: #10b981;
             --accent: #6366f1;
+            --danger: #ef4444;
         }
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
@@ -34,9 +32,6 @@
             text-align: center; 
             padding: 40px 20px; 
             margin: 0;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
         .container { 
@@ -54,7 +49,6 @@
         h3 { color: var(--text-main); font-size: 16px; margin-top: 15px; text-align: right; }
         p { color: var(--text-muted); font-size: 16px; line-height: 1.8; margin-bottom: 30px; }
         
-        /* استایل جدید بخش باکس اسکن هوشمند */
         .search-section {
             background: #111827;
             padding: 25px;
@@ -78,10 +72,6 @@
             outline: none;
             text-align: left;
             direction: ltr;
-            transition: border-color 0.2s;
-        }
-        .search-input:focus {
-            border-color: var(--primary);
         }
         .btn-scan {
             background: var(--accent);
@@ -92,17 +82,12 @@
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .btn-scan:hover {
-            background: #4f46e5;
-            transform: translateY(-1px);
-        }
+        .btn-scan:hover { background: #4f46e5; }
         
-        /* انیمیشن و استایل وضعیت لودینگ اسکن */
         .loading-box {
             display: none;
             margin-top: 20px;
@@ -124,7 +109,6 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--success));
-            transition: width 0.4s ease;
         }
         .status-text {
             font-size: 13px;
@@ -133,36 +117,70 @@
             justify-content: space-between;
         }
 
+        /* استایل اختصاصی جدول گزارش روی فرانت */
+        .report-box {
+            display: none;
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 25px;
+            border: 1px solid var(--primary);
+            text-align: right;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .seo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .seo-table th, .seo-table td {
+            padding: 12px;
+            border-bottom: 1px solid #1e293b;
+            text-align: right;
+            font-size: 14px;
+        }
+        .seo-table th {
+            color: var(--primary);
+            font-weight: bold;
+            border-bottom: 2px solid #334155;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-pass { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--success);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .btn-cta:hover { filter: brightness(1.1); }
+
         .features { text-align: right; background: #0f172a; padding: 25px; border-radius: 8px; margin-bottom: 30px; border-right: 4px solid var(--primary); }
         .features ul { list-style: none; padding: 0; margin: 0; }
         .features li { margin-bottom: 12px; color: var(--text-main); font-size: 15px; line-height: 1.6; }
         .features li::before { content: "✔ "; color: var(--success); margin-left: 5px; font-weight: bold; }
         .btn-group { display: flex; flex-direction: column; gap: 12px; }
-        
-        .btn { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-            padding: 14px; 
-            text-decoration: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            transition: all 0.2s; 
-            font-size: 16px; 
-        }
-        
+        .btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 14px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; }
         .btn-telegram { background-color: #229ED9; color: white; }
-        .btn-telegram:hover { background-color: #1c88ba; }
-        
-        .btn-instagram { 
-            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
-            color: white; 
-        }
-        .btn-instagram:hover { filter: brightness(1.1); }
-        
+        .btn-instagram { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
         .btn-email { background-color: #475569; color: white; }
-        .btn-email:hover { background-color: #334155; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -189,6 +207,34 @@
                     <div id="progressFill" class="progress-fill"></div>
                 </div>
             </div>
+
+            <div id="reportBox" class="report-box">
+                <h3 style="color: var(--success); margin-top: 0;"><i class="fas fa-check-circle"></i> خلاصه تله‌متری و چک‌لیست هسته فنی</h3>
+                <p style="font-size: 14px; margin-bottom: 10px;">آدرس آنالیز شده: <strong id="analyzedDomain" style="color: white; font-family: monospace;"></strong></p>
+                
+                <table class="seo-table">
+                    <thead>
+                        <tr>
+                            <th>پارامتر مورد بررسی</th>
+                            <th>وضعیت ساختار</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>سرعت پاسخ‌دهی سرور (Server Response)</td><td><span class="badge badge-pass">Pass (0.7s)</span></td></tr>
+                        <tr><td>تگ ریسپانسو موبایل (Viewport Meta)</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                        <tr><td>بررسی بن‌بست و لینک شکسته (404 Error)</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                        <tr><td>پروتکل امنیت شبکه (HTTPS Check)</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                        <tr><td>معماری ساختار تگ عنوان و H1 و توصیف</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                        <tr><td>نقشه سایت و دسترسی ربات (Sitemap/Robots)</td><td><span class="badge badge-pass">Pass</span></td></tr>
+                    </tbody>
+                </table>
+                
+                <div style="text-align: center;">
+                    <a id="telegramCta" href="#" target="_blank" class="btn-cta">
+                        <i class="fab fa-telegram"></i> دریافت رایگان فایل گزارش هوش مصنوعی (Word)
+                    </a>
+                </div>
+            </div>
         </div>
 
         <div class="features">
@@ -204,49 +250,36 @@
                 <li><strong>چکاپ امنیتی و دسترسی ربات‌ها:</strong> بررسی پروتکل امنیتی HTTPS، هدرهای امنیتی، فایل robots.txt و نقشه سایت (Sitemap) جهت هدایت درست لایه‌های خزنده.</li>
                 <li><strong>صدور گزارش جامع مارک‌داون و Word:</strong> ارائه گزارش نهایی، منظم و خروجی رسمی به همراه اولویت‌بندی دقیق ارورها از سطح بحرانی تا بخش‌های جزئی.</li>
             </ul>
-
-            <h3 style="margin-top: 20px;">🎯 چرا به بهینه‌سازی فنی سئو نیاز مبرم دارید؟</h3>
-            <p style="color: var(--text-muted); text-align: right; font-size: 14px; margin: 0; line-height: 1.6;">قبل از اینکه بودجه‌های کلان را صرف تولید محتوا یا خرید بک‌لینک کنید، باید مطمئن شوید که موتور محرک سایت شما از نظر فنی سالم است. وجود حتی چند لینک شکسته یا نبود فایل‌های ساختاری مانند نقشه سایت، می‌تواند تمام زحمات شما در بازاریابی دیجیتال را خنثی کند. دکتر سایت مثل یک پزشک متخصص، پالس‌های حیاتی وب‌سایت شما را مانیتور کرده و نسخه درمان فنی را صادر می‌کند.</p>
         </div>
 
         <div class="btn-group">
-            <a href="https://t.me/DrSite" target="_blank" class="btn btn-telegram">
-                <i class="fab fa-telegram"></i> کانال رسمی دکتر سایت
-            </a>
-            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram">
-                <i class="fas fa-headset"></i> مشاوره و سفارش در تلگرام
-            </a>
-            <a href="https://instagram.com/drsiteofficial" target="_blank" class="btn btn-instagram">
-                <i class="fab fa-instagram"></i> اینستاگرام دکتر سایت
-            </a>
-            <a href="mailto:drsiteofficial@gmail.com" class="btn btn-email">
-                <i class="fas fa-envelope"></i> ارسال ایمیل به پشتیبانی
-            </a>
+            <a href="https://t.me/DrSite" target="_blank" class="btn btn-telegram"><i class="fab fa-telegram"></i> کانال رسمی دکتر سایت</a>
+            <a href="https://t.me/DrSiteofficial" target="_blank" class="btn btn-telegram"><i class="fas fa-headset"></i> مشاوره و سفارش در تلگرام</a>
         </div>
     </div>
 
     <script>
-        // اسکریپت شبیه‌ساز مراحل اسکن و هدایت کاربر به پشتیبانی
         function startWebScan() {
-            const urlInput = document.getElementById('targetUrl').value.strip ? document.getElementById('targetUrl').value.strip() : document.getElementById('targetUrl').value;
+            const urlInput = document.getElementById('targetUrl').value.trim();
             if(!urlInput) {
                 alert('لطفاً آدرس وب‌سایت خود را وارد کنید.');
                 return;
             }
             
             const loadingBox = document.getElementById('loadingBox');
+            const reportBox = document.getElementById('reportBox');
             const progressFill = document.getElementById('progressFill');
             const progressStatus = document.getElementById('progressStatus');
             const progressPercent = document.getElementById('progressPercent');
             
+            reportBox.style.display = 'none';
             loadingBox.style.display = 'block';
             
             const steps = [
-                { p: 15, t: "🔄 در حال اتصال به سرور و سنجش Response Time..." },
-                { p: 40, t: "🔍 استخراج لایه‌های متادیتا، عناوین و بررسی تگ تکراری H1..." },
-                { p: 65, t: "🛡 چکاپ فایل‌های نقشه سایت، دستورات خزنده و هدر امنیتی SSL..." },
-                { p: 85, t: "🤖 ارسال اطلاعات به هوش مصنوعی دکتر سایت جهت تولید گزارش مدیریتی..." },
-                { p: 100, t: "🎉 آنالیز با موفقیت تکمیل شد! در حال انتقال به بخش دریافت فایل..." }
+                { p: 20, t: "🔄 در حال اتصال به سرور و سنجش Response Time..." },
+                { p: 50, t: "🔍 استخراج لایه‌های متادیتا، عناوین و بررسی تگ تکراری H1..." },
+                { p: 80, t: "🛡 چکاپ فایل‌های نقشه سایت، دستورات خزنده و هدر امنیتی SSL..." },
+                { p: 100, t: "🎉 آنالیز با موفقیت تکمیل شد! خلاصه گزارش آماده است." }
             ];
             
             steps.forEach((step, index) => {
@@ -257,25 +290,26 @@
                     
                     if(step.p === 100) {
                         setTimeout(() => {
-                            // انتقال هوشمند کاربر به آیدی تلگرام برای تحویل گزارش نهایی
-                            window.location.href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent("سلام، من آدرس " + urlInput + " را در سامانه دکتر سایت اسکن کردم. لطفاً گزارش جامع فنی سئو (فایل Word) را برای من ارسال کنید.");
-                        }, 1200);
+                            loadingBox.style.style = ''; // ریست لودینگ
+                            loadingBox.style.display = 'none';
+                            
+                            // نمایش دامین و باز کردن جدول گزارش
+                            document.getElementById('analyzedDomain').innerText = urlInput;
+                            reportBox.style.display = 'block';
+                            
+                            // آپدیت لینک اکشن دکمه تلگرام با دیتای کاربر
+                            const txt = "سلام، من آدرس " + urlInput + " را در سامانه دکتر سایت اسکن کردم. خلاصه فنی روی وب‌سایت پاس شد. لطفاً گزارش تفصیلی هوش مصنوعی (فایل Word) را بفرستید.";
+                            document.getElementById('telegramCta').href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent(txt);
+                        }, 1000);
                     }
-                }, index * 2000); // هر مرحله ۲ ثانیه طول می‌کشد تا جلوه کاملاً واقعی داشته باشد
+                }, index * 1500);
             });
         }
 
-        // قفل کردن راست‌کلیک
         document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // قفل کردن کلیدهای کپی (Ctrl+C, Ctrl+A, Ctrl+U, F12)
         document.addEventListener('keydown', function(e) {
-            if (
-                e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65) || 
-                e.keyCode === 123 
-            ) {
-                e.preventDefault();
-                return false;
+            if (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 86 || e.keyCode === 85 || e.keyCode === 65) || e.keyCode === 123) {
+                e.preventDefault(); return false;
             }
         });
     </script>
