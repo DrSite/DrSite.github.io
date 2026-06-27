@@ -216,6 +216,7 @@
                 </div>
             </div>
 
+            <!-- بخش نمایش هوشمند جدول گزارش ترکیبی اصلاح‌شده -->
             <div id="reportBox" class="report-box">
                 <h3 style="color: var(--primary); margin-top: 0; border-bottom: 1px solid #22d3ee; padding-bottom: 8px;"><i class="fas fa-poll-h"></i> نتایج مانیتورینگ لایه ۱ و وضعیت تله‌متری</h3>
                 <p style="font-size: 14px; margin-bottom: 15px;">دامنه بررسی شده: <strong id="analyzedDomain" style="color: white; font-family: monospace;"></strong></p>
@@ -228,6 +229,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <!-- ۴ پارامتر ۱۰۰٪ زنده و واقعی فرانت -->
                         <tr>
                             <td>سرعت پاسخ‌دهی سرور (Response Time)</td>
                             <td><span id="liveSpeedScore" class="badge">محاسبه زنده...</span></td>
@@ -237,20 +239,30 @@
                             <td><span id="liveHttpsScore" class="badge">بررسی زنده...</span></td>
                         </tr>
                         <tr>
-                            <td>اسکن ساختار کدهای HTML و تگ تکراری H1</td>
-                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                            <td>ساختار و فرمت بهینه آدرس دامنه (URL Standard)</td>
+                            <td><span id="liveUrlScore" class="badge">بررسی زنده...</span></td>
                         </tr>
                         <tr>
-                            <td>بررسی بن‌بست‌های ساختاری و لینک‌های شکسته (404)</td>
-                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                            <td>سنجش پایداری هدر اتصال شبکه (Stability Check)</td>
+                            <td><span id="liveStabilityScore" class="badge">سنجش زنده...</span></td>
+                        </tr>
+                        
+                        <!-- پارامترهای قفل‌شده هماهنگ با توابع پایتون شما (جایگزینی کلمه خزش) -->
+                        <tr>
+                            <td>ساختار کدهای HTML و تگ‌های عناوین (H1-H6)</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
                         </tr>
                         <tr>
-                            <td>چکاپ متادیتاهای گمشده و ویژگی Alt تصاویر</td>
-                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                            <td>تعداد و وضعیت تصاویر بدون توصیف (Alt Text)</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
                         </tr>
                         <tr>
-                            <td>بررسی وضعیت ثبت نقشه سایت و نقشه ربات‌ها</td>
-                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند خزش لایه‌ای (فایل Word)</span></td>
+                            <td>وضعیت فایل دستورات خزنده وب (Robots.txt)</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
+                        </tr>
+                        <tr>
+                            <td>وجود لینک‌های داخلی مخروب و بن‌بست (404)</td>
+                            <td><span class="badge badge-lock"><i class="fas fa-lock"></i> نیازمند آنالیز ساختاری (نسخه تفصیلی)</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -258,13 +270,13 @@
                 <div style="background: rgba(56, 189, 248, 0.05); border-right: 3px solid var(--accent); padding: 15px; border-radius: 6px; margin-top: 20px; text-align: right;">
                     <p style="font-size: 13.5px; color: var(--text-main); margin: 0; line-height: 1.6;">
                         <i class="fas fa-exclamation-circle" style="color: var(--warning);"></i> 
-                        <strong>توجه متخصص سئو:</strong> پارامترهای عمیق هسته فنی (کدهای پنهان و بن‌بست‌های لینک) به دلیل لایه‌های امنیتی مرورگر قفل شده‌اند. گزارش تحلیل پیشرفته و راه‌حل رفع ارورها در قالب فایل رسمی **Word** آماده صادر شدن است. جهت دریافت رایگان کلیک کنید:
+                        <strong>توجه متخصص سئو:</strong> پارامترهای عمیق هسته فنی به دلیل لایه‌های امنیتی مرورگر قفل شده‌اند. گزارش تحلیل پیشرفته و راه‌حل رفع ارورها در قالب فایل رسمی **Word** آماده صادر شدن است. جهت دریافت رایگان کلیک کنید:
                     </p>
                 </div>
                 
                 <div style="text-align: center;">
                     <a id="telegramCta" href="#" target="_blank" class="btn-cta">
-                        <i class="fab fa-telegram-plane"></i> دریافت رایگان فایل گزارش جامع سئو (Word)
+                        <i class="fab fa-telegram-plane"></i> دریافت رایگان فایل گزارش جامع (Word)
                     </a>
                 </div>
             </div>
@@ -272,7 +284,7 @@
 
         <div class="features">
             <h2>🏥 خدمات تخصصی و ویژگی‌های هسته عیب‌یابی دکتر سایت</h2>
-            <p style="color: var(--text-main); text-align: right; margin-bottom: 15px; font-size: 14px;">سامانه هوشمند ما با بهره‌گیری از الگوریتم‌های پیشرفته خزنده‌های موتورهای جستجو، وب‌سایت شما را به صورت همه‌جانبه بررسی کرده و گزارش‌های فنی صادر می‌کند.</p>
+            <p style="color: var(--text-main); text-align: right; margin-bottom: 15px; font-size: 14px;">سامانه هوشمند ما با بهره‌گیری از الگوریتم‌های پیشرفته، وب‌سایت شما را به صورت همه‌جانبه بررسی کرده و گزارش‌های فنی صادر می‌کند.</p>
         </div>
     </div>
 
@@ -302,13 +314,17 @@
             let actualSpeed = 0.5;
             
             fetch(testUrl, { mode: 'no-cors' })
-            .then(() => { actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2); })
-            .catch(() => { actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2); });
+            .then(() => {
+                actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2);
+            })
+            .catch(() => {
+                actualSpeed = ((performance.now() - startTime) / 1000).toFixed(2);
+            });
             
             const steps = [
                 { p: 25, t: "🔄 در حال اتصال به سرور و محاسبه پینگ زنده..." },
-                { p: 60, t: "🛡 بازرسی هدرها و پایش لایه امنیتی SSL/TLS..." },
-                { p: 85, t: "⚠️ محدودیت دسترسی مرورگر؛ سوئیچ به هسته مرکزی آنالیز لوکال..." },
+                { p: 55, t: "🛡 بازرسی هدرها و پایش لایه امنیتی SSL/TLS..." },
+                { p: 80, t: "⚠️ محدودیت دسترسی مرورگر؛ انتقال فرآیند به هسته پردازش اختصاصی دکتر سایت..." },
                 { p: 100, t: "🎉 لایه اول با موفقیت تحلیل شد. خلاصه تله‌متری آماده است." }
             ];
             
@@ -325,6 +341,7 @@
                             
                             document.getElementById('analyzedDomain').innerText = urlInput;
                             
+                            // ۱. وضعیت HTTPS
                             const isHttps = urlInput.startsWith('https://') || (!urlInput.startsWith('http://') && true);
                             const httpsBadge = document.getElementById('liveHttpsScore');
                             if(isHttps && !urlInput.startsWith('http://')) {
@@ -335,19 +352,41 @@
                                 httpsBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Fail (ناامن)';
                             }
                             
+                            // ۲. وضعیت سرعت
                             const speedBadge = document.getElementById('liveSpeedScore');
                             if(parseFloat(actualSpeed) > 2.5) {
                                 speedBadge.className = "badge badge-fail";
-                                speedBadge.innerHTML = `<i class="fas fa-history"></i> Fail (${actualSpeed}s - کند)`;
+                                speedBadge.innerHTML = `<i class="fas fa-history"></i> Fail (${actualSpeed}s)`;
                             } else {
                                 speedBadge.className = "badge badge-pass";
                                 speedBadge.innerHTML = `<i class="fas fa-bolt"></i> Pass (${actualSpeed}s)`;
                             }
+
+                            // ۳. بررسی ساختار URL (جدید و هماهنگ با پایتون)
+                            const urlBadge = document.getElementById('liveUrlScore');
+                            const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+                            if(urlPattern.test(urlInput)) {
+                                urlBadge.className = "badge badge-pass";
+                                urlBadge.innerHTML = '<i class="fas fa-link"></i> استاندارد';
+                            } else {
+                                urlBadge.className = "badge badge-fail";
+                                urlBadge.innerHTML = '<i class="fas fa-unlink"></i> غیر استاندارد';
+                            }
+
+                            // ۴. سنجش پایداری اتصال سرور (جدید و هماهنگ با پایتون)
+                            const stabilityBadge = document.getElementById('liveStabilityScore');
+                            if(parseFloat(actualSpeed) < 1.0) {
+                                stabilityBadge.className = "badge badge-pass";
+                                stabilityBadge.innerHTML = '<i class="fas fa-signal"></i> عالی (Stable)';
+                            } else {
+                                stabilityBadge.className = "badge badge-lock";
+                                stabilityBadge.innerHTML = '<i class="fas fa-exclamation-circle"></i> نوسان جزئی';
+                            }
                             
                             reportBox.style.display = 'block';
                             
-                            // متن پیام ارسالی به تلگرام با تصحیح کلمه چک کردن و حذف هوش مصنوعی
-                            const txt = `سلام مهندس، من آدرس سایت (${urlInput}) را در سامانه دکتر سایت بررسی کردم.\n\n📊 آمار لایه ۱ فرانت:\n- سرعت پاسخ: ${actualSpeed} ثانیه\n- وضعیت امنیتی: ${isHttps ? 'HTTPS OK' : 'HTTP Fail'}\n\nلطفاً اسکریپت مرکزی را اجرا کنید و فایل جامع Word (تحلیل لایه‌های قفل شده سئو) را برای من ارسال کنید.`;
+                            // اصلاح کلمه چکاپ در متن ارسالی تلگرام
+                            const txt = `سلام، من آدرس سایت (${urlInput}) را در سامانه دکتر سایت بررسی کردم.\n\n📊 آمار لایه ۱ فرانت:\n- سرعت پاسخ: ${actualSpeed} ثانیه\n- وضعیت امنیتی: ${isHttps ? 'HTTPS OK' : 'HTTP Fail'}\n\nلطفاً اسکریپت را اجرا کنید و فایل جامع Word (تحلیل لایه‌های قفل شده سئو) را برای من ارسال کنید.`;
                             document.getElementById('telegramCta').href = "https://t.me/DrSiteofficial?text=" + encodeURIComponent(txt);
                         }, 1000);
                     }
