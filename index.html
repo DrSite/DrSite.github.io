@@ -3,258 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت</title>
+    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل فنی سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای کسب نمره ۱۰۰.">
     
-    <title>دکتر سایت | تحلیل حرفه‌ای و بهینه‌سازی فنی سئو و سرعت وب‌سایت</title>
-    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل جامع سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای دریافت نمره ۱۰۰.">
-    <link rel="canonical" href="https://drsite.github.io">
-    
+    <!-- تزریق مستقیم اسکیما برای رفع خطای Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "Organization",
-          "@id": "https://drsite.github.io/#organization",
-          "name": "دکتر سایت | DrSite",
-          "url": "https://drsite.github.io",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://drsite.github.io/logo.png",
-            "width": "192",
-            "height": "192"
-          }
-        },
-        {
-          "@type": "WebApplication",
-          "@id": "https://drsite.github.io/#application",
-          "url": "https://drsite.github.io",
-          "name": "سامانه هوشمند دکتر سایت",
-          "applicationCategory": "BusinessApplication",
-          "operatingSystem": "All",
-          "browserRequirements": "Requires HTML5 support",
-          "author": {
-            "@id": "https://drsite.github.io/#organization"
-          }
-        }
-      ]
+      "@type": "WebApplication",
+      "name": "دکتر سایت",
+      "url": "https://drsite.github.io/",
+      "description": "سامانه هوشمند تحلیل و بهینه‌سازی فنی سئو و سرعت وب‌سایت."
     }
     </script>
 
     <style>
-        /* CSS بحرانی برای بهینه‌سازی شاخص FCP و حذف کامل پرش صفحه (CLS) */
-        :root {
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --text-main: #0f172a;
-            --text-muted: #475569;
-            --bg-site: #f8fafc;
-            --bg-card: #ffffff;
-            --border: #e2e8f0;
-            --success: #22c55e;
-        }
-
-        *, *::before, *::after {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-site);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-            line-height: 1.7;
-            text-align: right;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        /* جلوگیری از پرش المان هیرو با رزرو فضای ثابت */
-        .hero-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            display: block;
-        }
-
-        .hero-icon {
-            width: 100%;
-            height: 100%;
-            fill: var(--primary);
-        }
-
-        h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin: 0 0 10px 0;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            margin: 0;
-        }
-
-        .status-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-        }
-
-        .score-flex {
-            display: table;
-            width: 100%;
-            margin-bottom: 25px;
-        }
-
-        .score-cell {
-            display: table-cell;
-            vertical-align: middle;
-        }
-
-        .score-badge {
-            background-color: rgba(34, 197, 94, 0.1);
-            color: var(--success);
-            font-size: 2.5rem;
-            font-weight: 900;
-            padding: 10px 25px;
-            border-radius: 12px;
-            display: inline-block;
-            direction: ltr;
-        }
-
-        .audit-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .audit-item {
-            display: block;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .audit-item:last-child {
-            border-bottom: none;
-        }
-
-        .status-tag {
-            float: left;
-            background-color: var(--success);
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 20px;
-        }
-
-        /* بهینه‌سازی رندرهای طولانی در اسکرول با مکانیزم نوین مرورگر */
-        .lazy-render-section {
-            content-visibility: auto;
-            contain-intrinsic-size: 0 300px;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-        }
-
-        .telegram-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .telegram-link:hover {
-            text-decoration: underline;
-        }
+        body { font-family: Tahoma, sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; line-height: 1.6; }
+        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #007bff; font-size: 24px; }
+        /* حذف تمام ترفندهای مخفی‌سازی که باعث افت نمره می‌شدند */
+        .seo-content { font-size: 14px; color: #555; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
+        .btn { display: inline-block; padding: 10px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-    <main class="container">
-        <header>
-            <div class="hero-icon-wrapper">
-                <svg class="hero-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-            </div>
-            <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-            <p class="subtitle">تجزیه، تحلیل و بهینه‌سازی ساختاری سرعت و سئو انترپرایز</p>
-        </header>
+    <div class="container">
+        <h1>سامانه پردازش تخصصی دکتر سایت</h1>
+        <p>بهینه‌سازی شده برای کسب امتیاز ۱۰۰ در تست‌های انترپرایز.</p>
 
-        <section class="status-card">
-            <div class="score-flex">
-                <div class="score-cell">
-                    <h2 style="margin:0; font-size:1.5rem; font-weight:700;">وضعیت کلی سلامت سئوی دامنه</h2>
-                    <p style="margin:5px 0 0 0; color:var(--text-muted); font-size:0.95rem;">تمامی فاکتورهای حیاتی لایت‌هاوس بررسی و تایید شدند.</p>
-                </div>
-                <div class="score-cell" style="text-align: left; width: 120px;">
-                    <span class="score-badge">100/100</span>
-                </div>
-            </div>
+        <!-- قرارگیری محتوا به صورت استاندارد -->
+        <div class="seo-content">
+            <h2>چرا دکتر سایت؟</h2>
+            <p>دکتر سایت با استفاده از الگوریتم‌های پیشرفته، سرعت پاسخ‌دهی سرور (Response Time) را به زیر ۱ ثانیه رسانده و تمامی خطاهای ساختاری کدنویسی را برطرف می‌کند. ما با استانداردسازی تگ‌های هدینگ (H1-H6) و بهینه‌سازی متادیتای سئو، بستری امن برای رشد وب‌سایت شما فراهم می‌کنیم.</p>
+            <p>این سامانه تمامی پروتکل‌های HTTPS و استانداردهای Core Web Vitals را پاس کرده و با معماری اسکیما مارکاپ، درک وب‌سایت شما توسط هوش مصنوعی گوگل را به حداکثر می‌رساند.</p>
+        </div>
 
-            <ul class="audit-list">
-                <li class="audit-item">
-                    <span>بررسی سرعت پاسخ‌دهی سرور (Server Response Speed)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-                <li class="audit-item">
-                    <span>شاخص پایدارسازی رندر محتوا (Google LCP)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-                <li class="audit-item">
-                    <span>اعتبارسنجی ساختار معنایی داده‌ها (Schema Markup Graph)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-                <li class="audit-item">
-                    <span>اصلاح ساختار و ترتیبات تگ‌های عناوین (Heading Architecture)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-                <li class="audit-item">
-                    <span>پروتکل امنیتی ارتباطات وب (HTTPS)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-                <li class="audit-item">
-                    <span>انطباق‌پذیری با نمایشگرهای موبایل (Mobile Viewport)</span>
-                    <span class="status-tag">پاسخ داده شد</span>
-                </li>
-            </ul>
-        </section>
-
-        <article class="status-card lazy-render-section">
-            <h3 style="margin-top:0; font-size:1.3rem; font-weight:700;">راهکارهای برجسته فنی اعمال شده:</h3>
-            <p style="font-size:0.95rem; color:var(--text-muted);">
-                تگ توضیحات متا به نحوی بهینه‌سازی شد که پیام کلیدی برند در کوتاه‌ترین ساختار به موتورهای جستجو منتقل شود. همچنین معماری اسکیما از مدل سنتی تکی به گراف به هم پیوسته سازمان و اپلیکیشن تحت وب ارتقا یافت تا خزنده گوگل در اولین نگاه اعتبار دامنه را شناسایی کند.
-            </p>
-        </article>
-
-        <footer>
-            <p>وب‌سایت رسمی: <strong style="color:var(--text-main);">drsite.github.io</strong></p>
-            <p>پشتیبانی و مشاوره تخصصی تلگرام: <a href="https://t.me/DrSiteofficial" class="telegram-link" target="_blank" rel="noopener noreferrer">@DrSiteofficial</a></p>
-        </footer>
-    </main>
+        <a href="https://t.me/DrSiteofficial" class="btn">پشتیبانی تلگرام</a>
+    </div>
 
 </body>
 </html>
