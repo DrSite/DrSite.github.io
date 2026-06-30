@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سامانه هوشمند دکتر سایت | آنالیز تخصصی سئو و تله‌متری</title>
-    <meta name="description" content="سامانه دکتر سایت؛ ارائه دهنده آنالیز جامع عملکرد وب‌سایت، Core Web Vitals و تله‌متری سرور. اولین انتخاب برای وب‌سایت‌های سازمانی جهت رسیدن به سئوی ۱۰۰.">
+    <meta name="description" content="سامانه دکتر سایت؛ ارائه دهنده آنالیز جامع عملکرد وب‌سایت، Core Web Vitals و تله‌متری سرور.">
     <style>
         :root { --bg: #0b0f19; --card: #111827; --primary: #38bdf8; --text: #f8fafc; --lock: #ef4444; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.8; margin: 0; padding: 20px; }
@@ -14,17 +14,27 @@
         button { background: var(--primary); color: #000; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.2rem; margin-top: 15px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
         .metric { background: #1f2937; padding: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .locked { border: 1px dashed var(--lock); color: var(--lock); }
-        .contact-box { background: #0f172a; padding: 25px; border-radius: 15px; border: 1px solid var(--primary); margin-top: 20px; }
+        .locked { border: 1px dashed var(--lock); color: var(--lock); cursor: pointer; }
+        .contact-box { background: #0f172a; padding: 25px; border-radius: 15px; border: 1px solid var(--primary); margin-bottom: 30px; }
         h2 { border-right: 4px solid var(--primary); padding-right: 15px; }
+        a { color: var(--primary); text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <div class="card contact-box">
+        <h2>ارتباط با تیم فنی دکتر سایت</h2>
+        <div class="grid">
+            <div>📢 <a href="https://t.me/DrSite" target="_blank">کانال تلگرام</a></div>
+            <div>👤 <a href="https://t.me/DrSiteOfficial" target="_blank">آیدی تلگرام: @DrSiteOfficial</a></div>
+            <div>📸 <a href="https://instagram.com/DrSite.Official" target="_blank">اینستاگرام: @DrSite.Official</a></div>
+            <div>📧 <a href="mailto:support@drsite.io">ایمیل: drsiteofficial@gmail.com</a></div>
+        </div>
+    </div>
+
     <div class="card">
         <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-        <p>تحلیل دقیق، عیب‌یابی ساختاری و تله‌متری کامل وب‌سایت‌های سازمانی</p>
         <form id="auditForm">
             <input type="text" id="urlInput" placeholder="drsite.github.io" required>
             <button type="submit">شروع اسکن جامع و آنالیز لایه ۱</button>
@@ -33,43 +43,22 @@
 
     <div id="results" style="display:none;">
         <div class="card">
-            <h2>پارامترهای آنالیز شده (رایگان)</h2>
+            <h2>نتایج آنالیز اولیه (رایگان)</h2>
             <div class="grid">
                 <div class="metric"><span>پروتکل HTTPS</span> <span>Pass ✅</span></div>
                 <div class="metric"><span>زمان پاسخ سرور</span> <span>Pass (0.21s) ✅</span></div>
                 <div class="metric"><span>وضعیت اسکیما</span> <span>Pass ✅</span></div>
-                <div class="metric"><span>ساختار هدینگ‌ها</span> <span>Pass ✅</span></div>
-                <div class="metric"><span>پایداری هدر</span> <span>Stable ✅</span></div>
-                <div class="metric"><span>فشرده‌سازی GZIP</span> <span>Active ✅</span></div>
             </div>
         </div>
 
         <div class="card">
-            <h2>پارامترهای پیشرفته (نیاز به گزارش اختصاصی)</h2>
+            <h2>درخواست گزارش کامل (کلیک کنید)</h2>
             <div class="grid">
-                <div class="metric locked"><span>آنالیز کامل Core Web Vitals</span> <span>🔒</span></div>
-                <div class="metric locked"><span>بررسی خطاهای کدهای مخرب</span> <span>🔒</span></div>
-                <div class="metric locked"><span>آنالیز دقیق LCP و CLS</span> <span>🔒</span></div>
-                <div class="metric locked"><span>تخمین رتبه کلمات کلیدی</span> <span>🔒</span></div>
-                <div class="metric locked"><span>گزارش بک‌لینک‌های اسپم</span> <span>🔒</span></div>
-                <div class="metric locked"><span>بهینه‌سازی تصاویر (WebP)</span> <span>🔒</span></div>
+                <a href="https://t.me/DrSiteOfficial" target="_blank" class="metric locked"><span>آنالیز کامل Core Web Vitals</span> <span>🔒</span></a>
+                <a href="https://t.me/DrSiteOfficial" target="_blank" class="metric locked"><span>بررسی خطاهای کدهای مخرب</span> <span>🔒</span></a>
+                <a href="https://t.me/DrSiteOfficial" target="_blank" class="metric locked"><span>تخمین رتبه کلمات کلیدی</span> <span>🔒</span></a>
             </div>
         </div>
-
-        <div class="card contact-box">
-            <h2>راه‌های ارتباطی و پشتیبانی فنی</h2>
-            <ul style="list-style: none; padding: 0; margin-top: 20px; line-height: 2.5;">
-                <li>📢 <strong>کانال اطلاع‌رسانی تلگرام:</strong> <a href="https://t.me/DrSiteChannel" target="_blank" style="color: var(--primary);">t.me/DrSiteChannel</a></li>
-                <li>👤 <strong>ارتباط مستقیم با مدیر:</strong> <a href="https://t.me/DrSiteOfficial" target="_blank" style="color: var(--primary);">@DrSiteOfficial</a></li>
-                <li>📸 <strong>پیج اینستاگرام دکتر سایت:</strong> <a href="https://instagram.com/DrSite.Official" target="_blank" style="color: var(--primary);">@DrSite.Official</a></li>
-                <li>📧 <strong>ارسال ایمیل به تیم فنی:</strong> <a href="mailto:support@drsite.io" style="color: var(--primary);">support@drsite.io</a></li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>دانشنامه دکتر سایت: چرا تله‌متری وب‌سایت حیاتی است؟</h2>
-        <p>در دنیای رقابتی امروز، وب‌سایت شما نه تنها یک ویترین، بلکه یک سیستم پردازشی است. بهینه‌سازی سرعت بارگذاری و کاهش زمان اولین ترسیم محتوا (LCP) از دیدگاه موتورهای جستجو، حیاتی‌ترین فاکتور برای کسب امتیاز ۱۰۰ در ابزارهای تست سئو است. سامانه دکتر سایت با استفاده از متدهای پیشرفته، نه تنها ساختار DOM وب‌سایت شما را تحلیل می‌کند، بلکه با شناسایی گلوگاه‌های انتقال داده در شبکه، مسیر را برای بهبود رتبه در نتایج جستجو هموار می‌سازد. بسیاری از مدیران سایت، از تاثیر پرش‌های ناگهانی (CLS) بر تجربه کاربری غافل هستند؛ در حالی که همین یک فاکتور می‌تواند نرخ تبدیل وب‌سایت را تا ۴۰ درصد کاهش دهد. تیم دکتر سایت با متدهای اختصاصی خود، این مشکلات را شناسایی و راهکارهای اصلاحی را در قالب گزارش‌های فنی به شما ارائه می‌دهد.</p>
     </div>
 </div>
 
