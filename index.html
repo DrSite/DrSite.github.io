@@ -1,73 +1,215 @@
 <!doctype html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>دکتر سایت | آنالیز سئو و تله‌متری</title>
-<meta name="description" content="آنالیز جامع عملکرد وب‌سایت، Core Web Vitals و تله‌متری سرور.">
-<link rel="canonical" href="https://drsite.github.io/">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="image" href="/assets/hero-800.webp" imagesrcset="/assets/hero-400.webp 400w, /assets/hero-800.webp 800w" fetchpriority="high">
-<link rel="preload" as="font" href="/fonts/inter-var.woff2" type="font/woff2" crossorigin>
-<style>
-:root{--bg:#0b0f19;--card:#111827;--primary:#38bdf8;--text:#f8fafc;--lock:#ef4444}
-body{background:var(--bg);color:var(--text);font-family:Inter, 'Segoe UI', Tahoma, sans-serif;margin:0;padding:20px;line-height:1.6}
-.container{max-width:900px;margin:auto}
-.card{background:var(--card);padding:32px;border-radius:16px;border:1px solid #1f2937;margin-bottom:24px}
-input,button{font-size:1rem}
-img{max-width:100%;height:auto;display:block}
-.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>دکتر سایت | آنالیز سئو، عملکرد و تله‌متری</title>
+  <meta name="description" content="آنالیز تخصصی سئو، Core Web Vitals و تله‌متری سرور — گزارش اولیه رایگان و گزارش کامل پیشرفته.">
+  <link rel="canonical" href="https://drsite.github.io/">
 
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","name":"دکتر سایت","url":"https://drsite.github.io","sameAs":["https://t.me/DrSiteOfficial","https://instagram.com/DrSite.Official"],"contactPoint":[{"@type":"ContactPoint","email":"support@drsite.io","contactType":"customer support","inLanguage":"fa"}]}
-</script>
+  <!-- Preconnect / Preload for performance -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" href="/assets/hero-800.webp" as="image" imagesrcset="/assets/hero-400.webp 400w, /assets/hero-800.webp 800w" fetchpriority="high">
+  <link rel="preload" href="/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Fonts (در صورت self-host، مسیر را تغییر دهید) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <!-- Basic SEO / Social -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="دکتر سایت | آنالیز سئو و تله‌متری">
+  <meta property="og:description" content="آنالیز تخصصی سئو، Core Web Vitals و تله‌متری سرور">
+  <meta property="og:url" content="https://drsite.github.io/">
+  <meta name="theme-color" content="#0b0f19">
+
+  <style>
+    :root{
+      --bg:#071026; --card:#0f1724; --muted:#94a3b8; --accent:#06b6d4; --accent-2:#7c3aed;
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px; --maxw:1100px; --text:#e6eef8;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:Inter, 'Segoe UI', Tahoma, sans-serif; background:
+      linear-gradient(180deg,#041026 0%, #071026 60%); color:var(--text); -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale; line-height:1.6; padding:28px;
+    }
+    .wrap{max-width:var(--maxw);margin:0 auto}
+    header.site{
+      display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px;
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{
+      width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:#021025;font-size:20px;
+      box-shadow:0 6px 18px rgba(12,20,30,0.6);
+    }
+    h1{font-size:1.25rem;margin:0}
+    .tagline{color:var(--muted);font-size:0.95rem}
+
+    /* layout */
+    .grid{display:grid;grid-template-columns:1fr 380px;gap:22px}
+    @media (max-width:980px){.grid{grid-template-columns:1fr}}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--radius);padding:20px;border:1px solid rgba(255,255,255,0.04)}
+    .hero{
+      display:flex;gap:20px;align-items:center;padding:28px;border-radius:12px;background:linear-gradient(90deg, rgba(7,18,38,0.6), rgba(12,20,30,0.4));
+      box-shadow:0 8px 30px rgba(2,6,23,0.6);
+    }
+    .hero .left{flex:1}
+    .hero h2{margin:0 0 8px 0;font-size:1.4rem}
+    .hero p{margin:0;color:var(--muted)}
+    .cta-row{display:flex;gap:12px;margin-top:16px}
+    .btn{background:var(--accent);color:#021025;padding:12px 16px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.secondary{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06)}
+    .input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text)}
+
+    /* metrics */
+    .metrics{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+    .metric{flex:1;min-width:160px;background:var(--glass);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03)}
+    .metric .k{color:var(--muted);font-size:0.85rem}
+    .metric .v{font-weight:700;margin-top:6px}
+
+    /* locked features */
+    .locked{display:block;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(124,58,237,0.08), rgba(6,182,212,0.04));border:1px dashed rgba(255,255,255,0.04);text-decoration:none;color:var(--text)}
+    .locked .label{display:flex;justify-content:space-between;align-items:center}
+
+    /* footer */
+    footer{margin-top:28px;color:var(--muted);font-size:0.9rem;text-align:center}
+
+    /* accessibility helpers */
+    .visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)}
+  </style>
+
+  <!-- JSON-LD structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Organization",
+    "name":"دکتر سایت",
+    "url":"https://drsite.github.io",
+    "logo":"https://drsite.github.io/assets/logo.png",
+    "sameAs":["https://t.me/DrSiteOfficial","https://instagram.com/DrSite.Official"],
+    "contactPoint":[{"@type":"ContactPoint","contactType":"customer support","email":"support@drsite.io","inLanguage":"fa"}]
+  }
+  </script>
 </head>
 <body>
-<main class="container" id="main">
-  <header class="card" role="banner">
-    <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-    <p class="visually-hidden">بهینه‌سازی سئو و مانیتورینگ تله‌متری</p>
-  </header>
+  <div class="wrap">
+    <header class="site" role="banner">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">DS</div>
+        <div>
+          <h1>دکتر سایت</h1>
+          <div class="tagline">آنالیز سئو، عملکرد و تله‌متری — گزارش اولیه رایگان</div>
+        </div>
+      </div>
+      <div>
+        <nav aria-label="شبکه‌های اجتماعی">
+          <a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener" class="tagline">تلگرام</a>
+          <span style="margin:0 8px;color:var(--muted)">•</span>
+          <a href="https://instagram.com/DrSite.Official" target="_blank" rel="noopener" class="tagline">اینستاگرام</a>
+        </nav>
+      </div>
+    </header>
 
-  <section class="card" aria-labelledby="contactTitle">
-    <h2 id="contactTitle">ارتباط با تیم فنی</h2>
-    <nav>
-      <ul>
-        <li><a href="https://t.me/DrSite" target="_blank" rel="noopener">کانال تلگرام</a></li>
-        <li><a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">@DrSiteOfficial</a></li>
-        <li><a href="https://instagram.com/DrSite.Official" target="_blank" rel="noopener">اینستاگرام</a></li>
-        <li><a href="mailto:support@drsite.io">support@drsite.io</a></li>
-      </ul>
-    </nav>
-  </section>
+    <main class="grid" id="main">
+      <!-- main column -->
+      <section>
+        <div class="card hero" role="region" aria-labelledby="heroTitle">
+          <div class="left">
+            <h2 id="heroTitle">آنالیز سریع و گزارش اولیه</h2>
+            <p>آدرس سایت را وارد کن تا گزارش اولیه Core Web Vitals، امنیت و ساختار سئو را ببینی. گزارش کامل در نسخهٔ پیشرفته نمایش داده می‌شود.</p>
 
-  <section class="card" aria-labelledby="scanTitle">
-    <h2 id="scanTitle">اسکن و آنالیز</h2>
-    <form id="auditForm" aria-describedby="scanDesc">
-      <label for="urlInput" class="visually-hidden">آدرس سایت برای اسکن</label>
-      <input id="urlInput" name="url" type="text" placeholder="drsite.github.io" required aria-required="true">
-      <button type="submit">شروع اسکن رایگان</button>
-    </form>
-    <p id="scanDesc">نتایج اولیه رایگان؛ گزارش کامل در نسخهٔ پیشرفته نمایش داده می‌شود.</p>
-  </section>
+            <form id="auditForm" class="cta-row" aria-describedby="scanNote">
+              <label for="url" class="visually-hidden">آدرس سایت</label>
+              <input id="url" name="url" class="input" type="text" placeholder="drsite.github.io" required>
+              <button class="btn" type="submit">شروع اسکن</button>
+              <button class="btn secondary" type="button" id="demoBtn">نمایش نمونه</button>
+            </form>
+            <div id="scanNote" style="margin-top:10px;color:var(--muted)">نتایج اولیه رایگان؛ گزارش پیشرفته قفل شده است.</div>
 
-  <section id="results" class="card" style="display:none" aria-live="polite"></section>
-</main>
+            <div class="metrics" aria-hidden="false" style="margin-top:12px">
+              <div class="metric"><div class="k">پروتکل HTTPS</div><div class="v">Pass ✅</div></div>
+              <div class="metric"><div class="k">زمان پاسخ سرور</div><div class="v">0.21s</div></div>
+              <div class="metric"><div class="k">LCP</div><div class="v" id="lcpVal">—</div></div>
+            </div>
+          </div>
 
-<script>
-document.getElementById('auditForm').onsubmit = function(e){
-  e.preventDefault();
-  const r=document.getElementById('results');
-  r.style.display='block';
-  r.innerHTML='<h3>نتایج آنالیز اولیه (رایگان)</h3><p>در حال پردازش...</p>';
-  r.scrollIntoView({behavior:'smooth'});
-};
-// Lazy load non-LCP images
-if('loading' in HTMLImageElement.prototype){
-  document.querySelectorAll('img[data-lazy]').forEach(i=>i.loading='lazy');
-}
-</script>
+          <div style="width:320px">
+            <img src="/assets/hero-800.webp" alt="تصویر نمایشی آنالیز" width="320" height="200" style="border-radius:10px;object-fit:cover">
+          </div>
+        </div>
+
+        <div id="resultsArea" class="card" style="margin-top:18px;display:none" aria-live="polite"></div>
+
+        <div class="card" style="margin-top:18px">
+          <h3>نکات سریع برای بهبود</h3>
+          <ul>
+            <li>تصاویر LCP را به WebP/AVIF تبدیل و preload کن.</li>
+            <li>فونت‌ها را self-host کن و از font-display:swap استفاده کن.</li>
+            <li>CSS و JS را minify و منابع رندر‑بلاک را حذف کن.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- sidebar -->
+      <aside>
+        <div class="card" aria-labelledby="contactTitle">
+          <h3 id="contactTitle">تماس و پشتیبانی</h3>
+          <p class="tagline">پشتیبانی و مشاوره: <strong>support@drsite.io</strong></p>
+          <p style="margin-top:8px"><a href="mailto:support@drsite.io" class="locked">ارسال ایمیل</a></p>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>ویژگی‌های پیشرفته</h3>
+          <a class="locked" href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">
+            <div class="label"><span>آنالیز کامل Core Web Vitals</span><span>🔒</span></div>
+          </a>
+          <a class="locked" href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener" style="margin-top:8px;display:block">
+            <div class="label"><span>اسکن امنیتی و بدافزار</span><span>🔒</span></div>
+          </a>
+          <a class="locked" href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener" style="margin-top:8px;display:block">
+            <div class="label"><span>گزارش کلمات کلیدی و رتبه</span><span>🔒</span></div>
+          </a>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h3>وضعیت فعلی سایت</h3>
+          <p class="tagline">Core Score: <strong id="coreScore">55</strong>/100</p>
+          <p style="color:var(--muted);font-size:0.95rem">این نمره بر اساس گزارش اولیه است. برای گزارش کامل، نسخهٔ پیشرفته لازم است.</p>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      © 2026 دکتر سایت — طراحی و توسعه. آماده برای میزبانی روی GitHub Pages.
+    </footer>
+  </div>
+
+  <script>
+    // Demo behavior: نمایش نتایج نمونه و مقدار LCP فرضی
+    document.getElementById('auditForm').onsubmit = function(e){
+      e.preventDefault();
+      const results = document.getElementById('resultsArea');
+      results.style.display = 'block';
+      results.innerHTML = '<h3>نتایج آنالیز اولیه (نمونه)</h3>'
+        + '<p>صفحه: <strong>' + (document.getElementById('url').value || 'drsite.github.io') + '</strong></p>'
+        + '<ul>'
+        + '<li>Google LCP: <strong id="lcpText">2.8s (Fail)</strong></li>'
+        + '<li>CLS: <strong>0.12 (Needs Improvement)</strong></li>'
+        + '<li>Schema: <strong>Not Found</strong></li>'
+        + '</ul>'
+        + '<p style="color:var(--muted)">برای گزارش کامل و پیشنهادات دقیق، نسخهٔ پیشرفته لازم است.</p>';
+      document.getElementById('lcpVal').textContent = '2.8s';
+      document.getElementById('coreScore').textContent = '55';
+      results.scrollIntoView({behavior:'smooth'});
+    };
+
+    document.getElementById('demoBtn').onclick = function(){
+      document.getElementById('url').value = 'drsite.github.io';
+      document.getElementById('auditForm').dispatchEvent(new Event('submit'));
+    };
+  </script>
 </body>
 </html>
