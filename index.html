@@ -2,29 +2,84 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
     <title>دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت</title>
     <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل جامع سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای دریافت نمره ۱۰۰.">
     <link rel="canonical" href="https://drsite.github.io/">
 
+    <!-- Preconnect & Performance Boost -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <!-- Preload Critical Font -->
+    <link rel="preload" as="font" href="https://fonts.gstatic.com/s/iransans.woff2" type="font/woff2" crossorigin>
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#007bff">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت">
+    <meta property="og:description" content="سامانه هوشمند تحلیل، عیب‌یابی و بهینه‌سازی فنی سئو و سرعت وب‌سایت‌های سازمانی.">
+    <meta property="og:url" content="https://drsite.github.io/">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="دکتر سایت | تحلیل فنی سئو">
+    <meta name="twitter:description" content="تحلیل جامع سئو و سرعت وب‌سایت برای دریافت امتیاز ۱۰۰.">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Schema: WebSite -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "@id": "https://drsite.github.io/#webapp",
-      "name": "دکتر سایت",
+      "@type": "WebSite",
       "url": "https://drsite.github.io/",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires HTML5 support",
-      "description": "سامانه هوشمند تحلیل، عیب‌یابی و بهینه‌سازی فنی سئو و سرعت وب‌سایت‌های سازمانی."
+      "name": "دکتر سایت",
+      "description": "سامانه هوشمند تحلیل، عیب‌یابی و بهینه‌سازی فنی سئو و سرعت وب‌سایت‌های سازمانی.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "DrSite",
+        "url": "https://drsite.github.io/"
+      }
+    }
+    </script>
+
+    <!-- Schema: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "DrSite Intelligent System",
+      "url": "https://drsite.github.io/",
+      "logo": "https://drsite.github.io/logo.png",
+      "sameAs": [
+        "https://t.me/DrSiteofficial"
+      ]
+    }
+    </script>
+
+    <!-- Schema: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "تحلیل فنی سئو و سرعت وب‌سایت",
+      "author": "DrSite System",
+      "publisher": {
+        "@type": "Organization",
+        "name": "DrSite"
+      },
+      "url": "https://drsite.github.io/",
+      "mainEntityOfPage": "https://drsite.github.io/"
     }
     </script>
 
     <style>
-        /* کدهای CSS بحرانی خطی جهت رندر آنی بدون بلاک کردن مرورگر */
         :root {
             --primary-color: #007bff;
             --text-color: #2c3e50;
@@ -52,6 +107,7 @@
             max-width: 750px;
             margin: 40px auto;
             padding: 0 20px;
+            min-height: 100vh;
         }
 
         .main-card {
@@ -60,12 +116,14 @@
             border-radius: 12px;
             padding: 35px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            min-height: 400px;
         }
 
         header {
             border-bottom: 2px solid var(--border-color);
             padding-bottom: 20px;
             margin-bottom: 25px;
+            min-height: 90px;
         }
 
         h1 {
@@ -79,6 +137,7 @@
             font-size: 1rem;
             color: #7f8c8d;
             margin: 0;
+            min-height: 22px;
         }
 
         .seo-section {
@@ -114,10 +173,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .checklist li:last-child {
-            border-bottom: none;
+            min-height: 32px;
         }
 
         .badge-success {
@@ -136,6 +192,7 @@
             color: #95a5a6;
             border-top: 1px solid var(--border-color);
             padding-top: 15px;
+            min-height: 60px;
         }
 
         .btn-tele {
@@ -151,6 +208,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <main class="wrapper">
@@ -162,32 +220,20 @@
 
             <section class="seo-section">
                 <h2>راهکار هوشمند بهینه‌سازی سئو انترپرایز</h2>
-                <p>سامانه هوشمند دکتر سایت با تکیه بر الگوریتم‌های پیشرفته تحلیل تلمتری، بستر مناسبی را برای ارزیابی شاخص‌های حیاتی وب (Core Web Vitals) فراهم می‌سازد. با اصلاح کدهای مخرب و رفع پرش‌های ناگهانی صفحه (CLS)، سرعت بارگذاری اولیه به شکل چشمگیری بهبود یافته است.</p>
-                <p>این پلتفرم با پیاده‌سازی خودکار لایه داده‌های ساختاریافته (Schema Markup) و بهینه‌سازی نقشه سایت، درک موتورهای جستجو از ساختار محتوایی دامنه‌ها را به حداکثر رسانده و مسیر دستیابی به نمره کامل ۱۰۰ را هموار می‌کند.</p>
+                <p>سامانه هوشمند دکتر سایت با تکیه بر الگوریتم‌های پیشرفته تحلیل تلمتری، بستر مناسبی را برای ارزیابی شاخص‌های حیاتی وب (Core Web Vitals) فراهم می‌سازد.</p>
+                <p>با اصلاح کدهای مخرب و رفع پرش‌های ناگهانی صفحه (CLS)، سرعت بارگذاری اولیه به شکل چشمگیری بهبود یافته است.</p>
             </section>
 
             <ul class="checklist">
-                <li>
-                    <span>بررسی سرعت پاسخ‌دهی سرور (Server Response Speed)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>شاخص پایدارسازی رندر محتوا (Google LCP)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>اعتبارسنجی داده‌های ساختاریافته (Schema Validation)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>ترتیب و معماری عناوین متنی (Heading Sequence)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
+                <li><span>سرعت پاسخ‌دهی سرور</span><span class="badge-success">Pass</span></li>
+                <li><span>شاخص LCP</span><span class="badge-success">Pass</span></li>
+                <li><span>اعتبارسنجی اسکیما</span><span class="badge-success">Pass</span></li>
+                <li><span>معماری هدینگ‌ها</span><span class="badge-success">Pass</span></li>
             </ul>
 
             <footer>
                 <p>وب‌سایت رسمی: <strong>drsite.github.io</strong></p>
-                <p>پشتیبانی و مشاوره تخصصی در تلگرام: <a href="https://t.me/DrSiteofficial" class="btn-tele" target="_blank" rel="noopener noreferrer">@DrSiteofficial</a></p>
+                <p>پشتیبانی تلگرام: <a href="https://t.me/DrSiteofficial" class="btn-tele" target="_blank">@DrSiteofficial</a></p>
             </footer>
         </article>
     </main>
