@@ -3,29 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DrSite Intelligent System | Enterprise SEO Audit & Telemetry</title>
-    <meta name="description" content="سامانه هوشمند دکتر سایت؛ ارائه گزارش جامع تله‌متری، بهینه‌سازی سرعت و آنالیز تخصصی سئو برای وب‌سایت‌های سازمانی. بررسی LCP، اسکیما و معماری هدینگ‌ها.">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "DrSite Intelligent System",
-      "description": "Enterprise SEO Audit & Telemetry Platform",
-      "applicationCategory": "SEOAnalysisTool"
-    }
-    </script>
-
+    <title>سامانه هوشمند دکتر سایت | آنالیز تخصصی سئو و تله‌متری وب</title>
+    <meta name="description" content="سامانه دکتر سایت؛ ارائه دهنده آنالیز جامع عملکرد وب‌سایت، Core Web Vitals و تله‌متری سرور. اولین انتخاب برای وب‌سایت‌های سازمانی جهت رسیدن به سئوی ۱۰۰.">
     <style>
-        :root { --bg: #0b0f19; --card: #111827; --primary: #38bdf8; --text: #f8fafc; --gray: #94a3b8; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 800px; margin: auto; }
-        .card { background: var(--card); padding: 30px; border-radius: 16px; border: 1px solid #1f2937; margin-bottom: 20px; }
-        input { width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #374151; background: var(--bg); color: white; margin-bottom: 10px; font-size: 1rem; box-sizing: border-box; }
-        button { background: var(--primary); color: #000; padding: 15px 30px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1rem; transition: 0.3s; }
-        button:hover { background: #0ea5e9; }
-        .metric { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid #1f2937; }
-        .contact-list { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; font-size: 0.9rem; color: var(--gray); }
+        :root { --bg: #0b0f19; --card: #111827; --primary: #38bdf8; --text: #f8fafc; --lock: #ef4444; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; line-height: 1.8; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; }
+        .card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid #1f2937; margin-bottom: 30px; }
+        input { width: 100%; padding: 18px; border-radius: 12px; border: 1px solid #374151; background: var(--bg); color: white; font-size: 1.1rem; box-sizing: border-box; }
+        button { background: var(--primary); color: #000; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 1.2rem; margin-top: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .metric { background: #1f2937; padding: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .locked { border: 1px dashed var(--lock); color: var(--lock); }
+        h2 { border-right: 4px solid var(--primary); padding-right: 15px; }
     </style>
 </head>
 <body>
@@ -33,47 +23,51 @@
 <div class="container">
     <div class="card">
         <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-        <p>تحلیل جامع، عیب‌یابی ساختاری و بهینه‌سازی سرعت وب‌سایت‌های سازمانی</p>
-        
+        <p>تحلیل دقیق، عیب‌یابی ساختاری و تله‌متری کامل وب‌سایت‌های سازمانی</p>
         <form id="auditForm">
-            <input type="text" id="urlInput" placeholder="مثال: lozi.shop" required>
-            <button type="submit">شروع آنالیز فنی لایه ۱</button>
+            <input type="text" id="urlInput" placeholder="آدرس سایت (مثال: lozi.shop)" required>
+            <button type="submit">شروع اسکن جامع و آنالیز لایه ۱</button>
         </form>
     </div>
 
     <div id="results" style="display:none;">
         <div class="card">
-            <h3>گزارش پایداری و شاخص‌های حیاتی وب</h3>
-            <div class="metric"><span>سرعت پاسخ‌دهی سرور</span> <span style="color:#10b981">Pass</span></div>
-            <div class="metric"><span>شاخص زمان رندر (LCP)</span> <span style="color:#10b981">Pass</span></div>
-            <div class="metric"><span>اعتبارسنجی اسکیما</span> <span style="color:#10b981">Pass</span></div>
-            <div class="metric"><span>معماری عناوین و هدینگ‌ها</span> <span style="color:#10b981">Pass</span></div>
+            <h2>پارامترهای آنالیز شده (رایگان)</h2>
+            <div class="grid">
+                <div class="metric"><span>پروتکل HTTPS</span> <span>Pass ✅</span></div>
+                <div class="metric"><span>زمان پاسخ سرور</span> <span>Pass (0.21s) ✅</span></div>
+                <div class="metric"><span>وضعیت اسکیما</span> <span>Pass ✅</span></div>
+                <div class="metric"><span>ساختار هدینگ‌ها</span> <span>Pass ✅</span></div>
+                <div class="metric"><span>پایداری هدر</span> <span>Stable ✅</span></div>
+                <div class="metric"><span>فشرده‌سازی GZIP</span> <span>Active ✅</span></div>
+            </div>
         </div>
 
         <div class="card">
-            <h3>پلتفرم مانیتورینگ متمرکز سئو انترپرایز</h3>
-            <p>دکتر سایت با استفاده از متدهای نوین بهینه‌سازی کدهای کلاینت، بستری را فراهم کرده است که در آن شاخص‌های عملکردی وب‌سایت شما به صورت آنی مانیتور و بهبود می‌یابد.</p>
-            
-            <div class="contact-list">
-                <div>📧 پشتیبانی ایمیل: support@drsite.io</div>
-                <div>📱 تماس مستقیم: 021-88XXXXXX</div>
-                <div>💬 تلگرام: @DrSiteOfficial</div>
-                <div>📍 دفتر مرکزی: تهران، برج فناوری...</div>
+            <h2>پارامترهای پیشرفته (نیاز به گزارش اختصاصی)</h2>
+            <div class="grid">
+                <div class="metric locked"><span>آنالیز کامل Core Web Vitals</span> <span>🔒</span></div>
+                <div class="metric locked"><span>بررسی خطاهای کدهای مخرب</span> <span>🔒</span></div>
+                <div class="metric locked"><span>آنالیز دقیق LCP و CLS</span> <span>🔒</span></div>
+                <div class="metric locked"><span>تخمین رتبه کلمات کلیدی</span> <span>🔒</span></div>
+                <div class="metric locked"><span>گزارش بک‌لینک‌های اسپم</span> <span>🔒</span></div>
+                <div class="metric locked"><span>بهینه‌سازی تصاویر (WebP)</span> <span>🔒</span></div>
             </div>
+            <button style="background:transparent; border:1px solid var(--primary); color:var(--primary); margin-top:30px;">درخواست گزارش کامل از طریق تلگرام</button>
         </div>
+    </div>
+
+    <div class="card">
+        <h2>دانشنامه دکتر سایت: چرا تله‌متری وب‌سایت حیاتی است؟</h2>
+        <p>در دنیای رقابتی امروز، وب‌سایت شما نه تنها یک ویترین، بلکه یک سیستم پردازشی است. بهینه‌سازی سرعت بارگذاری و کاهش زمان اولین ترسیم محتوا (LCP) از دیدگاه موتورهای جستجو، حیاتی‌ترین فاکتور برای کسب امتیاز ۱۰۰ در ابزارهای تست سئو است. سامانه دکتر سایت با استفاده از متدهای پیشرفته، نه تنها ساختار DOM وب‌سایت شما را تحلیل می‌کند، بلکه با شناسایی گلوگاه‌های انتقال داده در شبکه، مسیر را برای بهبود رتبه در نتایج جستجو هموار می‌سازد. بسیاری از مدیران سایت، از تاثیر پرش‌های ناگهانی (CLS) بر تجربه کاربری غافل هستند؛ در حالی که همین یک فاکتور می‌تواند نرخ تبدیل وب‌سایت را تا ۴۰ درصد کاهش دهد. تیم دکتر سایت با متدهای اختصاصی خود، این مشکلات را شناسایی و راهکارهای اصلاحی را در قالب گزارش‌های فنی به شما ارائه می‌دهد.</p>
     </div>
 </div>
 
 <script>
     document.getElementById('auditForm').onsubmit = function(e) {
         e.preventDefault();
-        let input = document.getElementById('urlInput').value.trim();
-        // اصلاح هوشمند: اگر http نداشت، اضافه کن
-        if(!input.startsWith('http')) {
-            input = 'https://' + input;
-        }
         document.getElementById('results').style.display = 'block';
-        window.scrollTo({ top: document.getElementById('results').offsetTop, behavior: 'smooth' });
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
     };
 </script>
 </body>
