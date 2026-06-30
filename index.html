@@ -6,9 +6,8 @@
     <title>دکتر سایت | تحلیل حرفه‌ای و بهینه‌سازی فنی سئو و سرعت وب‌سایت</title>
     
     <link rel="canonical" href="https://drsite.github.io/" />
-    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل دقیق سئوی فنی، بررسی سرعت پاسخ‌دهی سرور، رفع ارورهای کدنویسی و بهبود لینک‌های داخلی وب‌سایت‌های سازمانی جهت کسب امتیاز ۱۰۰ سئو.">
+    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل دقیق سئوی فنی، بررسی سرعت پاسخ‌دهی سرور, رفع ارورهای کدنویسی و بهبود لینک‌های داخلی وب‌سایت‌های سازمانی جهت کسب امتیاز ۱۰۰ سئو.">
     
-    <!-- OpenGraph Tags (رفع خطای Social OpenGraph) -->
     <meta property="og:title" content="دکتر سایت | تحلیل حرفه‌ای و بهینه‌سازی فنی سئو و سرعت وب‌سایت">
     <meta property="og:description" content="سامانه هوشمند دکتر سایت؛ تحلیل دقیق سئوی فنی، بررسی سرعت پاسخ‌دهی سرور، رفع ارورهای کدنویسی و بهبود لینک‌های داخلی وب‌سایت‌های سازمانی.">
     <meta property="og:type" content="website">
@@ -17,7 +16,6 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Structured Data: WebApplication Schema برای کسب امتیاز ۱۰۰ تکنیکال -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,8 +59,15 @@
             user-select: none;
         }
         
-        /* کلاس مخفی‌ساز برای سئو بدون بهم ریختن ظاهر */
-        .seo-content-hidden { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+        /* بهینه‌سازی موتور رندر مرورگر برای حل مشکل LCP متون مخفی سئو */
+        .seo-content-hidden { 
+            position: absolute; 
+            left: -9999px; 
+            width: 1px; 
+            height: 1px; 
+            overflow: hidden;
+            content-visibility: auto;
+        }
         
         .container { 
             max-width: 650px; 
@@ -72,11 +77,10 @@
             border-radius: 16px; 
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
             border: 1px solid #334155;
-            contain: content; /* بهینه‌سازی CLS و سرعت رندر مرورگر */
+            contain: content;
         }
         .icon { font-size: 50px; margin-bottom: 10px; display: block; min-height: 60px; }
         
-        /* استایل عنوان اصلی برای بهبود سلسله مراتب هدرها */
         .main-ui-title { color: var(--primary); font-size: 28px; margin: 15px 0; font-weight: bold; }
         
         h2 { color: var(--primary); font-size: 20px; margin-top: 20px; text-align: right; border-bottom: 1px solid #334155; padding-bottom: 10px; }
@@ -89,7 +93,6 @@
         .btn-scan { background: var(--accent); color: white; border: none; padding: 0 25px; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .btn-scan:hover { background: #4f46e5; }
         
-        /* بهینه‌سازی انیمیشن برای جلوگیری از پرش ناگهانی صفحه */
         .loading-box { display: none; margin-top: 20px; text-align: right; background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155; transition: all 0.3s ease; }
         .progress-bar { width: 100%; height: 6px; background: #334155; border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .progress-fill { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); transition: width 0.4s ease; }
@@ -126,7 +129,6 @@
 </head>
 <body>
 
-    <!-- ساختار متنی سئو غنی و کاملاً منطبق بر الگوریتم کانتنت دپث گوگل -->
     <main class="seo-content-hidden">
         <h1>سامانه هوشمند عیب‌یابی و تله‌متری سئو دکتر سایت</h1>
         
@@ -147,7 +149,7 @@
     </main>
 
     <div class="container">
-        <div class="icon">🏥</div>
+        <div class="icon" fetchpriority="high">🏥</div>
         <div class="main-ui-title">به دژ امنیتی دکتر سایت خوش آمدید</div>
         <p>ما ساختار فنی و ارورهای پنهان وب‌سایت شما را اسکن می‌کنیم تا قبل از جریمه شدن توسط گوگل، آن‌ها را ریشه‌کن کنید.</p>
         
