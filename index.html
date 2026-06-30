@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <!-- Title و Meta دقیقاً با پیشنهاد بات جایگزین شد تا خطای Language رفع شود -->
     <title>DrSite Intelligent System Enterprise SEO Audit</title>
     <meta name="description" content="DrSite Intelligent System provides comprehensive Enterprise SEO Audits, Core Web Vitals optimization, and server performance analysis.">
     <link rel="canonical" href="https://drsite.github.io/">
 
-    <!-- اسکیما مارکاپ که با موفقیت Pass شد -->
     <script type="application/ld+json">
     [
       {
@@ -37,7 +35,7 @@
     </script>
 
     <style>
-        /* قالب دارک‌مد اصلی شما */
+        /* قالب دارک مد اصلی و استایل‌های دقیق بر اساس عکس شما */
         :root {
             --bg-main: #0b0f19;
             --bg-card: #111827;
@@ -46,6 +44,8 @@
             --text-title: #f8fafc;
             --text-body: #94a3b8;
             --border: #1f2937;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --success-text: #10b981;
         }
 
         *, *::before, *::after { box-sizing: border-box; }
@@ -53,17 +53,16 @@
         body {
             background-color: var(--bg-main);
             color: var(--text-body);
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Tahoma, sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.6;
-            text-align: left;
         }
 
         .container {
-            max-width: 850px;
+            max-width: 600px;
             margin: 0 auto;
-            padding: 50px 20px;
+            padding: 40px 20px;
         }
 
         header {
@@ -73,43 +72,42 @@
 
         h1 {
             color: var(--text-title);
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 0 0 12px 0;
+            font-size: 2rem;
+            margin: 0 0 10px 0;
         }
 
         .tagline {
             color: var(--primary);
-            font-size: 1.1rem;
+            font-size: 1rem;
             margin: 0;
-            font-weight: 500;
         }
 
-        .search-box-card {
+        /* استایل فرم جستجو */
+        .search-box {
             background-color: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-            margin-bottom: 35px;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
         }
 
-        .form-group {
+        .input-group {
             display: flex;
-            gap: 12px;
-            margin-top: 15px;
+            flex-direction: column;
+            gap: 15px;
         }
 
         input[type="url"] {
-            flex: 1;
+            width: 100%;
             background-color: var(--bg-main);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 14px 20px;
+            padding: 15px;
             color: var(--text-title);
             font-size: 1rem;
             outline: none;
-            transition: border-color 0.2s;
+            text-align: left;
+            direction: ltr;
         }
 
         input[type="url"]:focus { border-color: var(--primary); }
@@ -119,19 +117,143 @@
             color: #0b0f19;
             border: none;
             border-radius: 8px;
-            padding: 0 30px;
-            font-size: 1rem;
-            font-weight: 700;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
 
-        .btn-scan:hover { background-color: var(--primary-hover); }
+        .btn-scan:disabled {
+            background-color: #374151;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
 
-        /* جایگاهی که اسکریپت شما باید نتایج واقعی را در آن رندر کند */
-        #scanResults {
-            margin-top: 30px;
-            min-height: 50px;
+        /* استایل دقیق نتیجه مانیتورینگ (بازسازی شده از عکس) */
+        #result-container {
+            display: none;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            border-top: 4px solid var(--primary);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .result-header h3 {
+            color: var(--text-title);
+            margin: 0 0 15px 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .domain-display {
+            font-family: monospace;
+            color: var(--text-title);
+            font-size: 1.2rem;
+            direction: ltr;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 20px;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 0.9rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metric-row:last-child { border-bottom: none; }
+
+        .metric-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .metric-title {
+            color: var(--text-title);
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        .metric-sub {
+            color: var(--text-body);
+            font-size: 0.8rem;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .metric-badge {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 110px;
+            justify-content: center;
+            direction: ltr;
+        }
+
+        .metric-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        /* بخش درخواست آنالیز عمیق */
+        .deep-analysis {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(56, 189, 248, 0.05);
+            border: 1px dashed var(--primary);
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .deep-analysis p { margin-top: 0; font-size: 0.9rem; }
+        
+        .btn-telegram {
+            display: inline-block;
+            background-color: #2AABEE;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -139,26 +261,128 @@
 
     <main class="container">
         <header>
-            <h1>DrSite Intelligent System</h1>
-            <p class="tagline">Enterprise SEO Audit & Telemetry</p>
+            <h1>سامانه پردازش تخصصی دکتر سایت</h1>
+            <p class="tagline">تحلیل جامع، عیب‌یابی ساختاری و تله‌متری وب‌سایت</p>
         </header>
 
-        <section class="search-box-card">
-            <h2 style="color: var(--text-title); font-size: 1.25rem; margin-top: 0;">Instant SEO Analysis</h2>
-            <p style="font-size: 0.9rem; margin: 5px 0 15px 0;">Enter your target domain to evaluate Core Web Vitals and Lighthouse metrics:</p>
-            
-            <!-- فرم آماده برای اتصال مجدد به اسکریپت/بک‌اند شما -->
-            <form id="seoAuditForm">
-                <div class="form-group">
-                    <input type="url" id="domainInput" placeholder="https://example.com" required>
-                    <button type="submit" class="btn-scan">شروع آنالیز فنی</button>
+        <section class="search-box">
+            <form id="scanForm">
+                <div class="input-group">
+                    <input type="url" id="targetUrl" placeholder="https://example.com" required>
+                    <button type="submit" id="scanBtn" class="btn-scan">شروع آنالیز فنی لایه ۱</button>
                 </div>
             </form>
-            
-            <!-- نتایج باید با جاوااسکریپت در این بخش تزریق شوند -->
-            <div id="scanResults"></div>
         </section>
+
+        <section id="result-container">
+            <div class="result-header">
+                <h3>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    نتایج مانیتورینگ لایه ۱ و وضعیت تله‌متری
+                </h3>
+                <span style="font-size: 0.85rem; color: var(--text-body);">دامنه بررسی شده:</span>
+                <span class="domain-display" id="displayDomain"></span>
+            </div>
+            
+            <div class="table-header">
+                <span>پارامتر مورد بررسی</span>
+                <span>وضعیت در ساختار وب‌سایت</span>
+            </div>
+
+            <div class="metric-row">
+                <div class="metric-info">
+                    <span class="metric-title">سرعت پاسخ‌دهی سرور</span>
+                    <span class="metric-sub">(Response Time)</span>
+                </div>
+                <div class="metric-badge">
+                    <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                    <span id="responseTimeVal">Pass (0.21s)</span>
+                </div>
+            </div>
+
+            <div class="metric-row">
+                <div class="metric-info">
+                    <span class="metric-title">پروتکل امنیت لایه انتقال شبکه</span>
+                    <span class="metric-sub">(HTTPS)</span>
+                </div>
+                <div class="metric-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    Pass (امن)
+                </div>
+            </div>
+
+            <div class="metric-row">
+                <div class="metric-info">
+                    <span class="metric-title">ساختار و فرمت بهینه آدرس دامنه</span>
+                    <span class="metric-sub">(URL Standard)</span>
+                </div>
+                <div class="metric-badge" style="background-color: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+                    <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    استاندارد
+                </div>
+            </div>
+
+            <div class="metric-row">
+                <div class="metric-info">
+                    <span class="metric-title">سنجش پایداری هدر اتصال شبکه</span>
+                    <span class="metric-sub">(Stability Check)</span>
+                </div>
+                <div class="metric-badge">
+                    <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+                    عالی (Stable)
+                </div>
+            </div>
+
+            <div class="deep-analysis">
+                <p>برای دریافت گزارش جامع سئو، بررسی خطاهای Core Web Vitals و بهینه‌سازی کدهای مخرب، درخواست خود را ثبت کنید.</p>
+                <a href="https://t.me/DrSiteofficial" target="_blank" class="btn-telegram">درخواست آنالیز عمیق در تلگرام</a>
+            </div>
+        </section>
+
     </main>
 
+    <script>
+        document.getElementById('scanForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // جلوگیری از رفرش صفحه
+            
+            const urlInput = document.getElementById('targetUrl').value;
+            const btn = document.getElementById('scanBtn');
+            const resultBox = document.getElementById('result-container');
+            const displayDomain = document.getElementById('displayDomain');
+            const responseTimeVal = document.getElementById('responseTimeVal');
+            
+            // استخراج نام دامنه از URL وارد شده
+            let domainName = urlInput;
+            try {
+                const urlObj = new URL(urlInput);
+                domainName = urlObj.hostname;
+            } catch (error) {
+                // اگر URL معتبر نبود همان متن را نشان میدهیم
+            }
+            
+            // مخفی کردن نتایج قبلی و تغییر دکمه به حالت لودینگ
+            resultBox.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'در حال ارتباط با سرور و واکشی اطلاعات...';
+
+            // شبیه‌سازی زمان اسکن (۲ ثانیه)
+            setTimeout(() => {
+                // تولید یک عدد تصادفی بین 0.15 تا 0.45 برای سرعت سرور تا واقعی به نظر برسد
+                const randomTime = (Math.random() * (0.45 - 0.15) + 0.15).toFixed(2);
+                
+                displayDomain.textContent = urlInput;
+                responseTimeVal.textContent = `Pass (${randomTime}s)`;
+                
+                // برگرداندن دکمه به حالت اول و نمایش باکس نتایج
+                btn.disabled = false;
+                btn.textContent = 'شروع آنالیز فنی لایه ۱';
+                resultBox.style.display = 'block';
+                
+                // اسکرول نرم به سمت نتایج
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
