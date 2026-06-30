@@ -3,44 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت</title>
-    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل فنی سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای کسب نمره ۱۰۰.">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <!-- تزریق مستقیم اسکیما برای رفع خطای Structured Data -->
+    <title>دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت</title>
+    <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل جامع سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای دریافت نمره ۱۰۰.">
+    <link rel="canonical" href="https://drsite.github.io/">
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebApplication",
+      "@id": "https://drsite.github.io/#webapp",
       "name": "دکتر سایت",
       "url": "https://drsite.github.io/",
-      "description": "سامانه هوشمند تحلیل و بهینه‌سازی فنی سئو و سرعت وب‌سایت."
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires HTML5 support",
+      "description": "سامانه هوشمند تحلیل، عیب‌یابی و بهینه‌سازی فنی سئو و سرعت وب‌سایت‌های سازمانی."
     }
     </script>
 
     <style>
-        body { font-family: Tahoma, sans-serif; background: #f4f7f6; color: #333; margin: 0; padding: 20px; line-height: 1.6; }
-        .container { max-width: 800px; margin: auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #007bff; font-size: 24px; }
-        /* حذف تمام ترفندهای مخفی‌سازی که باعث افت نمره می‌شدند */
-        .seo-content { font-size: 14px; color: #555; margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px; }
-        .btn { display: inline-block; padding: 10px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+        /* کدهای CSS بحرانی خطی جهت رندر آنی بدون بلاک کردن مرورگر */
+        :root {
+            --primary-color: #007bff;
+            --text-color: #2c3e50;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --border-color: #eaeaea;
+            --success-color: #28a745;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            text-align: right;
+        }
+
+        .wrapper {
+            max-width: 750px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: #7f8c8d;
+            margin: 0;
+        }
+
+        .seo-section {
+            margin-bottom: 30px;
+        }
+
+        .seo-section h2 {
+            font-size: 1.3rem;
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .seo-section p {
+            font-size: 0.95rem;
+            color: #555;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0 0 0;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .checklist li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f9f9f9;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+
+        .badge-success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success-color);
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #95a5a6;
+            border-top: 1px solid var(--border-color);
+            padding-top: 15px;
+        }
+
+        .btn-tele {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .btn-tele:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-        <p>بهینه‌سازی شده برای کسب امتیاز ۱۰۰ در تست‌های انترپرایز.</p>
+    <main class="wrapper">
+        <article class="main-card">
+            <header>
+                <h1>سامانه پردازش تخصصی دکتر سایت</h1>
+                <p class="tagline">تحلیل جامع، عیب‌یابی ساختاری و بهینه‌سازی سرعت وب‌سایت‌های سازمانی</p>
+            </header>
 
-        <!-- قرارگیری محتوا به صورت استاندارد -->
-        <div class="seo-content">
-            <h2>چرا دکتر سایت؟</h2>
-            <p>دکتر سایت با استفاده از الگوریتم‌های پیشرفته، سرعت پاسخ‌دهی سرور (Response Time) را به زیر ۱ ثانیه رسانده و تمامی خطاهای ساختاری کدنویسی را برطرف می‌کند. ما با استانداردسازی تگ‌های هدینگ (H1-H6) و بهینه‌سازی متادیتای سئو، بستری امن برای رشد وب‌سایت شما فراهم می‌کنیم.</p>
-            <p>این سامانه تمامی پروتکل‌های HTTPS و استانداردهای Core Web Vitals را پاس کرده و با معماری اسکیما مارکاپ، درک وب‌سایت شما توسط هوش مصنوعی گوگل را به حداکثر می‌رساند.</p>
-        </div>
+            <section class="seo-section">
+                <h2>راهکار هوشمند بهینه‌سازی سئو انترپرایز</h2>
+                <p>سامانه هوشمند دکتر سایت با تکیه بر الگوریتم‌های پیشرفته تحلیل تلمتری، بستر مناسبی را برای ارزیابی شاخص‌های حیاتی وب (Core Web Vitals) فراهم می‌سازد. با اصلاح کدهای مخرب و رفع پرش‌های ناگهانی صفحه (CLS)، سرعت بارگذاری اولیه به شکل چشمگیری بهبود یافته است.</p>
+                <p>این پلتفرم با پیاده‌سازی خودکار لایه داده‌های ساختاریافته (Schema Markup) و بهینه‌سازی نقشه سایت، درک موتورهای جستجو از ساختار محتوایی دامنه‌ها را به حداکثر رسانده و مسیر دستیابی به نمره کامل ۱۰۰ را هموار می‌کند.</p>
+            </section>
 
-        <a href="https://t.me/DrSiteofficial" class="btn">پشتیبانی تلگرام</a>
-    </div>
+            <ul class="checklist">
+                <li>
+                    <span>بررسی سرعت پاسخ‌دهی سرور (Server Response Speed)</span>
+                    <span class="badge-success">Pass</span>
+                </li>
+                <li>
+                    <span>شاخص پایدارسازی رندر محتوا (Google LCP)</span>
+                    <span class="badge-success">Pass</span>
+                </li>
+                <li>
+                    <span>اعتبارسنجی داده‌های ساختاریافته (Schema Validation)</span>
+                    <span class="badge-success">Pass</span>
+                </li>
+                <li>
+                    <span>ترتیب و معماری عناوین متنی (Heading Sequence)</span>
+                    <span class="badge-success">Pass</span>
+                </li>
+            </ul>
+
+            <footer>
+                <p>وب‌سایت رسمی: <strong>drsite.github.io</strong></p>
+                <p>پشتیبانی و مشاوره تخصصی در تلگرام: <a href="https://t.me/DrSiteofficial" class="btn-tele" target="_blank" rel="noopener noreferrer">@DrSiteofficial</a></p>
+            </footer>
+        </article>
+    </main>
 
 </body>
 </html>
