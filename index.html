@@ -5,33 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     
-    <title>دکتر سایت | تحلیل فنی سئو و سرعت وب‌سایت</title>
+    <title>دکتر سایت | تحلیل حرفه‌ای و بهینه‌سازی فنی سئو و سرعت وب‌سایت</title>
     <meta name="description" content="سامانه هوشمند دکتر سایت؛ تحلیل جامع سئو، بررسی سرعت سرور و رفع خطاهای کدنویسی برای دریافت نمره ۱۰۰.">
     <link rel="canonical" href="https://drsite.github.io/">
 
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "@id": "https://drsite.github.io/#webapp",
-      "name": "دکتر سایت",
-      "url": "https://drsite.github.io/",
-      "applicationCategory": "BusinessApplication",
-      "operatingSystem": "All",
-      "browserRequirements": "Requires HTML5 support",
-      "description": "سامانه هوشمند تحلیل، عیب‌یابی و بهینه‌سازی فنی سئو و سرعت وب‌سایت‌های سازمانی."
-    }
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "دکتر سایت",
+        "url": "https://drsite.github.io/"
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "سامانه هوشمند دکتر سایت",
+        "url": "https://drsite.github.io/",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "All"
+      }
+    ]
     </script>
 
     <style>
-        /* کدهای CSS بحرانی خطی جهت رندر آنی بدون بلاک کردن مرورگر */
+        /* قالب اصلی انترپرایز - دارک مد تخصصی دکتر سایت */
         :root {
-            --primary-color: #007bff;
-            --text-color: #2c3e50;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --border-color: #eaeaea;
-            --success-color: #28a745;
+            --bg-main: #0b0f19;
+            --bg-card: #111827;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --text-title: #f8fafc;
+            --text-body: #94a3b8;
+            --border: #1f2937;
+            --success: #10b981;
         }
 
         *, *::before, *::after {
@@ -39,157 +46,212 @@
         }
 
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--bg-main);
+            color: var(--text-body);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Tahoma, sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.6;
             text-align: right;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .wrapper {
-            max-width: 750px;
-            margin: 40px auto;
-            padding: 0 20px;
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            padding: 50px 20px;
         }
 
-        .main-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 35px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
+        /* بخش هدر اصلی با هک پیش‌رندر LCP */
         header {
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 20px;
-            margin-bottom: 25px;
+            text-align: center;
+            margin-bottom: 40px;
+            contain: content;
         }
 
         h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin: 0 0 10px 0;
-            font-weight: 700;
+            color: var(--text-title);
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin: 0 0 12px 0;
+            letter-spacing: -0.025em;
         }
 
         .tagline {
-            font-size: 1rem;
-            color: #7f8c8d;
+            color: var(--primary);
+            font-size: 1.1rem;
             margin: 0;
+            font-weight: 500;
         }
 
-        .seo-section {
-            margin-bottom: 30px;
+        /* باکس اصلی اسکنر وب‌سایت (فرم اصلی که تغییر کرده بود) */
+        .search-box-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 35px;
         }
 
-        .seo-section h2 {
-            font-size: 1.3rem;
-            color: var(--text-color);
-            margin-top: 0;
-            margin-bottom: 15px;
+        .form-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
         }
 
-        .seo-section p {
-            font-size: 0.95rem;
-            color: #555;
-            margin-bottom: 12px;
-            text-align: justify;
+        input[type="url"] {
+            flex: 1;
+            background-color: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 20px;
+            color: var(--text-title);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+            text-align: ltr;
         }
 
-        .checklist {
-            list-style: none;
-            padding: 0;
-            margin: 20px 0 0 0;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+        input[type="url"]:focus {
+            border-color: var(--primary);
         }
 
-        .checklist li {
-            padding: 10px 0;
-            border-bottom: 1px solid #f9f9f9;
-            font-size: 0.9rem;
+        .btn-scan {
+            background-color: var(--primary);
+            color: #0b0f19;
+            border: none;
+            border-radius: 8px;
+            padding: 0 30px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-scan:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* بخش نمایش گزارش و تلمتری دایره‌ای/لیستی */
+        .telemetry-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+        }
+
+        .grid-status {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 100fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .status-item {
+            background: var(--bg-main);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .checklist li:last-child {
-            border-bottom: none;
+        .status-text {
+            font-size: 0.95rem;
+            color: var(--text-title);
         }
 
-        .badge-success {
-            background-color: rgba(40, 167, 69, 0.1);
-            color: var(--success-color);
-            padding: 3px 10px;
-            border-radius: 4px;
-            font-weight: bold;
-            font-size: 0.8rem;
+        .badge-pass {
+            background-color: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        /* بخش توضیحات سئو جهت ایندکس و کراول کامل محتوا */
+        .seo-rich-text {
+            font-size: 0.95rem;
+            color: var(--text-body);
+            text-align: justify;
+            border-top: 1px solid var(--border);
+            padding-top: 25px;
+            margin-top: 25px;
         }
 
         footer {
-            margin-top: 30px;
             text-align: center;
-            font-size: 0.85rem;
-            color: #95a5a6;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.9rem;
         }
 
-        .btn-tele {
-            display: inline-block;
-            margin-top: 10px;
-            color: var(--primary-color);
+        .tele-link {
+            color: var(--primary);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 700;
         }
 
-        .btn-tele:hover {
+        .tele-link:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <main class="wrapper">
-        <article class="main-card">
-            <header>
-                <h1>سامانه پردازش تخصصی دکتر سایت</h1>
-                <p class="tagline">تحلیل جامع، عیب‌یابی ساختاری و بهینه‌سازی سرعت وب‌سایت‌های سازمانی</p>
-            </header>
+    <main class="container">
+        <header>
+            <h1>سامانه پردازش تخصصی دکتر سایت</h1>
+            <p class="tagline">تحلیل جامع، عیب‌یابی ساختاری و بهینه‌سازی سرعت وب‌آزمون‌های سازمانی</p>
+        </header>
 
-            <section class="seo-section">
-                <h2>راهکار هوشمند بهینه‌سازی سئو انترپرایز</h2>
-                <p>سامانه هوشمند دکتر سایت با تکیه بر الگوریتم‌های پیشرفته تحلیل تلمتری، بستر مناسبی را برای ارزیابی شاخص‌های حیاتی وب (Core Web Vitals) فراهم می‌سازد. با اصلاح کدهای مخرب و رفع پرش‌های ناگهانی صفحه (CLS)، سرعت بارگذاری اولیه به شکل چشمگیری بهبود یافته است.</p>
-                <p>این پلتفرم با پیاده‌سازی خودکار لایه داده‌های ساختاریافته (Schema Markup) و بهینه‌سازی نقشه سایت، درک موتورهای جستجو از ساختار محتوایی دامنه‌ها را به حداکثر رسانده و مسیر دستیابی به نمره کامل ۱۰۰ را هموار می‌کند.</p>
-            </section>
+        <section class="search-box-card">
+            <h2 style="color: var(--text-title); font-size: 1.25rem; margin-top: 0;">تحلیل آنی سئو و تلمتری وب‌سایت</h2>
+            <p style="font-size: 0.9rem; margin: 5px 0 15px 0;">آدرس دامنه مورد نظر خود را جهت ارزیابی فاکتورهای حیاتی لایت‌هاوس وارد نمایید:</p>
+            
+            <div class="form-group">
+                <input type="url" placeholder="https://example.com" value="https://drsite.github.io" required>
+                <button type="submit" class="btn-scan">شروع آنالیز فنی</button>
+            </div>
+        </section>
 
-            <ul class="checklist">
-                <li>
-                    <span>بررسی سرعت پاسخ‌دهی سرور (Server Response Speed)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>شاخص پایدارسازی رندر محتوا (Google LCP)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>اعتبارسنجی داده‌های ساختاریافته (Schema Validation)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-                <li>
-                    <span>ترتیب و معماری عناوین متنی (Heading Sequence)</span>
-                    <span class="badge-success">Pass</span>
-                </li>
-            </ul>
+        <section class="telemetry-card">
+            <h3 style="color: var(--text-title); font-size: 1.25rem; margin-top: 0; border-bottom: 1px solid var(--border); padding-bottom: 15px;">گزارش پایداری و شاخص‌های هسته حیاتی وب</h3>
+            
+            <div class="grid-status">
+                <div class="status-item">
+                    <span class="status-text">سرعت پاسخ‌دهی سرور</span>
+                    <span class="badge-pass">Pass</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-text">شاخص زمان رندر (LCP)</span>
+                    <span class="badge-pass">Pass</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-text">اعتبارسنجی اسکیما</span>
+                    <span class="badge-pass">Pass</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-text">معماری عناوین و هدینگ‌ها</span>
+                    <span class="badge-pass">Pass</span>
+                </div>
+            </div>
 
-            <footer>
-                <p>وب‌سایت رسمی: <strong>drsite.github.io</strong></p>
-                <p>پشتیبانی و مشاوره تخصصی در تلگرام: <a href="https://t.me/DrSiteofficial" class="btn-tele" target="_blank" rel="noopener noreferrer">@DrSiteofficial</a></p>
-            </footer>
-        </article>
+            <article class="seo-rich-text">
+                <h4 style="color: var(--text-title); margin-top: 0;">پلتفرم مانیتورینگ متمرکز سئو انترپرایز</h4>
+                <p>دکتر سایت با استفاده از متدهای نوین بهینه‌سازی کدهای کلاینت، بستری را فراهم کرده است که در آن شاخص‌های عملکردی لایت‌هاوس به بهینه‌ترین حالت ممکن می‌رسند. با تنظیم دقیق متادیتاها، استفاده از مکانیزم‌های کش سرور و همچنین ساختاربندی داده‌های معنایی با پروتکل‌های Schema.org، خزنده‌های موتورهای جستجو می‌توانند معماری داخلی پلتفرم‌ها را در کسری از ثانیه واکشی و تحلیل کنند.</p>
+            </article>
+        </section>
+
+        <footer>
+            <p>وب‌سایت رسمی شما: <strong style="color: var(--text-title);">drsite.github.io</strong></p>
+            <p>پشتیبانی و مشاوره تخصصی در تلگرام: <a href="https://t.me/DrSiteofficial" class="tele-link" target="_blank" rel="noopener noreferrer">@DrSiteofficial</a></p>
+        </footer>
     </main>
 
 </body>
