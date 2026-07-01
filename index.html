@@ -3,30 +3,29 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>آنالیز تخصصی سئو و عیب‌یابی فنی | دکتر سایت</title>
-  <meta name="description" content="آنالیز فنی جامع، بهینه‌سازی Core Web Vitals، پیاده‌سازی Schema و گزارش Enterprise Audit برای جلوگیری از جریمه گوگل." />
+  <title>آنالیز تخصصی سئو و گزارش فنی | دکتر سایت</title>
+  <meta name="description" content="خدمات آنالیز فنی و گزارش Enterprise Audit؛ بهبود تجربه کاربری، بهینه‌سازی Core Web Vitals و پیاده‌سازی داده‌های ساخت‌یافته برای سایت‌های فارسی." />
   <link rel="canonical" href="https://drsite.github.io/" />
   <meta name="robots" content="index, follow" />
 
   <!-- Open Graph / Twitter -->
   <meta property="og:locale" content="fa_IR" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="آنالیز تخصصی سئو و عیب‌یابی فنی | دکتر سایت" />
-  <meta property="og:description" content="آنالیز فنی جامع، بهینه‌سازی Core Web Vitals و پیاده‌سازی Schema برای جلوگیری از جریمه گوگل." />
+  <meta property="og:title" content="آنالیز تخصصی سئو و گزارش فنی | دکتر سایت" />
+  <meta property="og:description" content="خدمات آنالیز فنی و گزارش Enterprise Audit؛ بهبود تجربه کاربری و پیاده‌سازی Schema برای سایت‌های فارسی." />
   <meta property="og:url" content="https://drsite.github.io/" />
   <meta property="og:site_name" content="دکتر سایت" />
   <meta property="og:image" content="https://drsite.github.io/logo.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="آنالیز تخصصی سئو و عیب‌یابی فنی | دکتر سایت" />
-  <meta name="twitter:description" content="آنالیز فنی جامع، بهینه‌سازی Core Web Vitals و پیاده‌سازی Schema برای جلوگیری از جریمه گوگل." />
+  <meta name="twitter:title" content="آنالیز تخصصی سئو و گزارش فنی | دکتر سایت" />
+  <meta name="twitter:description" content="خدمات آنالیز فنی و گزارش Enterprise Audit؛ بهبود تجربه کاربری و پیاده‌سازی Schema برای سایت‌های فارسی." />
   <meta name="twitter:image" content="https://drsite.github.io/logo.png" />
 
-  <!-- Preconnect / Preload for performance -->
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="preload" href="https://drsite.github.io/logo.png" as="image" />
+  <!-- Preconnect / Preload -->
+  <link rel="preload" href="/logo.png" as="image" />
   <link rel="icon" href="/favicon.ico" />
 
-  <!-- Structured Data (Organization, Service, WebSite, Breadcrumb) -->
+  <!-- Structured Data (safe, high-level) -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
@@ -38,7 +37,7 @@
         "url":"https://drsite.github.io/",
         "logo":"https://drsite.github.io/logo.png",
         "sameAs":["https://t.me/DrSiteOfficial","https://instagram.com/DrSite.Official"],
-        "contactPoint":[{"@type":"ContactPoint","contactType":"customer support","email":"drsiteofficial@gmail.com","url":"https://drsite.github.io/contact"}]
+        "contactPoint":[{"@type":"ContactPoint","contactType":"customer support","email":"drsiteofficial@gmail.com"}]
       },
       {
         "@type":"WebSite",
@@ -52,23 +51,13 @@
         "@id":"https://drsite.github.io/#service-seo-audit",
         "name":"آنالیز فنی سئو",
         "provider":{"@id":"https://drsite.github.io/#org"},
-        "description":"Enterprise Audit فنی، بهینه‌سازی Core Web Vitals، پیاده‌سازی Schema و راهکارهای عملی برای رفع خطاهای فنی سئو در سایت‌های فارسی.",
-        "serviceType":"Technical SEO Audit",
-        "areaServed":"IR"
-      },
-      {
-        "@type":"BreadcrumbList",
-        "itemListElement":[
-          {"@type":"ListItem","position":1,"name":"خانه","item":"https://drsite.github.io/"},
-          {"@type":"ListItem","position":2,"name":"خدمات","item":"https://drsite.github.io/services"},
-          {"@type":"ListItem","position":3,"name":"درخواست گزارش","item":"https://drsite.github.io/contact"}
-        ]
+        "description":"گزارش فنی جامع (Enterprise Audit) برای شناسایی و اولویت‌بندی مشکلات فنی و عملکردی سایت."
       }
     ]
   }
   </script>
 
-  <!-- Critical CSS (small, inline) -->
+  <!-- Critical CSS -->
   <style>
     :root{
       --bg:#0b0f19; --card:#0f1724; --muted:#94a3b8; --accent:#38bdf8; --danger:#ef4444; --text:#f8fafc;
@@ -97,28 +86,28 @@
 
   <!-- Defer non-critical JS -->
   <script defer>
-    // Minimal client-side behavior: form validation + secure POST to server endpoint.
-    // IMPORTANT: Do not put tokens here. Server must handle Telegram/email.
+    // Client-side: lightweight form handling only.
+    // IMPORTANT: Server must handle any external API calls (Telegram, email) and store secrets.
     document.addEventListener('DOMContentLoaded', function(){
       const form = document.getElementById('auditForm');
+      if(!form) return;
       form.addEventListener('submit', async function(e){
         e.preventDefault();
         const site = document.getElementById('urlInput').value.trim();
-        const notes = document.getElementById('notes').value.trim();
         const contact = document.getElementById('contact').value.trim();
-        if(!site) { alert('لطفاً آدرس سایت را وارد کنید.'); return; }
+        const notes = document.getElementById('notes').value.trim();
+        if(!site){ alert('لطفاً آدرس سایت را وارد کنید.'); return; }
 
-        // Show a lightweight UI feedback
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'در حال ارسال...';
+        const btn = form.querySelector('button[type="submit"]');
+        btn.disabled = true;
+        btn.textContent = 'در حال ارسال...';
 
         try {
-          // Replace '/api/request-audit' with your server endpoint.
+          // Replace '/api/request-audit' with your secure server endpoint.
           const res = await fetch('/api/request-audit', {
             method: 'POST',
             headers: {'Content-Type':'application/json'},
-            body: JSON.stringify({ site, notes, contact })
+            body: JSON.stringify({ site, contact, notes })
           });
           if(res.ok){
             alert('درخواست شما ثبت شد. کارشناس ظرف 48 ساعت پاسخ می‌دهد.');
@@ -130,8 +119,8 @@
           console.error(err);
           alert('خطا در ارسال درخواست. لطفاً از طریق ایمیل یا تلگرام تماس بگیرید.');
         } finally {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'درخواست تحلیل اولیه';
+          btn.disabled = false;
+          btn.textContent = 'درخواست تحلیل اولیه';
         }
       });
     });
@@ -142,8 +131,8 @@
     <header>
       <img src="/logo.png" alt="لوگوی دکتر سایت" class="logo" />
       <div>
-        <h1>آنالیز تخصصی سئو و عیب‌یابی فنی وب‌سایت</h1>
-        <div class="lead">Enterprise Audit فنی، بهینه‌سازی Core Web Vitals و پیاده‌سازی Schema برای سایت‌های فارسی</div>
+        <h1>آنالیز تخصصی سئو و گزارش فنی</h1>
+        <div class="lead">گزارش Enterprise Audit برای شناسایی و اولویت‌بندی مشکلات فنی و عملکردی سایت</div>
       </div>
     </header>
 
@@ -152,7 +141,7 @@
       <h2 id="contact-heading" style="margin-top:0">ارتباط سریع</h2>
       <div class="grid">
         <div>
-          <p class="muted" style="margin:0 0 8px 0">برای مشاوره و درخواست گزارش Enterprise Audit:</p>
+          <p class="muted" style="margin:0 0 8px 0">برای مشاوره و درخواست گزارش:</p>
           <ul style="margin:8px 0 0 0;padding-inline-start:18px;color:var(--muted)">
             <li>تلگرام: <a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">@DrSiteOfficial</a></li>
             <li>اینستاگرام: <a href="https://instagram.com/DrSite.Official" target="_blank" rel="noopener">@DrSite.Official</a></li>
@@ -161,7 +150,7 @@
         </div>
 
         <div>
-          <h3 style="margin:0 0 8px 0">اسکن سریع</h3>
+          <h3 style="margin:0 0 8px 0">درخواست تحلیل اولیه</h3>
           <form id="auditForm" aria-label="فرم درخواست اسکن">
             <label class="muted" for="urlInput">آدرس سایت (بدون http/https)</label>
             <input id="urlInput" name="site" placeholder="example.com" required aria-required="true" />
@@ -176,67 +165,59 @@
       </div>
     </section>
 
-    <!-- Services content (SEO-optimized ~600 words) -->
+    <!-- Services content (SEO-optimized, high-level, non-sensitive) -->
     <section class="card" id="service-content" aria-labelledby="services-heading">
-      <h2 id="services-heading" style="margin-top:0">خدمات آنالیز فنی سئو و بهینه‌سازی تجربه کاربری</h2>
+      <h2 id="services-heading" style="margin-top:0">خدمات آنالیز فنی سئو</h2>
 
-      <p class="muted">دکتر سایت ارائه‌دهنده گزارش‌های Enterprise Audit است؛ گزارش‌هایی که فراتر از چک‌لیست ساده عمل می‌کنند و با تحلیل داده‌ای، اولویت‌های فنی را مشخص می‌سازند تا تیم توسعه شما با کمترین ریسک و بیشترین تاثیر، اصلاحات را اجرا کند.</p>
+      <p class="muted">ما گزارش‌های فنی جامع (Enterprise Audit) ارائه می‌دهیم که با تمرکز بر اولویت‌های کسب‌وکار، نقاط بحرانی فنی و عملکردی سایت را شناسایی و راهکارهای عملی و قابل اجرا پیشنهاد می‌کند. محتوای صفحه به‌گونه‌ای نوشته شده که برای کاربران و موتورهای جستجو واضح و مفید باشد، در عین حال جزئیات داخلی و ابزارهای اختصاصی محافظت شده‌اند.</p>
 
-      <h3>آنالیز جامع و محورهای کاری</h3>
-      <p>خدمات ما در سه محور اصلی اجرا می‌شود: <strong>عملکرد</strong> (Core Web Vitals)، <strong>پاسخ‌پذیری</strong> (INP) و <strong>ساختار ماشین‌خوان</strong> (Schema / JSON‑LD). هر پروژه با جمع‌آوری داده‌های میدانی (CrUX)، گزارش Lighthouse و بررسی لاگ‌های سرور آغاز می‌شود تا تصویر دقیقی از وضعیت فعلی و نقاط گلوگاهی به‌دست آید.</p>
-
-      <h3>خدمات ارائه‌شده</h3>
+      <h3>چه چیزی دریافت می‌کنید</h3>
       <ul style="margin:0 0 12px 18px;color:var(--muted)">
-        <li>گزارش وضعیت فعلی با شاخص‌های LCP، INP، CLS و TTFB</li>
+        <li>گزارش خلاصه وضعیت فعلی با شاخص‌های کلیدی عملکرد</li>
         <li>فهرست اولویت‌بندی‌شده اصلاحات فنی با تخمین زمان اجرا</li>
-        <li>الگوهای JSON‑LD برای Schema و تست‌های Rich Results</li>
-        <li>راهنمای بهینه‌سازی تصاویر، preload، critical CSS و code-splitting</li>
-        <li>نکات عملی برای بهبود ایندکس و رفع مشکلات رندرینگ جاوااسکریپت</li>
+        <li>الگوهای داده ساخت‌یافته (JSON‑LD) برای نمایش بهتر در نتایج جستجو</li>
+        <li>راهنمای عملی برای بهبود سرعت و تجربه کاربری در سطح پیاده‌سازی</li>
+        <li>پیشنهادات برای مانیتورینگ و اعتبارسنجی پس از اجرا</li>
       </ul>
 
-      <h3>چرا این خدمات مهم است؟</h3>
-      <p>Core Web Vitals همچنان یکی از سیگنال‌های مهم تجربه صفحه است. اهداف «Good» که ما برای آن کار می‌کنیم عبارت‌اند از: <strong>LCP ≤ 2.5s</strong>، <strong>INP ≤ 200ms</strong> و <strong>CLS ≤ 0.1</strong>. رسیدن به این اهداف باعث افزایش نرخ ماندگاری کاربر، کاهش بانس و بهبود رتبه در نتایج جستجو می‌شود. علاوه بر این، پیاده‌سازی صحیح Schema شانس نمایش Rich Snippet را افزایش می‌دهد که مستقیماً CTR را بهبود می‌بخشد.</p>
-
-      <h3>نمونه‌کار و نتایج قابل انتظار</h3>
-      <p>در پروژه‌های مشابه، با اجرای اصلاحات فنی و بهینه‌سازی تصاویر و اسکریپت‌ها، LCP تا 40% کاهش و نرخ کلیک ارگانیک تا 18% افزایش یافته است. گزارش ما شامل نمودار قبل/بعد و نقاط اندازه‌گیری شده است تا تاثیر هر تغییر قابل ردیابی باشد.</p>
+      <h3>چرا این خدمات مفید است</h3>
+      <p>تمرکز ما بر بهبود تجربه کاربر و قابلیت ایندکس است؛ این کار باعث افزایش نرخ ماندگاری، کاهش نرخ پرش و بهبود شانس نمایش در نتایج غنی می‌شود. محتوای عمومی و نمونه‌کارها به‌صورت خلاصه منتشر می‌شوند؛ گزارش‌های کامل و داده‌های دقیق تنها پس از ثبت درخواست و توافق ارائه می‌گردند.</p>
 
       <h3>نحوه همکاری</h3>
-      <p>پس از ارسال آدرس سایت، یک تحلیل اولیه رایگان انجام می‌شود و سپس پیشنهاد فنی شامل محدوده کار، زمان‌بندی و هزینه ارائه می‌گردد. اجرای اصلاحات می‌تواند توسط تیم شما یا با همکاری توسعه‌دهندگان ما انجام شود؛ در هر حالت، ما تست‌های اعتبارسنجی پس از اجرا را انجام می‌دهیم.</p>
+      <p>پس از ارسال آدرس سایت، یک تحلیل اولیه انجام می‌شود و سپس پیشنهاد فنی شامل محدوده کار، زمان‌بندی و هزینه ارائه می‌گردد. گزارش‌های کامل و دسترسی به داده‌های حساس تنها پس از تایید مشتری و در قالب گزارش محافظت‌شده یا پنل مشتری ارائه می‌شوند.</p>
 
-      <p style="margin-top:12px"><strong>برای درخواست Enterprise Audit و دریافت نمونه گزارش:</strong> از فرم بالا استفاده کنید یا در تلگرام پیام دهید: <a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">@DrSiteOfficial</a></p>
+      <p style="margin-top:12px"><strong>برای درخواست گزارش:</strong> از فرم بالا استفاده کنید یا در تلگرام پیام دهید: <a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">@DrSiteOfficial</a></p>
     </section>
 
-    <!-- Technical checklist -->
+    <!-- Technical checklist (high-level, non-proprietary) -->
     <section class="card" aria-labelledby="checklist-heading">
-      <h2 id="checklist-heading" style="margin-top:0">چک‌لیست فنی فوری برای توسعه‌دهنده</h2>
+      <h2 id="checklist-heading" style="margin-top:0">چک‌لیست فنی (خلاصه برای اجرا)</h2>
       <pre>
-1) Core Web Vitals
-   - LCP ≤ 2.5s: preload منابع حیاتی، بهینه‌سازی تصاویر (AVIF/WebP)، CDN، کاهش TTFB.
-   - INP ≤ 200ms: کاهش long tasks، code-splitting، استفاده از Web Workers.
-   - CLS ≤ 0.1: رزرو فضا برای تصاویر و تبلیغات، اجتناب از تزریق ناگهانی DOM.
+1) عملکرد و تجربه کاربر
+   - بهبود سرعت بارگذاری و منابع حیاتی.
+   - بهینه‌سازی تصاویر و ارائه فرمت‌های مدرن.
+   - کاهش کارهای طولانی در جاوااسکریپت.
 
 2) ساختار و متادیتا
-   - هر صفحه Title و Meta Description یکتا.
-   - Canonical صحیح برای صفحات مشابه.
-   - Open Graph و Twitter Card تکمیل.
+   - Title و Meta Description یکتا برای هر صفحه.
+   - Canonical و تگ‌های Open Graph/Twitter.
 
-3) Schema
-   - JSON-LD در head: Organization، Service، BreadcrumbList.
-   - اعتبارسنجی با Rich Results Test.
+3) داده‌های ساخت‌یافته
+   - JSON-LD سطح بالا: Organization، Service، BreadcrumbList.
+   - اعتبارسنجی با ابزارهای رسمی.
 
-4) عملکرد سرور
-   - فعال‌سازی Brotli/Gzip.
-   - تنظیم Cache-Control و ETag.
-   - بررسی لاگ‌ها برای خطاهای 5xx و صفحات کند.
+4) سرور و امنیت
+   - HTTPS فعال و هدرهای امنیتی پایه.
+   - فشرده‌سازی و هدرهای کش مناسب.
 
-5) امنیت و دسترسی
-   - HTTPS با HSTS.
+5) دسترسی و پایش
    - robots.txt و sitemap.xml در دسترس.
+   - ثبت در Search Console و مانیتورینگ خطاها.
       </pre>
     </section>
 
     <footer>
-      © 2026 دکتر سایت — طراحی و پیاده‌سازی: تیم فنی دکتر سایت — برای مشاوره: <a href="mailto:drsiteofficial@gmail.com">drsiteofficial@gmail.com</a>
+      © 2026 دکتر سایت — برای مشاوره: <a href="mailto:drsiteofficial@gmail.com">drsiteofficial@gmail.com</a>
     </footer>
   </div>
 </body>
