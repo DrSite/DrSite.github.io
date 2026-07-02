@@ -334,6 +334,75 @@
                 grid-template-columns: minmax(0, 1fr);
             }
         }
+/* ریسپانسیو برای موبایل */
+@media (max-width: 768px) {
+
+    header {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+
+    header a {
+        margin: 10px;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .container {
+        margin-top: 30px;
+        padding: 0 15px;
+    }
+
+    h1 {
+        font-size: 26px;
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 20px;
+        text-align: center;
+    }
+
+    p {
+        font-size: 15px;
+        line-height: 1.8;
+        text-align: justify;
+    }
+
+    .service-box,
+    .about-box {
+        padding: 20px;
+    }
+
+    .service-box img,
+    .about-box img {
+        border-radius: 8px;
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .team-card {
+        padding: 18px;
+    }
+
+    .team-card img {
+        width: 100%;
+        border-radius: 8px;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+        padding: 14px;
+        font-size: 15px;
+        margin-top: 20px;
+    }
+}
+
     </style>
 </head>
 <body>
