@@ -4,14 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>سامانه هوشمند دکتر سایت | آنالیز تخصصی سئو و بهینه‌سازی فنی</title>
-    <meta name="description" content="دکتر سایت؛ سامانه تخصصی آنالیز سئو، پایش سلامت فنی وب‌سایت و مشاوره حرفه‌ای برای رشد ارگانیک در نتایج گوگل.">
+
+    <title>دکتر سایت | آنالیز تخصصی سئو، بررسی فنی و استراتژی رشد ارگانیک</title>
+    <meta name="description" content="دکتر سایت؛ سامانه هوشمند تحلیل سئو، بررسی فنی سایت، پایش Core Web Vitals، استراتژی محتوا و مشاوره تخصصی برای رشد ارگانیک در نتایج گوگل.">
     <link rel="canonical" href="https://drsite.github.io/">
-    <meta property="og:title" content="سامانه هوشمند دکتر سایت | آنالیز تخصصی سئو">
-    <meta property="og:description" content="آنالیز حرفه‌ای سئو، بررسی فنی وب‌سایت و طراحی استراتژی رشد ارگانیک.">
+
+    <meta property="og:title" content="دکتر سایت | تحلیل سئو و بررسی فنی سایت">
+    <meta property="og:description" content="آنالیز حرفه‌ای سئو، بررسی فنی، استراتژی محتوا و رشد ارگانیک در گوگل.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://drsite.github.io/">
-    <meta property="og:image" content="images/hero-drsite.jpg">
+    <meta property="og:image" content="images/hero-drsite-dashboard.jpg">
+
+    <!-- Ultra-Speed: Preload LCP image -->
+    <link rel="preload" as="image" href="images/hero-drsite-dashboard.jpg" fetchpriority="high">
 
     <script type="application/ld+json">
     {
@@ -40,7 +45,9 @@
             --muted: #9ca3af;
             --border: #1f2937;
         }
+
         * { box-sizing: border-box; }
+
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -48,6 +55,7 @@
             color: var(--text);
             line-height: 1.8;
         }
+
         a { color: var(--primary); text-decoration: none; }
         a:hover { color: #0ea5e9; }
 
@@ -63,11 +71,13 @@
             justify-content: space-between;
             padding: 12px 0 24px;
         }
+
         .logo-wrap {
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .logo {
             width: 56px;
             height: 56px;
@@ -76,10 +86,12 @@
             object-fit: cover;
             background: #020617;
         }
+
         .brand-title {
             font-weight: 700;
             font-size: 1.1rem;
         }
+
         .brand-sub {
             font-size: 0.8rem;
             color: var(--muted);
@@ -90,17 +102,20 @@
             gap: 18px;
             align-items: center;
         }
+
         nav a {
             font-size: 0.9rem;
             color: var(--muted);
             padding-bottom: 4px;
             border-bottom: 2px solid transparent;
         }
+
         nav a.active,
         nav a:hover {
             color: var(--text);
             border-bottom-color: var(--primary);
         }
+
         .nav-cta {
             padding: 8px 16px;
             border-radius: 999px;
@@ -116,15 +131,18 @@
             gap: 32px;
             padding: 32px 0 10px;
         }
+
         .hero-main h1 {
-            font-size: 1.9rem;
+            font-size: 2.1rem;
             margin: 0 0 12px;
         }
+
         .hero-main p {
             margin: 0 0 18px;
             color: var(--muted);
             font-size: 0.95rem;
         }
+
         .hero-badge {
             display: inline-flex;
             align-items: center;
@@ -137,13 +155,16 @@
             color: #bbf7d0;
             margin-bottom: 12px;
         }
+
         .hero-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
             margin-top: 12px;
         }
+
         .btn-primary {
+            display: inline-block;
             background: var(--primary);
             color: #020617;
             border-radius: 999px;
@@ -153,7 +174,9 @@
             cursor: pointer;
             font-weight: 600;
         }
+
         .btn-outline {
+            display: inline-block;
             background: transparent;
             color: var(--primary);
             border-radius: 999px;
@@ -163,6 +186,7 @@
             cursor: pointer;
             font-weight: 500;
         }
+
         .hero-meta {
             display: flex;
             flex-wrap: wrap;
@@ -171,6 +195,7 @@
             font-size: 0.8rem;
             color: var(--muted);
         }
+
         .hero-meta span {
             display: inline-flex;
             align-items: center;
@@ -185,11 +210,15 @@
             position: relative;
             overflow: hidden;
         }
+
         .hero-image img {
             width: 100%;
+            height: auto;
             border-radius: 18px;
             object-fit: cover;
+            display: block;
         }
+
         .hero-tag {
             position: absolute;
             top: 16px;
@@ -200,6 +229,7 @@
             font-size: 0.75rem;
             border: 1px solid rgba(56,189,248,0.5);
         }
+
         .hero-chip {
             position: absolute;
             bottom: 16px;
@@ -214,6 +244,7 @@
         .section {
             margin-top: 40px;
         }
+
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -221,12 +252,14 @@
             gap: 12px;
             margin-bottom: 18px;
         }
+
         .section-header h2 {
             margin: 0;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             border-right: 4px solid var(--primary);
             padding-right: 12px;
         }
+
         .section-header p {
             margin: 0;
             font-size: 0.85rem;
@@ -238,12 +271,14 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 18px;
         }
+
         .card {
             background: var(--card);
             border-radius: 16px;
             border: 1px solid var(--border);
             padding: 16px 16px 18px;
         }
+
         .card-icon {
             width: 36px;
             height: 36px;
@@ -255,10 +290,12 @@
             font-size: 1.1rem;
             margin-bottom: 10px;
         }
+
         .card h3 {
             margin: 0 0 8px;
             font-size: 0.95rem;
         }
+
         .card p {
             margin: 0;
             font-size: 0.85rem;
@@ -273,6 +310,7 @@
             margin-top: 24px;
             font-size: 0.9rem;
         }
+
         .highlight strong {
             color: #e0f2fe;
         }
@@ -284,12 +322,14 @@
             padding: 18px 18px 20px;
             margin-top: 32px;
         }
+
         .contact-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
             font-size: 0.85rem;
         }
+
         .contact-item span {
             display: block;
             color: var(--muted);
@@ -307,6 +347,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
+
         .footer-links {
             display: flex;
             gap: 12px;
@@ -317,6 +358,7 @@
                 grid-template-columns: minmax(0, 1fr);
             }
         }
+
         @media (max-width: 720px) {
             header {
                 flex-direction: column;
@@ -334,83 +376,43 @@
                 grid-template-columns: minmax(0, 1fr);
             }
         }
-/* ریسپانسیو برای موبایل */
-@media (max-width: 768px) {
 
-    header {
-        flex-direction: column;
-        text-align: center;
-        padding: 15px;
-    }
-
-    header a {
-        margin: 10px;
-        display: inline-block;
-        font-size: 14px;
-    }
-
-    .container {
-        margin-top: 30px;
-        padding: 0 15px;
-    }
-
-    h1 {
-        font-size: 26px;
-        text-align: center;
-    }
-
-    h2 {
-        font-size: 20px;
-        text-align: center;
-    }
-
-    p {
-        font-size: 15px;
-        line-height: 1.8;
-        text-align: justify;
-    }
-
-    .service-box,
-    .about-box {
-        padding: 20px;
-    }
-
-    .service-box img,
-    .about-box img {
-        border-radius: 8px;
-    }
-
-    .team-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .team-card {
-        padding: 18px;
-    }
-
-    .team-card img {
-        width: 100%;
-        border-radius: 8px;
-    }
-
-    .btn {
-        width: 100%;
-        text-align: center;
-        padding: 14px;
-        font-size: 15px;
-        margin-top: 20px;
-    }
-}
-
+        @media (max-width: 768px) {
+            .page {
+                padding: 16px;
+            }
+            .hero-main h1 {
+                font-size: 1.7rem;
+                text-align: center;
+            }
+            .hero-main p {
+                text-align: justify;
+            }
+            .hero {
+                gap: 20px;
+            }
+            .hero-actions {
+                flex-direction: column;
+            }
+            .btn-primary,
+            .btn-outline {
+                width: 100%;
+                text-align: center;
+            }
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
 
 <div class="page">
+
     <header>
         <div class="logo-wrap">
-            <img src="images/logo-drsite.png" alt="لوگوی دکتر سایت" class="logo">
+            <img src="images/logo-drsite.png" alt="لوگوی دکتر سایت" class="logo" width="56" height="56" loading="lazy">
             <div>
                 <div class="brand-title">دکتر سایت</div>
                 <div class="brand-sub">سامانه هوشمند آنالیز سئو و سلامت فنی وب‌سایت</div>
@@ -425,32 +427,41 @@
     </header>
 
     <section class="hero">
+
         <div class="hero-main">
             <div class="hero-badge">
                 🚀 رشد ارگانیک | بدون ریسک جریمه الگوریتمی
             </div>
+
             <h1>آنالیز تخصصی سئو و طراحی استراتژی رشد پایدار برای وب‌سایت شما</h1>
+
             <p>
                 دکتر سایت با ترکیب دانش فنی، تجربه عملی و تحلیل داده، به شما کمک می‌کند
                 قبل از هرگونه افت رتبه یا جریمه الگوریتمی، مشکلات سئو و ساختار فنی وب‌سایت را شناسایی و برطرف کنید.
             </p>
+
             <div class="hero-actions">
-                <a href="services.html"><button class="btn-primary">مشاهده پکیج‌های خدمات سئو</button></a>
-                <a href="#contact"><button class="btn-outline">درخواست مشاوره و آنالیز اولیه رایگان</button></a>
+                <a href="services.html" class="btn-primary">مشاهده پکیج‌های خدمات سئو</a>
+                <a href="#contact" class="btn-outline">درخواست مشاوره و آنالیز اولیه رایگان</a>
             </div>
+
             <div class="hero-meta">
-                <span>✅ تمرکز بر Core Web Vitals و تجربه کاربری</span>
+                <span>✓ تمرکز بر Core Web Vitals و تجربه کاربری</span>
                 <span>📊 گزارش‌های قابل‌فهم برای مدیران و تیم فنی</span>
                 <span>🎯 مناسب کسب‌وکارهای در حال رشد و برندهای جدی</span>
             </div>
         </div>
+
         <div class="hero-image">
             <span class="hero-tag">گزارش تحلیلی سئو | نسخه مدیران</span>
-            <img src="images/hero-drsite-dashboard.jpg" alt="داشبورد تحلیلی دکتر سایت">
+            <img src="images/hero-drsite-dashboard.jpg"
+                 alt="داشبورد تحلیل سئو دکتر سایت"
+                 width="900" height="600" fetchpriority="high">
             <div class="hero-chip">
                 📈 بهبود میانگین رتبه ارگانیک در ۳ تا ۶ ماه
             </div>
         </div>
+
     </section>
 
     <section class="section">
@@ -530,6 +541,7 @@
             <span>شرایط استفاده</span>
         </div>
     </footer>
+
 </div>
 
 </body>
