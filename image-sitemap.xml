@@ -6,42 +6,69 @@
     <!-- صفحه اصلی -->
     <url>
         <loc>https://drsite.github.io/</loc>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/logo-drsite.png</image:loc>
+            <image:title>لوگوی دکتر سایت</image:title>
+            <image:caption>لوگوی رسمی پلتفرم تحلیل سئو دکتر سایت</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/hero-drsite-dashboard.jpg</image:loc>
+            <image:title>داشبورد تحلیل سئو دکتر سایت</image:title>
+            <image:caption>نمایی از داشبورد تحلیل فنی و Core Web Vitals دکتر سایت</image:caption>
         </image:image>
     </url>
 
     <!-- صفحه خدمات -->
     <url>
         <loc>https://drsite.github.io/services.html</loc>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/services-technical-audit.jpg</image:loc>
+            <image:title>آنالیز فنی سئو</image:title>
+            <image:caption>تصویر مربوط به Technical SEO Audit و بررسی Core Web Vitals</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/services-content-strategy.jpg</image:loc>
+            <image:title>استراتژی محتوا</image:title>
+            <image:caption>طراحی نقشه راه محتوا و خوشه‌بندی موضوعی برای رشد ارگانیک</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/services-team-meeting.jpg</image:loc>
+            <image:title>جلسات تخصصی تیمی</image:title>
+            <image:caption>جلسات تحلیل داده و تصمیم‌گیری برای مسیر رشد سئو</image:caption>
         </image:image>
     </url>
 
     <!-- صفحه درباره ما -->
     <url>
         <loc>https://drsite.github.io/about.html</loc>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/about-drsite-team.jpg</image:loc>
+            <image:title>تیم دکتر سایت</image:title>
+            <image:caption>تیم متخصص تحلیل سئو و استراتژی رشد ارگانیک</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/team-seo-lead.jpg</image:loc>
+            <image:title>SEO Lead</image:title>
+            <image:caption>متخصص سئو تکنیکال و تحلیل داده</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/team-tech-lead.jpg</image:loc>
+            <image:title>Tech Lead</image:title>
+            <image:caption>متخصص فنی و Core Web Vitals</image:caption>
         </image:image>
+
         <image:image>
             <image:loc>https://drsite.github.io/images/team-content-strategist.jpg</image:loc>
+            <image:title>Content Strategist</image:title>
+            <image:caption>استراتژیست محتوا و اصول E‑E‑A‑T</image:caption>
         </image:image>
     </url>
 
