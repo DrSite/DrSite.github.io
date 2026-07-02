@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-# جلوگیری از ایندکس فایل‌های سیستمی و پوشه‌های غیرضروری
+# جلوگیری از ایندکس پوشه‌های غیرضروری
 Disallow: /assets/
 Disallow: /temp/
 Disallow: /backup/
@@ -9,7 +9,7 @@ Disallow: /drafts/
 Disallow: /old/
 Disallow: /test/
 
-# جلوگیری از ایندکس فایل‌های حساس یا بی‌ارزش برای گوگل
+# جلوگیری از ایندکس فایل‌های بی‌ارزش یا حساس
 Disallow: /*.json$
 Disallow: /*.txt$
 Disallow: /*.md$
@@ -17,6 +17,9 @@ Disallow: /*.zip$
 Disallow: /*.rar$
 Disallow: /*.psd$
 Disallow: /*.ai$
+
+# جلوگیری از ایندکس صفحات خطا
+Disallow: /404.html
 
 # جلوگیری از ایندکس پارامترهای بی‌ارزش
 Disallow: /*?ref=*
@@ -28,7 +31,6 @@ Allow: /index.html
 Allow: /services.html
 Allow: /about.html
 
-# مسیر سایت‌مپ
+# مسیر سایت‌مپ‌ها
 Sitemap: https://drsite.github.io/sitemap.xml
 Sitemap: https://drsite.github.io/image-sitemap.xml
-
