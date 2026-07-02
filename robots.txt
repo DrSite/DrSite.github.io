@@ -30,3 +30,5 @@ Allow: /about.html
 
 # مسیر سایت‌مپ
 Sitemap: https://drsite.github.io/sitemap.xml
+Sitemap: https://drsite.github.io/image-sitemap.xml
+
