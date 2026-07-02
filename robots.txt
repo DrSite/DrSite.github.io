@@ -1,3 +1,32 @@
 User-agent: *
 Allow: /
+
+# جلوگیری از ایندکس فایل‌های سیستمی و پوشه‌های غیرضروری
+Disallow: /assets/
+Disallow: /temp/
+Disallow: /backup/
+Disallow: /drafts/
+Disallow: /old/
+Disallow: /test/
+
+# جلوگیری از ایندکس فایل‌های حساس یا بی‌ارزش برای گوگل
+Disallow: /*.json$
+Disallow: /*.txt$
+Disallow: /*.md$
+Disallow: /*.zip$
+Disallow: /*.rar$
+Disallow: /*.psd$
+Disallow: /*.ai$
+
+# جلوگیری از ایندکس پارامترهای بی‌ارزش
+Disallow: /*?ref=*
+Disallow: /*?utm_*
+Disallow: /*?fbclid=*
+
+# اجازه کامل به صفحات اصلی
+Allow: /index.html
+Allow: /services.html
+Allow: /about.html
+
+# مسیر سایت‌مپ
 Sitemap: https://drsite.github.io/sitemap.xml
