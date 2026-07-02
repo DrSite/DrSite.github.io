@@ -4,147 +4,289 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>درباره دکتر سایت | تحلیل سئو، تیم متخصص و استراتژی رشد</title>
-    <meta name="description" content="آشنایی با تیم دکتر سایت، ماموریت ما، تخصص‌ها و رویکرد حرفه‌ای در تحلیل سئو، Core Web Vitals، محتوا و رشد ارگانیک کسب‌وکارها.">
+    <title>درباره دکتر سایت | تیم متخصص تحلیل سئو و استراتژی رشد ارگانیک</title>
+    <meta name="description" content="آشنایی با دکتر سایت، تیم متخصص تحلیل سئو، Core Web Vitals، استراتژی محتوا و رویکرد حرفه‌ای برای رشد ارگانیک و پایدار کسب‌وکارها.">
+    <meta name="keywords" content="درباره دکتر سایت, تیم سئو, تحلیل سئو, Core Web Vitals, استراتژی محتوا, رشد ارگانیک, مشاوره سئو, تیم متخصص سئو, Tech Lead, Content Strategist">
+    <link rel="canonical" href="https://drsite.github.io/about.html">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#0d1117">
+
+    <meta property="og:title" content="درباره دکتر سایت | تیم متخصص تحلیل سئو و استراتژی رشد">
+    <meta property="og:description" content="دکتر سایت؛ تیمی متخصص در تحلیل سئو، Core Web Vitals، محتوا و طراحی مسیر رشد ارگانیک کسب‌وکارها.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://drsite.github.io/about.html">
+    <meta property="og:image" content="https://drsite.github.io/images/about-drsite-team.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="درباره دکتر سایت | تیم متخصص تحلیل سئو و استراتژی رشد">
+    <meta name="twitter:description" content="آشنایی با تیم دکتر سایت و رویکرد حرفه‌ای در تحلیل سئو و رشد ارگانیک.">
+    <meta name="twitter:image" content="https://drsite.github.io/images/about-drsite-team.jpg">
 
     <!-- Ultra-Speed: Preload LCP image -->
     <link rel="preload" as="image" href="images/about-drsite-team.jpg" fetchpriority="high">
 
+    <!-- Schema: AboutPage + Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "درباره دکتر سایت",
+      "url": "https://drsite.github.io/about.html",
+      "description": "آشنایی با تیم دکتر سایت، ماموریت و رویکرد حرفه‌ای در تحلیل سئو و رشد ارگانیک.",
+      "primaryTopic": {
+        "@type": "Organization",
+        "name": "DrSite",
+        "url": "https://drsite.github.io/",
+        "logo": "https://drsite.github.io/images/logo-drsite.png"
+      }
+    }
+    </script>
+
     <style>
+        :root {
+            --bg: #0d1117;
+            --bg-soft: #111827;
+            --card: #111827;
+            --primary: #3b82f6;
+            --primary-soft: rgba(59,130,246,0.12);
+            --text: #e6e6e6;
+            --muted: #9ca3af;
+            --border: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            background: #0d1117;
-            color: #e6e6e6;
-            font-family: system-ui, sans-serif;
+            background: radial-gradient(circle at top, #111827 0, #0d1117 55%, #000 100%);
+            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
             margin: 0;
             padding: 0;
             line-height: 1.8;
         }
 
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #2563eb;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+        }
+
         header {
-            padding: 20px 40px;
+            padding: 16px 0 24px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #0f141b;
-            border-bottom: 1px solid #1f2937;
         }
 
-        header nav a {
-            color: #e6e6e6;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 15px;
+        .logo-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            height: 44px;
+            width: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            object-fit: cover;
+            background: #020617;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--muted);
+            font-size: 0.9rem;
             padding-bottom: 4px;
             border-bottom: 2px solid transparent;
+            transition: color 0.15s ease, border-bottom-color 0.15s ease;
         }
 
-        header nav a:hover {
-            border-bottom-color: #3b82f6;
+        nav a.active,
+        nav a:hover {
+            color: var(--text);
+            border-bottom-color: var(--primary);
         }
 
-        header img {
-            height: 40px;
-            width: auto;
+        .nav-cta {
+            padding: 8px 16px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.85rem;
+            border: 1px solid rgba(59,130,246,0.4);
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 50px auto;
-            padding: 0 20px;
+        .hero-about {
+            margin-top: 10px;
+            margin-bottom: 28px;
         }
 
-        h1 {
-            font-size: 30px;
-            margin-bottom: 10px;
+        .hero-about h1 {
+            font-size: 1.9rem;
+            margin: 0 0 10px;
         }
 
-        h2 {
-            font-size: 22px;
-            margin-bottom: 10px;
+        .hero-about p {
+            margin: 0;
+            font-size: 0.95rem;
+            color: var(--muted);
         }
 
         .about-box {
-            background: #111827;
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 35px;
-            border: 1px solid #1f2937;
+            background: var(--bg-soft);
+            padding: 20px 20px 22px;
+            border-radius: 14px;
+            margin-top: 22px;
+            border: 1px solid var(--border);
+        }
+
+        .about-box h2 {
+            font-size: 1.1rem;
+            margin: 0 0 8px;
+        }
+
+        .about-box p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--muted);
         }
 
         .about-box img {
             width: 100%;
             height: auto;
-            border-radius: 10px;
-            margin-top: 20px;
+            border-radius: 12px;
+            margin-top: 16px;
             display: block;
+            object-fit: cover;
+        }
+
+        .section-title {
+            margin-top: 32px;
+            font-size: 1.2rem;
         }
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin-top: 40px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+            margin-top: 18px;
         }
 
         .team-card {
-            background: #1a2332;
-            padding: 20px;
-            border-radius: 12px;
+            background: var(--card);
+            padding: 18px 18px 20px;
+            border-radius: 14px;
             text-align: center;
-            border: 1px solid #1f2937;
+            border: 1px solid var(--border);
         }
 
         .team-card img {
             width: 100%;
             height: auto;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: block;
+            object-fit: cover;
         }
 
         .team-card h3 {
-            margin: 0;
-            font-size: 18px;
+            margin: 0 0 6px;
+            font-size: 1rem;
         }
 
         .team-card p {
-            font-size: 14px;
-            opacity: 0.85;
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .note {
+            margin-top: 26px;
+            font-size: 0.85rem;
+            color: var(--muted);
+            background: rgba(15,23,42,0.8);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .team-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
+            .page {
+                padding: 16px;
+            }
+
             header {
                 flex-direction: column;
-                text-align: center;
-                padding: 20px;
+                align-items: flex-start;
+                gap: 12px;
             }
 
-            header nav a {
-                margin: 10px;
-                display: inline-block;
+            nav {
+                flex-wrap: wrap;
+                gap: 10px;
             }
 
-            .container {
-                margin-top: 30px;
-                padding: 0 15px;
-            }
-
-            h1 {
-                font-size: 26px;
+            .hero-about h1 {
+                font-size: 1.6rem;
                 text-align: center;
             }
 
-            h2 {
-                font-size: 20px;
-            }
-
-            p {
-                font-size: 15px;
+            .hero-about p {
                 text-align: justify;
             }
 
-            .about-box {
-                padding: 20px;
+            .team-grid {
+                grid-template-columns: minmax(0, 1fr);
             }
         }
     </style>
@@ -152,65 +294,98 @@
 
 <body>
 
-<header>
-    <nav>
-        <a href="index.html">صفحه اصلی</a>
-        <a href="services.html">خدمات</a>
-        <a href="about.html" class="active">درباره دکتر سایت</a>
-    </nav>
-    <img src="images/logo-drsite.png" alt="لوگوی دکتر سایت" loading="lazy">
-</header>
+<div class="page">
 
-<div class="container">
+    <header>
+        <div class="logo-wrap">
+            <img src="images/logo-drsite.png"
+                 alt="لوگوی دکتر سایت | DrSite Logo"
+                 class="logo"
+                 width="44" height="44"
+                 loading="lazy">
+            <div>
+                <div class="brand-title">دکتر سایت</div>
+                <div class="brand-sub">تیم متخصص تحلیل سئو و رشد ارگانیک وب‌سایت‌ها</div>
+            </div>
+        </div>
+        <nav>
+            <a href="index.html">صفحه اصلی</a>
+            <a href="services.html">خدمات سئو</a>
+            <a href="about.html" class="active">درباره دکتر سایت</a>
+            <a href="index.html#contact" class="nav-cta">رزرو مشاوره تخصصی</a>
+        </nav>
+    </header>
 
-    <h1>درباره دکتر سایت</h1>
-    <p>دکتر سایت یک پلتفرم تخصصی تحلیل سئو و طراحی استراتژی رشد پایدار برای کسب‌وکارهای آنلاین است.</p>
-
-    <div class="about-box">
-        <h2>ماموریت ما</h2>
+    <section class="hero-about">
+        <h1>درباره دکتر سایت</h1>
         <p>
-            هدف ما ارائه تحلیل‌های دقیق، عملی و قابل اجرا برای بهبود رتبه ارگانیک، افزایش ترافیک هدفمند و رشد بلندمدت کسب‌وکارهاست.
-            تمرکز اصلی ما بر Core Web Vitals، تجربه کاربری، معماری محتوا و تحلیل رقباست.
+            دکتر سایت یک پلتفرم تخصصی تحلیل سئو و طراحی استراتژی رشد پایدار برای کسب‌وکارهای آنلاین است؛
+            با تمرکز بر Core Web Vitals، تجربه کاربری، معماری محتوا و تحلیل رقبا، تا برند شما در نتایج گوگل
+            جایگاه پایدار و قابل اعتماد به دست آورد.
+        </p>
+    </section>
+
+    <section class="about-box">
+        <h2>ماموریت دکتر سایت</h2>
+        <p>
+            ماموریت ما ارائه تحلیل‌های دقیق، عملی و قابل اجرا برای بهبود رتبه ارگانیک، افزایش ترافیک هدفمند
+            و رشد بلندمدت کسب‌وکارهاست. رویکرد دکتر سایت بر پایه ترکیب دانش فنی، تجربه عملی و تحلیل داده است
+            تا تصمیم‌های سئو شما بر اساس واقعیت و داده‌های قابل اندازه‌گیری گرفته شوند.
         </p>
 
         <img src="images/about-drsite-team.jpg"
-             alt="تیم متخصص دکتر سایت"
+             alt="تیم متخصص دکتر سایت در حال تحلیل سئو و Core Web Vitals"
              width="900" height="600"
-             fetchpriority="high">
-    </div>
+             fetchpriority="high"
+             loading="eager">
+    </section>
 
-    <h2>تیم دکتر سایت</h2>
+    <h2 class="section-title">تیم دکتر سایت</h2>
 
-    <div class="team-grid">
+    <section class="team-grid">
 
-        <div class="team-card">
+        <article class="team-card">
             <img src="images/team-seo-lead.jpg"
-                 alt="SEO Lead - متخصص سئو تکنیکال"
+                 alt="SEO Lead دکتر سایت - متخصص سئو تکنیکال و تحلیل داده"
                  width="900" height="600"
                  loading="lazy">
             <h3>SEO Lead</h3>
-            <p>متخصص سئو تکنیکال، تحلیل داده و بهینه‌سازی ساختار سایت.</p>
-        </div>
+            <p>متخصص سئو تکنیکال، تحلیل داده، معماری اطلاعات و بهینه‌سازی ساختار سایت برای درک بهتر گوگل.</p>
+        </article>
 
-        <div class="team-card">
+        <article class="team-card">
             <img src="images/team-tech-lead.jpg"
-                 alt="Tech Lead - متخصص فنی و Core Web Vitals"
+                 alt="Tech Lead دکتر سایت - متخصص فنی و Core Web Vitals"
                  width="900" height="600"
                  loading="lazy">
             <h3>Tech Lead</h3>
-            <p>متخصص فنی، سرعت سایت، Core Web Vitals و معماری کد.</p>
-        </div>
+            <p>متخصص فنی، سرعت سایت، Core Web Vitals، معماری کد و رفع مشکلات فنی که روی سئو اثر مستقیم دارند.</p>
+        </article>
 
-        <div class="team-card">
+        <article class="team-card">
             <img src="images/team-content-strategist.jpg"
-                 alt="Content Strategist - استراتژیست محتوا"
+                 alt="Content Strategist دکتر سایت - استراتژیست محتوا و E-E-A-T"
                  width="900" height="600"
                  loading="lazy">
             <h3>Content Strategist</h3>
-            <p>طراح استراتژی محتوا، خوشه‌بندی موضوعی و E-E-A-T.</p>
-        </div>
+            <p>طراح استراتژی محتوا، خوشه‌بندی موضوعی، اصول E‑E‑A‑T و تبدیل برند شما به مرجع تخصصی در حوزه فعالیت‌تان.</p>
+        </article>
 
+    </section>
+
+    <div class="note">
+        دکتر سایت به‌عنوان یک تیم تخصصی، در کنار کسب‌وکار شما قرار می‌گیرد تا تصمیم‌های سئو،
+        محتوا و فنی بر اساس تحلیل داده، تجربه عملی و اهداف واقعی کسب‌وکار گرفته شوند؛
+        نه صرفاً بر اساس ترندهای کوتاه‌مدت یا تغییرات لحظه‌ای الگوریتم‌ها.
     </div>
+
+    <footer>
+        <div>© 2026 دکتر سایت – تمامی حقوق محفوظ است.</div>
+        <div class="footer-links">
+            <span>سیاست حفظ حریم خصوصی</span>
+            <span>شرایط استفاده</span>
+        </div>
+    </footer>
 
 </div>
 
