@@ -1,17 +1,25 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>درباره دکتر سایت | DrSite</title>
+
+    <title>درباره دکتر سایت | تحلیل سئو، تیم متخصص و استراتژی رشد</title>
+    <meta name="description" content="آشنایی با تیم دکتر سایت، ماموریت ما، تخصص‌ها و رویکرد حرفه‌ای در تحلیل سئو، Core Web Vitals، محتوا و رشد ارگانیک کسب‌وکارها.">
+
+    <!-- Ultra-Speed: Preload LCP image -->
+    <link rel="preload" as="image" href="images/about-drsite-team.jpg" fetchpriority="high">
+
     <style>
         body {
             background: #0d1117;
             color: #e6e6e6;
-            font-family: Vazirmatn, sans-serif;
+            font-family: system-ui, sans-serif;
             margin: 0;
             padding: 0;
+            line-height: 1.8;
         }
+
         header {
             padding: 20px 40px;
             display: flex;
@@ -20,21 +28,41 @@
             background: #0f141b;
             border-bottom: 1px solid #1f2937;
         }
-        header a {
+
+        header nav a {
             color: #e6e6e6;
             text-decoration: none;
             margin-left: 20px;
             font-size: 15px;
+            padding-bottom: 4px;
+            border-bottom: 2px solid transparent;
         }
+
+        header nav a:hover {
+            border-bottom-color: #3b82f6;
+        }
+
+        header img {
+            height: 40px;
+            width: auto;
+        }
+
         .container {
             max-width: 1100px;
             margin: 50px auto;
             padding: 0 20px;
         }
+
         h1 {
-            font-size: 32px;
+            font-size: 30px;
             margin-bottom: 10px;
         }
+
+        h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
         .about-box {
             background: #111827;
             padding: 25px;
@@ -42,17 +70,22 @@
             margin-bottom: 35px;
             border: 1px solid #1f2937;
         }
+
         .about-box img {
             width: 100%;
+            height: auto;
             border-radius: 10px;
             margin-top: 20px;
+            display: block;
         }
+
         .team-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 25px;
             margin-top: 40px;
         }
+
         .team-card {
             background: #1a2332;
             padding: 20px;
@@ -60,18 +93,59 @@
             text-align: center;
             border: 1px solid #1f2937;
         }
+
         .team-card img {
             width: 100%;
+            height: auto;
             border-radius: 10px;
             margin-bottom: 15px;
+            display: block;
         }
+
         .team-card h3 {
             margin: 0;
             font-size: 18px;
         }
+
         .team-card p {
             font-size: 14px;
-            opacity: 0.8;
+            opacity: 0.85;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+
+            header nav a {
+                margin: 10px;
+                display: inline-block;
+            }
+
+            .container {
+                margin-top: 30px;
+                padding: 0 15px;
+            }
+
+            h1 {
+                font-size: 26px;
+                text-align: center;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 15px;
+                text-align: justify;
+            }
+
+            .about-box {
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -79,12 +153,12 @@
 <body>
 
 <header>
-    <div>
+    <nav>
         <a href="index.html">صفحه اصلی</a>
         <a href="services.html">خدمات</a>
-        <a href="about.html">درباره دکتر سایت</a>
-    </div>
-    <img src="images/logo-drsite.png" alt="لوگو" style="height:40px;">
+        <a href="about.html" class="active">درباره دکتر سایت</a>
+    </nav>
+    <img src="images/logo-drsite.png" alt="لوگوی دکتر سایت" loading="lazy">
 </header>
 
 <div class="container">
@@ -98,7 +172,11 @@
             هدف ما ارائه تحلیل‌های دقیق، عملی و قابل اجرا برای بهبود رتبه ارگانیک، افزایش ترافیک هدفمند و رشد بلندمدت کسب‌وکارهاست.
             تمرکز اصلی ما بر Core Web Vitals، تجربه کاربری، معماری محتوا و تحلیل رقباست.
         </p>
-        <img src="images/about-drsite-team.jpg" alt="تیم دکتر سایت">
+
+        <img src="images/about-drsite-team.jpg"
+             alt="تیم متخصص دکتر سایت"
+             width="900" height="600"
+             fetchpriority="high">
     </div>
 
     <h2>تیم دکتر سایت</h2>
@@ -106,19 +184,28 @@
     <div class="team-grid">
 
         <div class="team-card">
-            <img src="images/team-seo-lead.jpg" alt="SEO Lead">
+            <img src="images/team-seo-lead.jpg"
+                 alt="SEO Lead - متخصص سئو تکنیکال"
+                 width="900" height="600"
+                 loading="lazy">
             <h3>SEO Lead</h3>
             <p>متخصص سئو تکنیکال، تحلیل داده و بهینه‌سازی ساختار سایت.</p>
         </div>
 
         <div class="team-card">
-            <img src="images/team-tech-lead.jpg" alt="Tech Lead">
+            <img src="images/team-tech-lead.jpg"
+                 alt="Tech Lead - متخصص فنی و Core Web Vitals"
+                 width="900" height="600"
+                 loading="lazy">
             <h3>Tech Lead</h3>
             <p>متخصص فنی، سرعت سایت، Core Web Vitals و معماری کد.</p>
         </div>
 
         <div class="team-card">
-            <img src="images/team-content-strategist.jpg" alt="Content Strategist">
+            <img src="images/team-content-strategist.jpg"
+                 alt="Content Strategist - استراتژیست محتوا"
+                 width="900" height="600"
+                 loading="lazy">
             <h3>Content Strategist</h3>
             <p>طراح استراتژی محتوا، خوشه‌بندی موضوعی و E-E-A-T.</p>
         </div>
