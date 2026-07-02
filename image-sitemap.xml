@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset 
+    xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+    xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+    <!-- صفحه اصلی -->
+    <url>
+        <loc>https://drsite.github.io/</loc>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/logo-drsite.png</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/hero-drsite-dashboard.jpg</image:loc>
+        </image:image>
+    </url>
+
+    <!-- صفحه خدمات -->
+    <url>
+        <loc>https://drsite.github.io/services.html</loc>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/services-technical-audit.jpg</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/services-content-strategy.jpg</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/services-team-meeting.jpg</image:loc>
+        </image:image>
+    </url>
+
+    <!-- صفحه درباره ما -->
+    <url>
+        <loc>https://drsite.github.io/about.html</loc>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/about-drsite-team.jpg</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/team-seo-lead.jpg</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/team-tech-lead.jpg</image:loc>
+        </image:image>
+        <image:image>
+            <image:loc>https://drsite.github.io/images/team-content-strategist.jpg</image:loc>
+        </image:image>
+    </url>
+
+</urlset>
