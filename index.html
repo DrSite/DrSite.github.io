@@ -1,4 +1,4 @@
-<!-- index.html -->
+<!-- بخش ۱: head + استایل پایه index.html -->
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -7,17 +7,26 @@
 
     <title>دکتر سایت | آنالیز تخصصی سئو، بررسی فنی و استراتژی رشد ارگانیک</title>
     <meta name="description" content="دکتر سایت؛ سامانه هوشمند تحلیل سئو، بررسی فنی سایت، پایش Core Web Vitals، استراتژی محتوا و مشاوره تخصصی برای رشد ارگانیک در نتایج گوگل.">
+    <meta name="keywords" content="آنالیز سئو, تحلیل سئو, بررسی فنی سایت, Technical SEO, Core Web Vitals, خدمات سئو, استراتژی محتوا, مشاوره سئو, بهبود رتبه گوگل, رشد ارگانیک سایت">
     <link rel="canonical" href="https://drsite.github.io/">
+    <meta name="robots" content="index,follow">
+    <meta name="theme-color" content="#020617">
 
     <meta property="og:title" content="دکتر سایت | تحلیل سئو و بررسی فنی سایت">
     <meta property="og:description" content="آنالیز حرفه‌ای سئو، بررسی فنی، استراتژی محتوا و رشد ارگانیک در گوگل.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://drsite.github.io/">
-    <meta property="og:image" content="images/hero-drsite-dashboard.jpg">
+    <meta property="og:image" content="https://drsite.github.io/images/hero-drsite-dashboard.jpg">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="دکتر سایت | تحلیل سئو و بررسی فنی سایت">
+    <meta name="twitter:description" content="سامانه تخصصی تحلیل سئو، بررسی فنی و استراتژی رشد ارگانیک.">
+    <meta name="twitter:image" content="https://drsite.github.io/images/hero-drsite-dashboard.jpg">
 
     <!-- Ultra-Speed: Preload LCP image -->
     <link rel="preload" as="image" href="images/hero-drsite-dashboard.jpg" fetchpriority="high">
 
+    <!-- Schema: Organization + WebSite -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -29,6 +38,21 @@
         "https://t.me/DrSite",
         "https://instagram.com/DrSite.Official"
       ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "url": "https://drsite.github.io/",
+      "name": "دکتر سایت",
+      "description": "سامانه هوشمند تحلیل سئو، بررسی فنی سایت و استراتژی رشد ارگانیک.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://drsite.github.io/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
     </script>
 
@@ -46,18 +70,26 @@
             --border: #1f2937;
         }
 
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
             background: radial-gradient(circle at top, #0f172a 0, #020617 55%, #000 100%);
             color: var(--text);
             line-height: 1.8;
         }
 
-        a { color: var(--primary); text-decoration: none; }
-        a:hover { color: #0ea5e9; }
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #0ea5e9;
+        }
 
         .page {
             max-width: 1100px;
@@ -91,458 +123,524 @@
             font-weight: 700;
             font-size: 1.1rem;
         }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        nav {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        nav a {
-            font-size: 0.9rem;
-            color: var(--muted);
-            padding-bottom: 4px;
-            border-bottom: 2px solid transparent;
-        }
-
-        nav a.active,
-        nav a:hover {
-            color: var(--text);
-            border-bottom-color: var(--primary);
-        }
-
-        .nav-cta {
-            padding: 8px 16px;
-            border-radius: 999px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 0.85rem;
-            border: 1px solid rgba(56,189,248,0.4);
-        }
-
-        .hero {
-            display: grid;
-            grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-            gap: 32px;
-            padding: 32px 0 10px;
-        }
-
-        .hero-main h1 {
-            font-size: 2.1rem;
-            margin: 0 0 12px;
-        }
-
-        .hero-main p {
-            margin: 0 0 18px;
-            color: var(--muted);
-            font-size: 0.95rem;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 12px;
-            border-radius: 999px;
-            background: rgba(34,197,94,0.08);
-            border: 1px solid rgba(34,197,94,0.4);
-            font-size: 0.8rem;
-            color: #bbf7d0;
-            margin-bottom: 12px;
-        }
-
-        .hero-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .btn-primary {
-            display: inline-block;
-            background: var(--primary);
-            color: #020617;
-            border-radius: 999px;
-            padding: 10px 22px;
-            font-size: 0.95rem;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-outline {
-            display: inline-block;
-            background: transparent;
-            color: var(--primary);
-            border-radius: 999px;
-            padding: 10px 22px;
-            font-size: 0.95rem;
-            border: 1px solid var(--primary);
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .hero-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 18px;
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        .hero-meta span {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .hero-image {
-            background: radial-gradient(circle at top, #0f172a 0, #020617 60%);
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            padding: 18px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-image img {
-            width: 100%;
-            height: auto;
-            border-radius: 18px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .hero-tag {
-            position: absolute;
-            top: 16px;
-            left: 16px;
-            background: rgba(15,23,42,0.9);
-            border-radius: 999px;
-            padding: 6px 12px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(56,189,248,0.5);
-        }
-
-        .hero-chip {
-            position: absolute;
-            bottom: 16px;
-            right: 16px;
-            background: rgba(15,23,42,0.9);
-            border-radius: 12px;
-            padding: 8px 12px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(34,197,94,0.5);
-        }
-
-        .section {
-            margin-top: 40px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .section-header h2 {
-            margin: 0;
-            font-size: 1.3rem;
-            border-right: 4px solid var(--primary);
-            padding-right: 12px;
-        }
-
-        .section-header p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        .grid-3 {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 18px;
-        }
-
-        .card {
-            background: var(--card);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 16px 16px 18px;
-        }
-
-        .card-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            background: var(--primary-soft);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-        }
-
-        .card h3 {
-            margin: 0 0 8px;
-            font-size: 0.95rem;
-        }
-
-        .card p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        .highlight {
-            background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(34,197,94,0.08));
-            border-radius: 18px;
-            border: 1px solid rgba(56,189,248,0.4);
-            padding: 16px 18px;
-            margin-top: 24px;
-            font-size: 0.9rem;
-        }
-
-        .highlight strong {
-            color: #e0f2fe;
-        }
-
-        .contact-box {
-            background: var(--bg-soft);
-            border-radius: 18px;
-            border: 1px solid var(--border);
-            padding: 18px 18px 20px;
-            margin-top: 32px;
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            font-size: 0.85rem;
-        }
-
-        .contact-item span {
-            display: block;
-            color: var(--muted);
-            font-size: 0.8rem;
-        }
-
-        footer {
-            margin-top: 40px;
-            padding-top: 18px;
-            border-top: 1px solid var(--border);
-            font-size: 0.8rem;
-            color: var(--muted);
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 12px;
-        }
-
-        @media (max-width: 900px) {
-            .hero {
-                grid-template-columns: minmax(0, 1fr);
-            }
-        }
-
-        @media (max-width: 720px) {
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            nav {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-            .grid-3 {
-                grid-template-columns: minmax(0, 1fr);
-            }
-            .contact-grid {
-                grid-template-columns: minmax(0, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .page {
-                padding: 16px;
-            }
-            .hero-main h1 {
-                font-size: 1.7rem;
-                text-align: center;
-            }
-            .hero-main p {
-                text-align: justify;
-            }
-            .hero {
-                gap: 20px;
-            }
-            .hero-actions {
-                flex-direction: column;
-            }
-            .btn-primary,
-            .btn-outline {
-                width: 100%;
-                text-align: center;
-            }
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
     </style>
 </head>
+
+        .brand-sub {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+}
+
+nav a {
+    font-size: 0.9rem;
+    color: var(--muted);
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-bottom-color 0.15s ease;
+}
+
+nav a.active,
+nav a:hover {
+    color: var(--text);
+    border-bottom-color: var(--primary);
+}
+
+.nav-cta {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.85rem;
+    border: 1px solid rgba(56,189,248,0.4);
+    font-weight: 500;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 32px;
+    padding: 32px 0 10px;
+}
+
+.hero-main h1 {
+    font-size: 2.1rem;
+    margin: 0 0 12px;
+}
+
+.hero-main p {
+    margin: 0 0 18px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.4);
+    font-size: 0.8rem;
+    color: #bbf7d0;
+    margin-bottom: 12px;
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-primary {
+    display: inline-block;
+    background: var(--primary);
+    color: #020617;
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 0.95rem;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--primary);
+    border-radius: 999px;
+    padding: 10px 22px;
+    font-size: 0.95rem;
+    border: 1px solid var(--primary);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 18px;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.hero-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.hero-image {
+    background: radial-gradient(circle at top, #0f172a 0, #020617 60%);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+    object-fit: cover;
+    display: block;
+}
+
+.hero-tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(15,23,42,0.9);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(56,189,248,0.5);
+}
+
+        .hero-chip {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    background: rgba(15,23,42,0.9);
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-size: 0.75rem;
+    border: 1px solid rgba(34,197,94,0.5);
+    backdrop-filter: blur(4px);
+}
+
+.section {
+    margin-top: 40px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.section-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    border-right: 4px solid var(--primary);
+    padding-right: 12px;
+    line-height: 1.4;
+}
+
+.section-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    padding: 16px 16px 18px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary);
+}
+
+.card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--primary-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.highlight {
+    background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(34,197,94,0.08));
+    border-radius: 18px;
+    border: 1px solid rgba(56,189,248,0.4);
+    padding: 16px 18px;
+    margin-top: 24px;
+    font-size: 0.9rem;
+    line-height: 1.7;
+}
+
+.highlight strong {
+    color: #e0f2fe;
+}
+
+.contact-box {
+    background: var(--bg-soft);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    padding: 18px 18px 20px;
+    margin-top: 32px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    font-size: 0.85rem;
+}
+
+.contact-item span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.8rem;
+}
+
+footer {
+    margin-top: 40px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .grid-3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .contact-grid {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+}
+
+       @media (max-width: 720px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .grid-3 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .page {
+        padding: 16px;
+    }
+
+    .hero-main h1 {
+        font-size: 1.7rem;
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .hero-main p {
+        text-align: justify;
+        font-size: 0.92rem;
+    }
+
+    .hero {
+        gap: 20px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .btn-primary,
+    .btn-outline {
+        width: 100%;
+        text-align: center;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}
+</style>
+</head>
+
 <body>
 
 <div class="page">
 
-    <header>
-        <div class="logo-wrap">
-            <img src="images/logo-drsite.png" alt="لوگوی دکتر سایت" class="logo" width="56" height="56" loading="lazy">
-            <div>
-                <div class="brand-title">دکتر سایت</div>
-                <div class="brand-sub">سامانه هوشمند آنالیز سئو و سلامت فنی وب‌سایت</div>
-            </div>
+<header>
+    <div class="logo-wrap">
+        <img src="images/logo-drsite.png"
+             alt="لوگوی دکتر سایت | DrSite Logo"
+             class="logo"
+             width="56"
+             height="56"
+             loading="lazy">
+        <div>
+            <div class="brand-title">دکتر سایت</div>
+            <div class="brand-sub">سامانه هوشمند آنالیز سئو و سلامت فنی وب‌سایت</div>
         </div>
-        <nav>
-            <a href="index.html" class="active">صفحه اصلی</a>
-            <a href="services.html">خدمات سئو</a>
-            <a href="about.html">درباره دکتر سایت</a>
-            <a href="#contact" class="nav-cta">رزرو مشاوره تخصصی</a>
-        </nav>
-    </header>
+    </div>
 
-    <section class="hero">
+    <nav>
+        <a href="index.html" class="active">صفحه اصلی</a>
+        <a href="services.html">خدمات سئو</a>
+        <a href="about.html">درباره دکتر سایت</a>
+        <a href="#contact" class="nav-cta">رزرو مشاوره تخصصی</a>
+    </nav>
+</header>
 
-        <div class="hero-main">
-            <div class="hero-badge">
-                🚀 رشد ارگانیک | بدون ریسک جریمه الگوریتمی
-            </div>
+<section class="hero">
 
-            <h1>آنالیز تخصصی سئو و طراحی استراتژی رشد پایدار برای وب‌سایت شما</h1>
+    <div class="hero-main">
 
-            <p>
-                دکتر سایت با ترکیب دانش فنی، تجربه عملی و تحلیل داده، به شما کمک می‌کند
-                قبل از هرگونه افت رتبه یا جریمه الگوریتمی، مشکلات سئو و ساختار فنی وب‌سایت را شناسایی و برطرف کنید.
-            </p>
-
-            <div class="hero-actions">
-                <a href="services.html" class="btn-primary">مشاهده پکیج‌های خدمات سئو</a>
-                <a href="#contact" class="btn-outline">درخواست مشاوره و آنالیز اولیه رایگان</a>
-            </div>
-
-            <div class="hero-meta">
-                <span>✓ تمرکز بر Core Web Vitals و تجربه کاربری</span>
-                <span>📊 گزارش‌های قابل‌فهم برای مدیران و تیم فنی</span>
-                <span>🎯 مناسب کسب‌وکارهای در حال رشد و برندهای جدی</span>
-            </div>
+        <div class="hero-badge">
+            🚀 رشد ارگانیک | بدون ریسک جریمه الگوریتمی
         </div>
 
-        <div class="hero-image">
-            <span class="hero-tag">گزارش تحلیلی سئو | نسخه مدیران</span>
-            <img src="images/hero-drsite-dashboard.jpg"
-                 alt="داشبورد تحلیل سئو دکتر سایت"
-                 width="900" height="600" fetchpriority="high">
-            <div class="hero-chip">
-                📈 بهبود میانگین رتبه ارگانیک در ۳ تا ۶ ماه
-            </div>
-        </div>
+        <h1>آنالیز تخصصی سئو و طراحی استراتژی رشد پایدار برای وب‌سایت شما</h1>
 
-    </section>
+        <p>
+            دکتر سایت با ترکیب دانش فنی، تجربه عملی و تحلیل داده، به شما کمک می‌کند
+            قبل از هرگونه افت رتبه یا جریمه الگوریتمی، مشکلات سئو و ساختار فنی وب‌سایت را شناسایی و برطرف کنید.
+        </p>
 
-    <section class="section">
-        <div class="section-header">
-            <h2>چرا دکتر سایت برای کسب‌وکار شما حیاتی است؟</h2>
-            <p>تمرکز ما فقط روی رتبه نیست؛ روی سلامت بلندمدت برند شما در نتایج گوگل است.</p>
-        </div>
-        <div class="grid-3">
-            <div class="card">
-                <div class="card-icon">🔍</div>
-                <h3>آنالیز عمیق فنی و ساختاری</h3>
-                <p>
-                    بررسی معماری اطلاعات، سرعت، ساختار HTML، تگ‌ها، اسکیما و سیگنال‌های فنی که
-                    مستقیماً روی درک گوگل از وب‌سایت شما اثر می‌گذارند.
-                </p>
-            </div>
-            <div class="card">
-                <div class="card-icon">📑</div>
-                <h3>طراحی استراتژی محتوا بر اساس E-E-A-T</h3>
-                <p>
-                    کمک به تولید محتوای تخصصی، قابل اعتماد و منطبق با نیاز واقعی کاربر،
-                    تا برند شما به عنوان مرجع در حوزه خود شناخته شود.
-                </p>
-            </div>
-            <div class="card">
-                <div class="card-icon">🤝</div>
-                <h3>همراهی مستمر با تیم شما</h3>
-                <p>
-                    ارائه گزارش‌های دوره‌ای، چک‌لیست‌های اجرایی و جلسات مشاوره برای هماهنگی
-                    بین تیم فنی، محتوا و مدیریت کسب‌وکار.
-                </p>
-            </div>
-        </div>
-
-        <div class="highlight">
-            <strong>نتیجه نهایی:</strong>
-            به جای واکنش به افت رتبه، با دکتر سایت به‌صورت پیشگیرانه عمل می‌کنید؛
-            یعنی قبل از هر مشکل جدی، سیگنال‌های هشدار را می‌بینید و مسیر را اصلاح می‌کنید.
-        </div>
-    </section>
-
-    <section class="section" id="contact">
-        <div class="section-header">
-            <h2>ارتباط با تیم تخصصی دکتر سایت</h2>
-            <p>برای دریافت پیشنهاد اختصاصی، اطلاعات کسب‌وکار خود را برای ما ارسال کنید.</p>
-        </div>
-        <div class="contact-box">
-            <div class="contact-grid">
-                <div class="contact-item">
-                    <span>تلگرام</span>
-                    <a href="https://t.me/DrSiteOfficial" target="_blank">👤 @DrSiteOfficial</a>
-                </div>
-                <div class="contact-item">
-                    <span>کانال تلگرام</span>
-                    <a href="https://t.me/DrSite" target="_blank">📢 t.me/DrSite</a>
-                </div>
-                <div class="contact-item">
-                    <span>اینستاگرام</span>
-                    <a href="https://instagram.com/DrSite.Official" target="_blank">📸 @DrSite.Official</a>
-                </div>
-                <div class="contact-item">
-                    <span>ایمیل کاری</span>
-                    <a href="mailto:drsiteofficial@gmail.com">📧 drsiteofficial@gmail.com</a>
-                </div>
-            </div>
-            <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">
-                پس از ارسال پیام، یکی از کارشناسان ارشد سئو دکتر سایت، وضعیت فعلی وب‌سایت شما را بررسی کرده
-                و پیشنهاد مناسب با بودجه و اهداف کسب‌وکارتان ارائه می‌کند.
-            </p>
-        </div>
-    </section>
-
-    <footer>
-        <div>© 2026 دکتر سایت – تمامی حقوق محفوظ است.</div>
-        <div class="footer-links">
-            <span>سیاست حفظ حریم خصوصی</span>
-            <span>شرایط استفاده</span>
-        </div>
-    </footer>
-
+           <div class="hero-actions">
+    <a href="services.html" class="btn-primary" aria-label="مشاهده پکیج‌های خدمات سئو دکتر سایت">
+        مشاهده پکیج‌های خدمات سئو
+    </a>
+    <a href="#contact" class="btn-outline" aria-label="درخواست مشاوره و آنالیز اولیه رایگان">
+        درخواست مشاوره و آنالیز اولیه رایگان
+    </a>
 </div>
 
-</body>
-</html>
+<div class="hero-meta">
+    <span>✓ تمرکز بر Core Web Vitals و تجربه کاربری</span>
+    <span>📊 گزارش‌های قابل‌فهم برای مدیران و تیم فنی</span>
+    <span>🎯 مناسب کسب‌وکارهای در حال رشد و برندهای جدی</span>
+</div>
+</div>
+
+<div class="hero-image">
+    <span class="hero-tag">گزارش تحلیلی سئو | نسخه مدیران</span>
+
+    <img src="images/hero-drsite-dashboard.jpg"
+         alt="داشبورد تحلیل سئو دکتر سایت | گزارش فنی و تحلیل Core Web Vitals"
+         width="900" height="600"
+         fetchpriority="high"
+         loading="eager">
+
+    <div class="hero-chip">
+        📈 بهبود میانگین رتبه ارگانیک در ۳ تا ۶ ماه
+    </div>
+</div>
+
+</section>
+
+<section class="section">
+    <div class="section-header">
+        <h2>چرا دکتر سایت برای کسب‌وکار شما حیاتی است؟</h2>
+        <p>تمرکز ما فقط روی رتبه نیست؛ روی سلامت بلندمدت برند شما در نتایج گوگل است.</p>
+    </div>
+
+    <div class="grid-3">
+
+        <div class="card">
+            <div class="card-icon">🔍</div>
+            <h3>آنالیز عمیق فنی و ساختاری</h3>
+            <p>
+                بررسی معماری اطلاعات، سرعت، ساختار HTML، تگ‌ها، اسکیما و سیگنال‌های فنی که
+                مستقیماً روی درک گوگل از وب‌سایت شما اثر می‌گذارند.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">📑</div>
+            <h3>طراحی استراتژی محتوا بر اساس E‑E‑A‑T</h3>
+            <p>
+                کمک به تولید محتوای تخصصی، قابل اعتماد و منطبق با نیاز واقعی کاربر،
+                تا برند شما به عنوان مرجع در حوزه خود شناخته شود.
+            </p>
+        </div>
+
+        <div class="card">
+            <div class="card-icon">🤝</div>
+            <h3>همراهی مستمر با تیم شما</h3>
+            <p>
+                ارائه گزارش‌های دوره‌ای، چک‌لیست‌های اجرایی و جلسات مشاوره برای هماهنگی
+                بین تیم فنی، محتوا و مدیریت کسب‌وکار.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="highlight">
+        <strong>نتیجه نهایی:</strong>
+        به جای واکنش به افت رتبه، با دکتر سایت به‌صورت پیشگیرانه عمل می‌کنید؛
+        یعنی قبل از هر مشکل جدی، سیگنال‌های هشدار را می‌بینید و مسیر را اصلاح می‌کنید.
+    </div>
+</section>
+
+<section class="section" id="contact">
+    <div class="section-header">
+        <h2>ارتباط با تیم تخصصی دکتر سایت</h2>
+        <p>برای دریافت پیشنهاد اختصاصی، اطلاعات کسب‌وکار خود را برای ما ارسال کنید.</p>
+    </div>
+
+    <div class="contact-box">
+        <div class="contact-grid">
+
+            <div class="contact-item">
+                <span>تلگرام</span>
+                <a href="https://t.me/DrSiteOfficial" target="_blank" rel="noopener">
+                    👤 @DrSiteOfficial
+                </a>
+            </div>
+
+            <div class="contact-item">
+                <span>کانال تلگرام</span>
+                <a href="https://t.me/DrSite" target="_blank" rel="noopener">
+                    📢 t.me/DrSite
+                </a>
+            </div>
+
+            <div class="contact-item">
+                <span>اینستاگرام</span>
+                <a href="https://instagram.com/DrSite.Official" target="_blank" rel="noopener">
+                    📸 @DrSite.Official
+                </a>
+            </div>
+
+            <div class="contact-item">
+                <span>ایمیل کاری</span>
+                <a href="mailto:drsiteofficial@gmail.com">
+                    📧 drsiteofficial@gmail.com
+                </a>
+            </div>
+
+        </div>
+
+        <p style="margin-top:16px;font-size:0.85rem;color:var(--muted);">
+            پس از ارسال پیام، یکی از کارشناسان ارشد سئو دکتر سایت، وضعیت فعلی وب‌سایت شما را بررسی کرده
+            و پیشنهاد مناسب با بودجه و اهداف کسب‌وکارتان ارائه می‌کند.
+        </p>
+    </div>
+</section>
+
+<footer>
+    <div>© 2026 دکتر سایت – تمامی حقوق محفوظ است.</div>
+    <div class="footer-links">
+        <span>سیاست حفظ حریم خصوصی</span>
+        <span>شرایط استفاده</span>
+    </div>
+</footer>
