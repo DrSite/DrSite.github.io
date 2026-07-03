@@ -6,26 +6,27 @@
 
     <title>خدمات تخصصی دکتر سایت | آنالیز فنی سئو، استراتژی محتوا و رشد ارگانیک</title>
     <meta name="description" content="خدمات تخصصی دکتر سایت شامل آنالیز فنی سئو، استراتژی محتوا، جلسات تخصصی تیمی و طراحی مسیر رشد ارگانیک برای کسب‌وکارهای در حال رشد و برندهای جدی.">
-    <meta name="keywords" content="خدمات سئو, آنالیز فنی سئو, Technical SEO Audit, استراتژی محتوا, جلسات تخصصی سئو, رشد ارگانیک, Core Web Vitals, E-E-A-T, تحلیل رقبا, مشاوره سئو">
     <link rel="canonical" href="https://drsite.github.io/services.html">
     <meta name="robots" content="index,follow">
     <meta name="theme-color" content="#0d1117">
 
+    <!-- OpenGraph -->
     <meta property="og:title" content="خدمات تخصصی دکتر سایت | آنالیز فنی، محتوا و رشد ارگانیک">
     <meta property="og:description" content="پکیج‌های تخصصی دکتر سایت برای آنالیز فنی سئو، استراتژی محتوا و رشد ارگانیک پایدار کسب‌وکار شما.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://drsite.github.io/services.html">
-    <meta property="og:image" content="https://drsite.github.io/images/drsite-technical-seo-audit.jpg">
+    <meta property="og:image" content="https://drsite.github.io/images/drsite-technical-seo-audit.webp">
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="خدمات تخصصی دکتر سایت | آنالیز فنی، محتوا و رشد ارگانیک">
     <meta name="twitter:description" content="آنالیز فنی سئو، استراتژی محتوا و جلسات تخصصی تیمی برای رشد ارگانیک برند شما.">
-    <meta name="twitter:image" content="https://drsite.github.io/images/drsite-technical-seo-audit.jpg">
+    <meta name="twitter:image" content="https://drsite.github.io/images/drsite-technical-seo-audit.webp">
 
-    <!-- Ultra-Speed: Preload LCP image -->
-    <link rel="preload" as="image" href="images/drsite-technical-seo-audit.jpg" fetchpriority="high">
+    <!-- LCP Preload -->
+    <link rel="preload" as="image" href="images/drsite-technical-seo-audit.webp" fetchpriority="high">
 
-    <!-- Schema: Service list for DrSite -->
+    <!-- Schema -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -82,10 +83,6 @@
             --border: #1f2937;
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
         body {
             background: radial-gradient(circle at top, #111827 0, #0d1117 55%, #000 100%);
             color: var(--text);
@@ -93,15 +90,6 @@
             margin: 0;
             padding: 0;
             line-height: 1.8;
-        }
-
-        a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        a:hover {
-            color: #2563eb;
         }
 
         .page {
@@ -132,20 +120,9 @@
             background: #020617;
         }
 
-        .brand-title {
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .brand-sub {
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
         nav {
             display: flex;
             gap: 18px;
-            align-items: center;
         }
 
         nav a {
@@ -153,22 +130,12 @@
             font-size: 0.9rem;
             padding-bottom: 4px;
             border-bottom: 2px solid transparent;
-            transition: color 0.15s ease, border-bottom-color 0.15s ease;
         }
 
         nav a.active,
         nav a:hover {
             color: var(--text);
             border-bottom-color: var(--primary);
-        }
-
-        .nav-cta {
-            padding: 8px 16px;
-            border-radius: 999px;
-            background: var(--primary-soft);
-            color: var(--primary);
-            font-size: 0.85rem;
-            border: 1px solid rgba(59,130,246,0.4);
         }
 
         .hero-services {
@@ -181,12 +148,6 @@
             margin: 0 0 10px;
         }
 
-        .hero-services p {
-            margin: 0;
-            font-size: 0.95rem;
-            color: var(--muted);
-        }
-
         .services-grid {
             display: grid;
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -196,43 +157,15 @@
 
         .service-box {
             background: var(--card);
-            padding: 18px 18px 20px;
+            padding: 18px;
             border-radius: 14px;
             border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .service-box h2 {
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .service-box p {
-            margin: 0;
-            font-size: 0.85rem;
-            color: var(--muted);
-        }
-
-        .service-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            padding: 4px 10px;
-            border-radius: 999px;
-            background: var(--primary-soft);
-            color: #bfdbfe;
         }
 
         .service-box img {
             width: 100%;
-            height: auto;
             border-radius: 10px;
             margin-top: 12px;
-            display: block;
-            object-fit: cover;
         }
 
         .btn {
@@ -246,22 +179,6 @@
             font-size: 0.9rem;
             font-weight: 600;
             text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            background: #2563eb;
-        }
-
-        .note {
-            margin-top: 28px;
-            font-size: 0.85rem;
-            color: var(--muted);
-            background: rgba(15,23,42,0.8);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            padding: 14px 16px;
         }
 
         footer {
@@ -272,53 +189,6 @@
             color: var(--muted);
             display: flex;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 12px;
-        }
-
-        @media (max-width: 900px) {
-            .services-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .page {
-                padding: 16px;
-            }
-
-            header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-
-            nav {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .hero-services h1 {
-                font-size: 1.6rem;
-                text-align: center;
-            }
-
-            .hero-services p {
-                text-align: justify;
-            }
-
-            .services-grid {
-                grid-template-columns: minmax(0, 1fr);
-            }
-
-            .btn {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -329,21 +199,16 @@
 
     <header>
         <div class="logo-wrap">
-            <img src="images/drsite-logo.png"
-                 alt="لوگوی دکتر سایت | DrSite Logo"
-                 class="logo"
-                 width="44" height="44"
-                 loading="lazy">
+            <img src="images/drsite-logo.webp" alt="لوگوی دکتر سایت" class="logo">
             <div>
                 <div class="brand-title">دکتر سایت</div>
-                <div class="brand-sub">خدمات تخصصی آنالیز سئو و رشد ارگانیک وب‌سایت</div>
+                <div class="brand-sub">خدمات تخصصی آنالیز سئو و رشد ارگانیک</div>
             </div>
         </div>
         <nav>
             <a href="index.html">صفحه اصلی</a>
             <a href="services.html" class="active">خدمات سئو</a>
             <a href="about.html">درباره دکتر سایت</a>
-            <a href="index.html#contact" class="nav-cta">رزرو مشاوره تخصصی</a>
         </nav>
     </header>
 
@@ -363,18 +228,13 @@
             <h2>آنالیز فنی سئو (Technical SEO Audit)</h2>
             <p>
                 بررسی کامل ساختار سایت، Core Web Vitals، سرعت، مشکلات فنی، ساختار HTML، اسکیما، ریدایرکت‌ها
-                و بهینه‌سازی کد برای درک بهتر گوگل از وب‌سایت شما و جلوگیری از افت رتبه ناگهانی.
+                و بهینه‌سازی کد برای درک بهتر گوگل از وب‌سایت شما.
             </p>
 
-            <img src="images/drsite-technical-seo-audit.jpg"
-                 alt="آنالیز فنی سئو و بررسی Core Web Vitals وب‌سایت"
-                 width="900" height="600"
-                 fetchpriority="high"
-                 loading="eager">
+            <img src="images/drsite-technical-seo-audit.webp"
+                 alt="آنالیز فنی سئو و بررسی Core Web Vitals">
 
-            <a class="btn" href="#contact" aria-label="درخواست جزئیات آنالیز فنی سئو دکتر سایت">
-                درخواست جزئیات و شروع آنالیز فنی
-            </a>
+            <a class="btn" href="#contact">درخواست آنالیز فنی</a>
         </article>
 
         <!-- Service 2 -->
@@ -382,18 +242,13 @@
             <span class="service-tag">📑 استراتژی محتوا | Content Strategy</span>
             <h2>استراتژی محتوا (Content Strategy)</h2>
             <p>
-                طراحی نقشه راه محتوا، خوشه‌بندی موضوعی، تحلیل رقبا، پیاده‌سازی اصول E‑E‑A‑T
-                و ساختاردهی محتوا برای رشد ارگانیک بلندمدت و تبدیل برند شما به مرجع تخصصی در حوزه فعالیت‌تان.
+                طراحی نقشه راه محتوا، خوشه‌بندی موضوعی، تحلیل رقبا، اصول E‑E‑A‑T و ساختاردهی محتوا برای رشد ارگانیک بلندمدت.
             </p>
 
-            <img src="images/drsite-content-strategy.jpg"
-                 alt="استراتژی محتوا و خوشه‌بندی موضوعی برای رشد ارگانیک"
-                 width="900" height="600"
-                 loading="lazy">
+            <img src="images/drsite-content-strategy.webp"
+                 alt="استراتژی محتوا و خوشه‌بندی موضوعی">
 
-            <a class="btn" href="#contact" aria-label="درخواست طراحی استراتژی محتوا توسط دکتر سایت">
-                درخواست طراحی استراتژی محتوا
-            </a>
+            <a class="btn" href="#contact">درخواست طراحی استراتژی محتوا</a>
         </article>
 
         <!-- Service 3 -->
@@ -401,28 +256,16 @@
             <span class="service-tag">🤝 جلسات تخصصی تیمی | Consulting</span>
             <h2>جلسات تخصصی تیمی</h2>
             <p>
-                جلسات منظم با تیم شما برای بررسی وضعیت سایت، تحلیل داده‌ها، تصمیم‌گیری،
-                اولویت‌بندی اقدامات و طراحی مسیر رشد، به‌گونه‌ای که تیم فنی، محتوا و مدیریت
-                در یک مسیر واحد و هدفمند حرکت کنند.
+                جلسات منظم برای بررسی وضعیت سایت، تحلیل داده‌ها، تصمیم‌گیری و طراحی مسیر رشد.
             </p>
 
-            <img src="images/drsite-team-consulting.jpg"
-                 alt="جلسات تخصصی تیمی برای تحلیل سئو و طراحی مسیر رشد"
-                 width="900" height="600"
-                 loading="lazy">
+            <img src="images/drsite-team-consulting.webp"
+                 alt="جلسات تخصصی تیمی برای تحلیل سئو">
 
-            <a class="btn" href="#contact" aria-label="رزرو جلسه تخصصی تیمی با دکتر سایت">
-                رزرو جلسه تخصصی تیمی
-            </a>
+            <a class="btn" href="#contact">رزرو جلسه تخصصی تیمی</a>
         </article>
 
     </section>
-
-    <div class="note">
-        این خدمات معمولاً در قالب یک مسیر مرحله‌به‌مرحله اجرا می‌شوند؛
-        ابتدا آنالیز فنی سئو، سپس طراحی استراتژی محتوا و در نهایت جلسات تخصصی تیمی
-        برای اجرای دقیق و پایدار تصمیم‌ها. برای دریافت پیشنهاد اختصاصی، از طریق بخش ارتباط در صفحه اصلی پیام ارسال کنید.
-    </div>
 
     <footer>
         <div>© 2026 دکتر سایت – تمامی حقوق محفوظ است.</div>
@@ -436,4 +279,3 @@
 
 </body>
 </html>
-
