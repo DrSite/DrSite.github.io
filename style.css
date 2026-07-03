@@ -1,45 +1,72 @@
+/* Auto Theme */
 :root {
-  --bg: #05060a;
-  --bg-alt: #0b0d12;
-  --surface: #11141c;
-  --surface-alt: #181c26;
-  --primary: #4f8cff;
-  --primary-soft: rgba(79, 140, 255, 0.12);
-  --accent: #00d4b7;
-  --text: #f5f7ff;
-  --muted: #a3a8b8;
-  --border: #262a36;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.55);
-  --shadow-card: 0 14px 32px rgba(0, 0, 0, 0.6);
-  --max-width: 1120px;
-  --transition-fast: 0.18s ease-out;
-  --transition-med: 0.24s ease-out;
-  --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: light dark;
 }
 
+/* Light Mode */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --bg-alt: #f7f8fa;
+    --surface: #ffffff;
+    --surface-alt: #f2f3f6;
+    --primary: #2563eb;
+    --primary-soft: rgba(37, 99, 235, 0.12);
+    --accent: #00bfa6;
+    --text: #1a1c1f;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --max-width: 1120px;
+    --transition-fast: 0.18s ease-out;
+    --transition-med: 0.24s ease-out;
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+}
+
+/* Dark Mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #05060a;
+    --bg-alt: #0b0d12;
+    --surface: #11141c;
+    --surface-alt: #181c26;
+    --primary: #4f8cff;
+    --primary-soft: rgba(79, 140, 255, 0.12);
+    --accent: #00d4b7;
+    --text: #f5f7ff;
+    --muted: #a3a8b8;
+    --border: #262a36;
+    --radius: 16px;
+    --radius-sm: 10px;
+    --max-width: 1120px;
+    --transition-fast: 0.18s ease-out;
+    --transition-med: 0.24s ease-out;
+    --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+}
+
+/* Base */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   margin: 0;
   padding: 0;
 }
 
 body {
   font-family: var(--font-main);
-  background: radial-gradient(circle at top, #15192a 0, #05060a 55%, #020308 100%);
+  background: var(--bg);
   color: var(--text);
   line-height: 1.7;
 }
 
 /* Layout */
-
 .container {
   width: 100%;
   max-width: var(--max-width);
@@ -51,9 +78,10 @@ body {
   position: sticky;
   top: 0;
   z-index: 20;
-  backdrop-filter: blur(16px);
-  background: linear-gradient(to bottom, rgba(5, 6, 10, 0.96), rgba(5, 6, 10, 0.85));
-  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.9);
+  background: rgba(5,6,10,0.9);
+  border-bottom: 1px solid var(--border);
 }
 
 .header-inner {
@@ -72,8 +100,7 @@ body {
 
 .brand img {
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: radial-gradient(circle at top, rgba(255, 255, 255, 0.12), transparent 60%);
+  border: 1px solid var(--border);
 }
 
 .brand-text {
@@ -100,24 +127,19 @@ body {
 
 .nav-link:hover {
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
+  border-color: var(--border);
+  background: var(--surface-alt);
 }
 
 .nav-link.active {
   color: var(--text);
   background: var(--primary-soft);
-  border-color: rgba(79, 140, 255, 0.4);
+  border-color: var(--primary);
 }
 
 /* Hero */
-
 .hero {
   padding: 2.8rem 0 2.4rem;
-}
-
-.hero-small {
-  padding: 2.4rem 0 2rem;
 }
 
 .hero-grid {
@@ -180,10 +202,9 @@ body {
 
 .hero-image-wrapper {
   margin: 0;
-  background: radial-gradient(circle at top, #1b2134 0, #0b0d12 55%, #05060a 100%);
+  background: var(--surface-alt);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-soft);
   padding: 0.9rem;
 }
 
@@ -201,13 +222,12 @@ body {
 }
 
 /* Sections */
-
 .section {
   padding: 2.4rem 0;
 }
 
 .section-muted {
-  background: radial-gradient(circle at top, #15192a 0, #05060a 70%);
+  background: var(--bg-alt);
 }
 
 .section-title {
@@ -221,15 +241,10 @@ body {
   gap: 1.4rem;
 }
 
-.section-grid > .card-horizontal {
-  grid-column: span 3;
-}
-
 .card {
   background: var(--surface);
   border-radius: var(--radius);
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
   padding: 1.2rem 1.3rem;
 }
 
@@ -244,28 +259,7 @@ body {
   color: var(--muted);
 }
 
-.card-horizontal {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
-  gap: 1.2rem;
-  align-items: center;
-}
-
-.card-media img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-sm);
-}
-
-.card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-/* Team grid */
-
+/* Team */
 .team-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -276,13 +270,11 @@ body {
   margin-bottom: 0.6rem;
 }
 
-/* Contact box */
-
+/* Contact */
 .contact-box {
-  background: linear-gradient(135deg, rgba(79, 140, 255, 0.18), rgba(0, 212, 183, 0.18));
+  background: var(--primary-soft);
   border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border);
   padding: 1.6rem 1.7rem;
 }
 
@@ -292,7 +284,6 @@ body {
 }
 
 /* Buttons */
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -308,31 +299,28 @@ body {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary), #7aa4ff);
-  color: #05060a;
-  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--primary);
+  color: #ffffff;
 }
 
 .btn-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.6);
 }
 
 .btn-outline {
   background: transparent;
   color: var(--text);
-  border-color: rgba(255, 255, 255, 0.18);
+  border-color: var(--border);
 }
 
 .btn-outline:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--surface-alt);
 }
 
 /* Footer */
-
 .site-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-  background: #05060a;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
   padding: 1.4rem 0 1.6rem;
 }
 
@@ -350,17 +338,12 @@ body {
 }
 
 /* Responsive */
-
 @media (max-width: 960px) {
   .hero-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 
   .section-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .card-horizontal {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -374,10 +357,6 @@ body {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.6rem;
-  }
-
-  .hero {
-    padding-top: 2rem;
   }
 
   .hero-title {
