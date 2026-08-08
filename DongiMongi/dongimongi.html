@@ -41,6 +41,10 @@
             <div class="quick-btns">
                 <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
                 <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
+                <button type="button" class="quick-btn" onclick="setTitle('اقامت / هتل')">🏨 اقامت/هتل</button>
+                <button type="button" class="quick-btn" onclick="setTitle('تاکسی / حمل‌ونقل')">🚕 تاکسی</button>
+                <button type="button" class="quick-btn" onclick="setTitle('کافه / بستنی')">☕ کافه/بستنی</button>
+                <button type="button" class="quick-btn" onclick="setTitle('تفریحات / ورودی')">🎟️ تفریحات</button>
                 <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
                 <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
             </div>
@@ -62,8 +66,19 @@
             <h4>لیست هزینه‌های اشتراکی گروه:</h4>
             <ul id="expense-list" style="list-style: none; padding: 0;"></ul>
             
-            <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی وضعیت و گزارش‌های شخصی</button>
+            <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی تسویه حساب با مادرخرج</button>
             <div id="result" style="margin-top:20px; line-height: 2; font-size: 14px;"></div>
+
+            <hr style="margin: 20px 0;">
+            
+            <!-- بخش استعلام گزارش شخصی و محرمانه هر فرد -->
+            <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h4 style="margin-top: 0; color: #475569;">🔒 مشاهده گزارش شخصی و محرمانه</h4>
+                <label style="font-size: 12px; font-weight: bold;">نام خود را انتخاب کنید تا هزینه‌های شخصی‌تان را ببینید:</label>
+                <select id="personal-report-select"></select>
+                <button onclick="showPersonalReport()" style="background-color: #64748b; margin-top: 4px;">نمایش گزارش شخصی من</button>
+                <div id="personal-result" style="margin-top: 10px; font-size: 13px; color: #334155; font-weight: bold;"></div>
+            </div>
         </div>
     </div>
 
@@ -103,16 +118,19 @@
             document.getElementById("step2").style.display = "block";
             document.getElementById("display-group").innerText = "گروه: " + document.getElementById("group-name").value;
             document.getElementById("display-treasurer").innerText = treasurer;
-            updatePayerList();
+            updateDropdowns();
         }
 
         function setTitle(val) {
             document.getElementById("expense-title").value = val;
         }
 
-        function updatePayerList() {
-            let s = document.getElementById("payer-select");
-            s.innerHTML = members.map(m => `<option value="${m}">${m} ${m === treasurer ? '(مادرخرج)' : ''}</option>`).join("");
+        function updateDropdowns() {
+            let s1 = document.getElementById("payer-select");
+            s1.innerHTML = members.map(m => `<option value="${m}">${m} ${m === treasurer ? '(مادرخرج)' : ''}</option>`).join("");
+
+            let s2 = document.getElementById("personal-report-select");
+            s2.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
         }
 
         function addExpense() {
@@ -140,7 +158,6 @@
 
         function renderList() {
             let list = document.getElementById("expense-list");
-            // فقط هزینه‌های اشتراکی در لیست عمومی نمایش داده می‌شوند تا حریم شخصی هزینه‌های شخصی حفظ شود
             let sharedExpenses = expenses.filter(e => e.type == 'shared');
             
             if (sharedExpenses.length === 0) {
@@ -164,17 +181,44 @@
             let perPerson = members.length > 0 ? totalShared / members.length : 0;
             
             let res = `<b>مجموع کل هزینه‌های اشتراکی گروه:</b> ${totalShared.toLocaleString()} تومان<br>`;
-            res += `<b>سهم هر نفر از هزینه‌های گروه:</b> ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
-            res += `<b>گزارش اختصاصی و محرمانه هر شخص:</b><br>`;
-            
+            res += `<b>سهم هر نفر از هزینه‌ها:</b> ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
+            res += `<b>وضعیت تسویه حساب نهایی با مادرخرج (${treasurer}):</b><br><ul style="padding-right: 15px; margin: 5px 0;">`;
+
             members.forEach(m => {
-                let paidPersonal = expenses.filter(e => e.payer == m && e.type == 'personal').reduce((s, e) => s + e.amount, 0);
-                
-                res.innerHTML;
-                res += `👤 <b>${m}:</b> هزینه‌های شخصی (محرمانه): <b>${paidPersonal.toLocaleString()} تومان</b><br>`;
+                if (m === treasurer) return; // مادرخرج حسابش مرجع است
+                let paidByMember = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
+                let netBalance = Math.round(perPerson - paidByMember);
+
+                if (netBalance > 0) {
+                    res += `<li>👤 <b>${m}</b> باید مبلغ <span style="color:var(--danger);"><b>${netBalance.toLocaleString()} تومان</b></span> به مادرخرج پرداخت کند.</li>`;
+                } else if (netBalance < 0) {
+                    res += `<li>👤 مادرخرج باید مبلغ <span style="color:var(--success);"><b>${Math.abs(netBalance).toLocaleString()} تومان</b></span> به <b>${m}</b> پس بدهد.</li>`;
+                } else {
+                    res += `<li>👤 <b>${m}</b> تسویه است و بدهکاری/طلبکاری ندارد.</li>`;
+                }
             });
 
+            res += `</ul>`;
             document.getElementById("result").innerHTML = res;
+        }
+
+        function showPersonalReport() {
+            let selectedPerson = document.getElementById("personal-report-select").value;
+            let personalExpenses = expenses.filter(e => e.payer == selectedPerson && e.type == 'personal');
+            let totalPersonal = personalExpenses.reduce((sum, e) => sum + e.amount, 0);
+
+            let resHtml = `👤 نام: ${selectedPerson}<br>مجموع هزینه‌های شخصی و محرمانه: ${totalPersonal.toLocaleString()} تومان`;
+            if (personalExpenses.length > 0) {
+                resHtml += `<ul style="margin: 5px 0; padding-right: 15px; font-weight: normal; font-size: 12px;">`;
+                personalExpenses.forEach(pe => {
+                    resHtml += `<li>${pe.title}: ${pe.amount.toLocaleString()} تومان</li>`;
+                });
+                resHtml += `</ul>`;
+            } else {
+                resHtml += ` (موردی ثبت نشده است)`;
+            }
+
+            document.getElementById("personal-result").innerHTML = resHtml;
         }
     </script>
 </body>
