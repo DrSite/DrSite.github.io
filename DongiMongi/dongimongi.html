@@ -15,7 +15,9 @@
         .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: white; }
         .shared { background-color: #6366f1; }
         .personal { background-color: #f59e0b; }
-        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+        .quick-btn { background-color: #e2e8f0; color: #1e293b; padding: 6px 10px; font-size: 12px; border-radius: 6px; width: auto; margin: 0; cursor: pointer; font-weight: normal; }
     </style>
 </head>
 <body>
@@ -24,28 +26,43 @@
         
         <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
-            <input type="text" id="group-name" placeholder="نام گروه">
+            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)">
             <input type="number" id="member-count" placeholder="تعداد کل اعضا" oninput="generateInputs()">
             <div id="member-inputs"></div>
             <button id="start-btn" style="display:none; background-color: var(--success);" onclick="setupGroup()">ورود به برنامه</button>
         </div>
 
         <div class="card" id="step2" style="display: none;">
-            <h3 id="display-group"></h3>
+            <h3 id="display-group" style="color: var(--primary); text-align: center;"></h3>
+            <p style="text-align: center; font-size: 14px;">مادرخرج (کارت‌کش اصلی): <span id="display-treasurer" style="font-weight: bold; color: var(--danger);"></span></p>
+            <hr>
             <h4>ثبت خرج جدید</h4>
-            <input type="text" id="expense-title" placeholder="بابت چی؟">
+            
+            <div class="quick-btns">
+                <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
+                <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
+                <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
+                <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
+            </div>
+
+            <input type="text" id="expense-title" placeholder="بابت چی؟ (یا انتخاب از دکمه‌های بالا)">
             <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
+            
+            <label style="font-size: 13px; font-weight: bold;">پرداخت‌کننده:</label>
             <select id="payer-select"></select>
+            
+            <label style="font-size: 13px; font-weight: bold;">نوع هزینه:</label>
             <select id="type-select">
                 <option value="shared">🌐 اشتراکی (برای کل گروه)</option>
                 <option value="personal">👤 شخصی (فقط برای خودم)</option>
             </select>
-            <button onclick="addExpense()">ثبت در لیست عمومی</button>
             
-            <h4>لیست هزینه‌ها (شفاف برای همه):</h4>
+            <button onclick="addExpense()">ثبت در لیست</button>
+            
+            <h4>لیست هزینه‌ها:</h4>
             <ul id="expense-list" style="list-style: none; padding: 0;"></ul>
-            <button style="background-color: var(--success);" onclick="calculate()">محاسبه نهایی وضعیت</button>
-            <div id="result" style="margin-top:20px; line-height: 2;"></div>
+            <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی وضعیت</button>
+            <div id="result" style="margin-top:20px; line-height: 2; font-size: 14px;"></div>
         </div>
     </div>
 
@@ -58,8 +75,12 @@
             let container = document.getElementById("member-inputs");
             container.innerHTML = "";
             for(let i=0; i<count; i++){
-                container.innerHTML += `<div style="display:flex; gap:5px;"><input type="text" class="m-name" placeholder="نام نفر ${i+1}">
-                <input type="radio" name="treasurer" value="${i}"> مادرخرج</div>`;
+                container.innerHTML += `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
+                    <input type="text" class="m-name" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;">
+                    <label style="font-size:12px; display:flex; align-items:center; gap:4px; flex:1; cursor:pointer;">
+                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;"> مادرخرج؟
+                    </label>
+                </div>`;
             }
             if(count > 0) document.getElementById("start-btn").style.display = "block";
         }
@@ -67,52 +88,81 @@
         function setupGroup() {
             let names = document.querySelectorAll(".m-name");
             let radios = document.getElementsByName("treasurer");
-            members = Array.from(names).map(n => n.value);
+            members = Array.from(names).map(n => n.value.trim());
+            
+            if(members.some(m => !m)) {
+                return alert("لطفاً نام تمام اعضا را وارد کنید.");
+            }
+
             let tIdx = Array.from(radios).findIndex(r => r.checked);
-            if(tIdx == -1) return alert("مادرخرج را انتخاب کنید");
+            if(tIdx == -1) return alert("لطفاً مادرخرج را انتخاب کنید.");
+            
             treasurer = members[tIdx];
             document.getElementById("step1").style.display = "none";
             document.getElementById("step2").style.display = "block";
-            document.getElementById("display-group").innerText = document.getElementById("group-name").value;
+            document.getElementById("display-group").innerText = "گروه: " + document.getElementById("group-name").value;
+            document.getElementById("display-treasurer").innerText = treasurer;
             updatePayerList();
+        }
+
+        function setTitle(val) {
+            document.getElementById("expense-title").value = val;
         }
 
         function updatePayerList() {
             let s = document.getElementById("payer-select");
-            s.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
+            s.innerHTML = members.map(m => `<option value="${m}">${m} ${m === treasurer ? '(مادرخرج)' : ''}</option>`).join("");
         }
 
         function addExpense() {
+            let title = document.getElementById("expense-title").value.trim();
+            let amount = parseFloat(document.getElementById("expense-amount").value);
+            
+            if(!title || isNaN(amount) || amount <= 0) {
+                alert("عنوان و مبلغ معتبر وارد کنید.");
+                return;
+            }
+
             expenses.push({
-                title: document.getElementById("expense-title").value,
-                amount: parseFloat(document.getElementById("expense-amount").value),
+                id: Date.now(),
+                title: title,
+                amount: amount,
                 payer: document.getElementById("payer-select").value,
                 type: document.getElementById("type-select").value
             });
+            
+            document.getElementById("expense-title").value = "";
+            document.getElementById("expense-amount").value = "";
             renderList();
         }
 
         function renderList() {
             let list = document.getElementById("expense-list");
-            list.innerHTML = expenses.map((e, i) => `<li>
-                ${e.title}: ${e.amount.toLocaleString()} تومان (${e.payer})
-                <span class="tag ${e.type}">${e.type == 'shared' ? 'اشتراکی' : 'شخصی'}</span>
-                <button onclick="expenses.splice(${i},1); renderList()" style="width:auto; padding:2px 8px; background:var(--danger)">X</button>
+            list.innerHTML = expenses.map(e => `<li>
+                <span>${e.title}: ${e.amount.toLocaleString()} تومان (${e.payer}) <span class="tag ${e.type}">${e.type == 'shared' ? 'اشتراکی' : 'شخصی'}</span></span>
+                <button onclick="deleteExpense(${e.id})" style="width:auto; padding:4px 8px; background:var(--danger); margin:0; font-size:11px;">حذف</button>
             </li>`).join("");
+        }
+
+        function deleteExpense(id) {
+            expenses = expenses.filter(e => e.id !== id);
+            renderList();
         }
 
         function calculate() {
             let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            let perPerson = totalShared / members.length;
-            let res = `مجموع هزینه‌های اشتراکی: ${totalShared.toLocaleString()} تومان<br>سهم هر نفر از هزینه‌های گروه: ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
+            let perPerson = members.length > 0 ? totalShared / members.length : 0;
+            
+            let res = `<b>مجموع کل هزینه‌های اشتراکی گروه:</b> ${totalShared.toLocaleString()} تومان<br>`;
+            res += `<b>سهم هر نفر از هزینه‌های گروه:</b> ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
             
             members.forEach(m => {
                 let paidShared = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((s, e) => s + e.amount, 0);
                 let paidPersonal = expenses.filter(e => e.payer == m && e.type == 'personal').reduce((s, e) => s + e.amount, 0);
-                let balance = paidShared - perPerson;
                 
-                res += `<b>${m}:</b> کل پرداخت شخصی: ${paidPersonal.toLocaleString()} | تراز گروهی: ${Math.round(balance).toLocaleString()} تومان<br>`;
+                res += `🔹 <b>${m}:</b> خرج شخصی: ${paidPersonal.toLocaleString()} تومان | کل پرداختی اشتراکی: ${paidShared.toLocaleString()} تومان<br>`;
             });
+
             document.getElementById("result").innerHTML = res;
         }
     </script>
