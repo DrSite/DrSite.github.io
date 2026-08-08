@@ -3,306 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دانگی‌منگی</title>
+    <title>دانگی‌منگی - نسخه حرفه‌ای</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: var(--tg-theme-bg-color, #f4f4f5);
-            --text-color: var(--tg-theme-text-color, #18181b);
-            --button-color: var(--tg-theme-button-color, #6366f1);
-            --button-text: var(--tg-theme-button-text-color, #ffffff);
-            --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 16px;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        h2 {
-            text-align: center;
-            color: var(--button-color);
-        }
-        .card {
-            background-color: var(--card-bg);
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-        }
-        input, select, button {
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            margin-bottom: 12px;
-            border-radius: 8px;
-            border: 1px solid #d1d5db;
-            font-size: 14px;
-            box-sizing: border-box;
-            background-color: #ffffff;
-            color: #18181b;
-        }
-        button {
-            background-color: var(--button-color);
-            color: var(--button-text);
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:active {
-            opacity: 0.9;
-        }
-        .quick-btns {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            margin-bottom: 8px;
-        }
-        .quick-btn {
-            background-color: #e2e8f0;
-            color: #1e293b;
-            padding: 6px 10px;
-            font-size: 12px;
-            border-radius: 6px;
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-        }
-        ul {
-            padding-right: 20px;
-        }
-        li {
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .delete-btn {
-            background-color: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            width: auto;
-            margin: 0;
-            cursor: pointer;
-        }
+        :root { --bg-color: #f4f4f5; --card-bg: #ffffff; --primary: #6366f1; --success: #10b981; --danger: #ef4444; }
+        body { font-family: sans-serif; background-color: var(--bg-color); margin: 0; padding: 16px; }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background-color: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #d1d5db; box-sizing: border-box; }
+        button { background-color: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
+        .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: white; }
+        .shared { background-color: #6366f1; }
+        .personal { background-color: #f59e0b; }
+        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>🪙 دانگی‌منگی 💸</h2>
         
-        <!-- مرحله ۱: اطلاعات اولیه و تعداد اعضا -->
-        <div class="card" id="step1-section">
+        <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
-            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)">
-            <label style="font-size: 13px; font-weight: bold;">تعداد کل افراد گروه:</label>
-            <input type="number" id="member-count" min="1" max="20" placeholder="تعداد افراد (مثلا: 5)" oninput="generateMemberInputs()">
-            <div id="member-inputs-container"></div>
-            <button onclick="saveGroupSetup()" style="background-color: #10b981; display: none;" id="start-btn">ورود به بخش هزینه‌ها</button>
+            <input type="text" id="group-name" placeholder="نام گروه">
+            <input type="number" id="member-count" placeholder="تعداد کل اعضا" oninput="generateInputs()">
+            <div id="member-inputs"></div>
+            <button id="start-btn" style="display:none; background-color: var(--success);" onclick="setupGroup()">ورود به برنامه</button>
         </div>
 
-        <!-- مرحله ۲: ثبت هزینه و تسویه حساب -->
-        <div class="card" id="step2-section" style="display: none;">
-            <h3 id="display-group-name"></h3>
-            <p>مادرخرج (کارت‌کش اصلی): <span id="display-treasurer" style="font-weight: bold; color: #6366f1;"></span></p>
-            <hr>
+        <div class="card" id="step2" style="display: none;">
+            <h3 id="display-group"></h3>
             <h4>ثبت خرج جدید</h4>
-            
-            <div class="quick-btns">
-                <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
-                <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
-                <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
-                <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
-            </div>
-
-            <input type="text" id="expense-title" placeholder="بابت چی؟ (یا دکمه‌های بالا)">
+            <input type="text" id="expense-title" placeholder="بابت چی؟">
             <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
+            <select id="payer-select"></select>
+            <select id="type-select">
+                <option value="shared">🌐 اشتراکی (برای کل گروه)</option>
+                <option value="personal">👤 شخصی (فقط برای خودم)</option>
+            </select>
+            <button onclick="addExpense()">ثبت در لیست عمومی</button>
             
-            <label for="expense-payer" style="font-size: 13px; font-weight: bold;">چه کسی این را پرداخت کرد؟</label>
-            <select id="expense-payer"></select>
-            
-            <button onclick="addExpense()">ثبت هزینه</button>
-            
-            <h4>لیست هزینه‌ها:</h4>
-            <ul id="expense-list"></ul>
-            
-            <button onclick="calculateSplit()" style="background-color: #10b981;">محاسبه نهایی تسویه حساب</button>
-            <div id="result" style="margin-top: 15px; font-weight: bold; line-height: 1.8;"></div>
+            <h4>لیست هزینه‌ها (شفاف برای همه):</h4>
+            <ul id="expense-list" style="list-style: none; padding: 0;"></ul>
+            <button style="background-color: var(--success);" onclick="calculate()">محاسبه نهایی وضعیت</button>
+            <div id="result" style="margin-top:20px; line-height: 2;"></div>
         </div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
+        let tg = window.Telegram.WebApp; tg.expand();
+        let members = [], treasurer = "", expenses = [];
 
-        let currentGroup = "";
-        let members = [];
-        let treasurer = "";
-        let expenses = [];
-
-        function generateMemberInputs() {
-            const count = parseInt(document.getElementById("member-count").value);
-            const container = document.getElementById("member-inputs-container");
+        function generateInputs() {
+            let count = document.getElementById("member-count").value;
+            let container = document.getElementById("member-inputs");
             container.innerHTML = "";
-
-            if (count > 0 && count <= 20) {
-                let html = '<label style="font-size: 13px; font-weight: bold; margin-top: 10px; display: block;">نام اعضا و انتخاب مادرخرج:</label>';
-                for (let i = 1; i <= count; i++) {
-                    html += `<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
-                        <input type="text" class="member-name-input" placeholder="نام فرد ${i}" style="margin:0; flex: 2;">
-                        <label style="font-size: 12px; display: flex; align-items: center; gap: 4px; flex: 1; cursor: pointer;">
-                            <input type="radio" name="treasurer-radio" value="${i-1}" style="width: auto; margin:0;"> مادرخرج؟
-                        </label>
-                    </div>`;
-                }
-                container.innerHTML = html;
-                document.getElementById("start-btn").style.display = "block";
-            } else {
-                document.getElementById("start-btn").style.display = "none";
+            for(let i=0; i<count; i++){
+                container.innerHTML += `<div style="display:flex; gap:5px;"><input type="text" class="m-name" placeholder="نام نفر ${i+1}">
+                <input type="radio" name="treasurer" value="${i}"> مادرخرج</div>`;
             }
+            if(count > 0) document.getElementById("start-btn").style.display = "block";
         }
 
-        function saveGroupSetup() {
-            const gName = document.getElementById("group-name").value.trim();
-            const nameInputs = document.querySelectorAll(".member-name-input");
-            const radios = document.querySelectorAll("name-radio, input[name='treasurer-radio']");
-
-            if (!gName) {
-                alert("لطفاً نام گروه را وارد کنید.");
-                return;
-            }
-
-            members = [];
-            let treasurerIdx = -1;
-
-            nameInputs.forEach((input, index) => {
-                let val = input.value.trim();
-                if (val) members.push(val);
-                if (radios[index].checked) treasurerIdx = index;
-            });
-
-            if (members.length < (nameInputs.length)) {
-                alert("لطفاً نام تمام اعضا را پر کنید.");
-                return;
-            }
-
-            if (treasurerIdx === -1) {
-                alert("لطفاً یکی از اعضا را به عنوان مادرخرج (کارت‌کش اصلی) انتخاب کنید.");
-                return;
-            }
-
-            treasurer = members[treasurerIdx];
-            currentGroup = gName;
-
-            document.getElementById("step1-section").style.display = "none";
-            document.getElementById("step2-section").style.display = "block";
-            document.getElementById("display-group-name").innerText = "گروه: " + currentGroup;
-            document.getElementById("display-treasurer").innerText = treasurer;
-
-            updatePayerDropdown();
+        function setupGroup() {
+            let names = document.querySelectorAll(".m-name");
+            let radios = document.getElementsByName("treasurer");
+            members = Array.from(names).map(n => n.value);
+            let tIdx = Array.from(radios).findIndex(r => r.checked);
+            if(tIdx == -1) return alert("مادرخرج را انتخاب کنید");
+            treasurer = members[tIdx];
+            document.getElementById("step1").style.display = "none";
+            document.getElementById("step2").style.display = "block";
+            document.getElementById("display-group").innerText = document.getElementById("group-name").value;
+            updatePayerList();
         }
 
-        function setTitle(val) {
-            document.getElementById("expense-title").value = val;
-        }
-
-        function updatePayerDropdown() {
-            const payerSelect = document.getElementById("expense-payer");
-            payerSelect.innerHTML = "";
-            members.forEach(member => {
-                let option = document.createElement("option");
-                option.value = member;
-                option.innerText = member + (member === treasurer ? " (مادرخرج اصلی)" : "");
-                payerSelect.appendChild(option);
-            });
+        function updatePayerList() {
+            let s = document.getElementById("payer-select");
+            s.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
         }
 
         function addExpense() {
-            const title = document.getElementById("expense-title").value.trim();
-            const amount = parseFloat(document.getElementById("expense-amount").value);
-            const payer = document.getElementById("expense-payer").value;
+            expenses.push({
+                title: document.getElementById("expense-title").value,
+                amount: parseFloat(document.getElementById("expense-amount").value),
+                payer: document.getElementById("payer-select").value,
+                type: document.getElementById("type-select").value
+            });
+            renderList();
+        }
 
-            if (!title || isNaN(amount) || amount <= 0) {
-                alert("عنوان و مبلغ معتبر وارد کنید.");
-                return;
-            }
+        function renderList() {
+            let list = document.getElementById("expense-list");
+            list.innerHTML = expenses.map((e, i) => `<li>
+                ${e.title}: ${e.amount.toLocaleString()} تومان (${e.payer})
+                <span class="tag ${e.type}">${e.type == 'shared' ? 'اشتراکی' : 'شخصی'}</span>
+                <button onclick="expenses.splice(${i},1); renderList()" style="width:auto; padding:2px 8px; background:var(--danger)">X</button>
+            </li>`).join("");
+        }
 
-            expenses.push({ id: Date.now(), title: title, amount: amount, payer: payer });
+        function calculate() {
+            let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
+            let perPerson = totalShared / members.length;
+            let res = `مجموع هزینه‌های اشتراکی: ${totalShared.toLocaleString()} تومان<br>سهم هر نفر از هزینه‌های گروه: ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
             
-            document.getElementById("expense-title").value = "";
-            document.getElementById("expense-amount").value = "";
-
-            updateExpenseList();
-        }
-
-        function deleteExpense(id) {
-            expenses = expenses.filter(exp => exp.id !== id);
-            updateExpenseList();
-        }
-
-        function updateExpenseList() {
-            const listEl = document.getElementById("expense-list");
-            listEl.innerHTML = "";
-            expenses.forEach(exp => {
-                let li = document.createElement("li");
-                li.innerHTML = `<span>${exp.title}: ${exp.amount.toLocaleString()} تومان (پرداخت: ${exp.payer})</span>
-                                <button class="delete-btn" onclick="deleteExpense(${exp.id})">حذف</button>`;
-                listEl.appendChild(li);
-            });
-        }
-
-        function calculateSplit() {
-            if (expenses.length === 0) {
-                document.getElementById("result").innerText = "هنوز هزینه‌ای ثبت نشده است!";
-                return;
-            }
-
-            let total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-            let perPerson = total / members.length;
-
-            let paidBy = {};
-            members.forEach(m => paidBy[m] = 0);
-
-            expenses.forEach(exp => {
-                paidBy[exp.payer] += exp.amount;
-            });
-
-            let html = `مجموع کل هزینه‌ها: ${total.toLocaleString()} تومان<br>`;
-            html += `سهم هر نفر از سفر: ${Math.round(perPerson).toLocaleString()} تومان<br><br>`;
-            html += `وضعیت تسویه حساب نهایی:<br>`;
-
             members.forEach(m => {
-                if (m === treasurer) {
-                    // مادرخرج کل پول‌ها رو از جیب داده، پس هرچی بقیه خرج کردن رو باید ازشون بگیره یا حساب بشه
-                    let net = paidBy[m] - perPerson;
-                    html += `🌟 <b>${m} (مادرخرج):</b> کل مبلغ کارت کشیده؛ تراز نهایی: ${Math.round(net).toLocaleString()} تومان<br>`;
-                } else {
-                    // بقیه اعضا چقدر باید به مادرخرج پرداخت کنند؟
-                    // سهم هر نفر - پرداختی خود شخص به صورت شخصی
-                    let userShare = perPerson;
-                    let userPaidBySelf = paidBy[m];
-                    let finalAmountToPayToTreasurer = userShare - userPaidBySelf;
-
-                    if (finalAmountToPayToTreasurer > 0) {
-                        html += `🔻 ${m}: باید <b>${Math.round(finalAmountToPayToTreasurer).toLocaleString()} تومان</b> به ${treasurer} پرداخت کند.<br>`;
-                    } else if (finalAmountToPayToTreasurer < 0) {
-                        html += `✨ ${m}: باید <b>${Math.round(Math.abs(finalAmountToPayToTreasurer)).toLocaleString()} تومان</b> از ${treasurer} دریافت کند.<br>`;
-                    } else {
-                        html += `⚖️ ${m}: کاملاً تسویه است.<br>`;
-                    }
-                }
+                let paidShared = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((s, e) => s + e.amount, 0);
+                let paidPersonal = expenses.filter(e => e.payer == m && e.type == 'personal').reduce((s, e) => s + e.amount, 0);
+                let balance = paidShared - perPerson;
+                
+                res += `<b>${m}:</b> کل پرداخت شخصی: ${paidPersonal.toLocaleString()} | تراز گروهی: ${Math.round(balance).toLocaleString()} تومان<br>`;
             });
-
-            document.getElementById("result").innerHTML = html;
+            document.getElementById("result").innerHTML = res;
         }
     </script>
 </body>
