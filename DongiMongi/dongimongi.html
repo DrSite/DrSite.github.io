@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دنگی‌منگی</title>
-    <!-- اتصال به کتابخانه رسمی تلگرام برای مینی‌اپ -->
+    <title>دانگی‌منگی</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -36,7 +35,7 @@
             margin-bottom: 16px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        input, button {
+        input, select, button {
             width: 100%;
             padding: 12px;
             margin-top: 8px;
@@ -45,6 +44,8 @@
             border: 1px solid #d1d5db;
             font-size: 14px;
             box-sizing: border-box;
+            background-color: #ffffff;
+            color: #18181b;
         }
         button {
             background-color: var(--button-color);
@@ -64,74 +65,95 @@
 <body>
 
     <div class="container">
-        <h2>🪙 دنگی‌منگی 💸</h2>
+        <h2>🪙 دانگی‌منگی 💸</h2>
         
-        <!-- بخش ساخت یا ورود به گروه -->
+        <!-- بخش ساخت گروه و معرفی اعضا -->
         <div class="card" id="group-section">
-            <h3>ساخت گروه جدید</h3>
+            <h3>ساخت گروه و ثبت اعضا</h3>
             <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)">
-            <input type="text" id="user-name" placeholder="نام شما در گروه">
+            <input type="text" id="group-members" placeholder="اسامی اعضا با ویرگول (مثلا: علی, رضا, سارا)">
             <button onclick="createGroup()">ساخت گروه</button>
         </div>
 
-        <!-- بخش ثبت هزینه (بعد از ساخت گروه نمایش داده می‌شود) -->
+        <!-- بخش ثبت هزینه و تسویه حساب -->
         <div class="card" id="expense-section" style="display: none;">
             <h3 id="display-group-name"></h3>
-            <p>سلام، <span id="display-user-name"></span>!</p>
+            <p>اعضای گروه: <span id="display-members"></span></p>
             <hr>
             <h4>ثبت خرج جدید</h4>
             <input type="text" id="expense-title" placeholder="بابت چی؟ (مثلا: ناهار رستوران)">
             <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
+            
+            <label for="expense-payer" style="font-size: 13px; font-weight: bold;">پرداخت‌کننده:</label>
+            <select id="expense-payer"></select>
+            
             <button onclick="addExpense()">ثبت هزینه</button>
             
             <h4>لیست هزینه‌ها:</h4>
             <ul id="expense-list"></ul>
             
             <button onclick="calculateSplit()" style="background-color: #10b981;">محاسبه تسویه حساب</button>
-            <div id="result" style="margin-top: 10px; font-weight: bold;"></div>
+            <div id="result" style="margin-top: 15px; font-weight: bold; line-height: 1.8;"></div>
         </div>
     </div>
 
     <script>
-        // راه‌اندازی اولیه تلگرام وب‌اپ
         let tg = window.Telegram.WebApp;
         tg.expand();
 
         let currentGroup = "";
-        let currentUser = "";
+        let members = [];
         let expenses = [];
 
         function createGroup() {
-            const gName = document.getElementById("group-name").value;
-            const uName = document.getElementById("user-name").value;
+            const gName = document.getElementById("group-name").value.trim();
+            const mInput = document.getElementById("group-members").value.trim();
 
-            if (!gName || !uName) {
-                alert("لطفاً نام گروه و نام خودتان را وارد کنید.");
+            if (!gName || !mInput) {
+                alert("لطفاً نام گروه و اسامی اعضا را وارد کنید.");
                 return;
             }
 
             currentGroup = gName;
-            currentUser = uName;
+            // جدا کردن اسامی با ویرگول فارسی یا انگلیسی
+            members = mInput.split(/[,،]/).map(m => m.trim()).filter(m => m.length > 0);
 
-            // تغییر نمايش بخش‌ها
-            document.getElementById("group-section").style.display = "none";
-            document.getElementById("expense-section").style.display = "block";
-            document.getElementById("display-group-name").innerText = "گروه: " + currentGroup;
-            document.getElementById("display-user-name").innerText = currentUser;
-        }
-
-        function addExpense() {
-            const title = document.getElementById("expense-title").value;
-            const amount = document.getElementById("expense-amount").value;
-
-            if (!title || !amount) {
-                alert("عنوان و مبلغ را وارد کنید.");
+            if (members.length === 0) {
+                alert("لطفاً حداقل یک عضو معتبر وارد کنید.");
                 return;
             }
 
-            expenses.push({ title: title, amount: parseFloat(amount), payer: currentUser });
+            document.getElementById("group-section").style.display = "none";
+            document.getElementById("expense-section").style.display = "block";
+            document.getElementById("display-group-name").innerText = "گروه: " + currentGroup;
+            document.getElementById("display-members").innerText = members.join('، ');
+
+            updatePayerDropdown();
+        }
+
+        function updatePayerDropdown() {
+            const payerSelect = document.getElementById("expense-payer");
+            payerSelect.innerHTML = "";
+            members.forEach(member => {
+                let option = document.createElement("option");
+                option.value = member;
+                option.innerText = member;
+                payerSelect.appendChild(option);
+            });
+        }
+
+        function addExpense() {
+            const title = document.getElementById("expense-title").value.trim();
+            const amount = parseFloat(document.getElementById("expense-amount").value);
+            const payer = document.getElementById("expense-payer").value;
+
+            if (!title || isNaN(amount) || amount <= 0) {
+                alert("عنوان و مبلغ معتبر وارد کنید.");
+                return;
+            }
+
+            expenses.push({ title: title, amount: amount, payer: payer });
             
-            // پاک کردن فیلدها
             document.getElementById("expense-title").value = "";
             document.getElementById("expense-amount").value = "";
 
@@ -143,7 +165,7 @@
             listEl.innerHTML = "";
             expenses.forEach(exp => {
                 let li = document.createElement("li");
-                li.innerText = `${exp.title}: ${exp.amount} تومان (پرداخت توسط ${exp.payer})`;
+                li.innerText = `${exp.title}: ${exp.amount.toLocaleString()} تومان (پرداخت توسط ${exp.payer})`;
                 listEl.appendChild(li);
             });
         }
@@ -153,8 +175,33 @@
                 document.getElementById("result").innerText = "هنوز هزینه‌ای ثبت نشده است!";
                 return;
             }
+
             let total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-            document.getElementById("result").innerText = `مجموع کل هزینه‌های گروه: ${total} تومان`;
+            let perPerson = total / members.length;
+
+            let paidBy = {};
+            members.forEach(m => paidBy[m] = 0);
+
+            expenses.forEach(exp => {
+                paidBy[exp.payer] += exp.amount;
+            });
+
+            let html = `مجموع کل هزینه‌ها: ${total.toLocaleString()} تومان<br>`;
+            html += `سهم هر نفر: ${Math.round(perPerson).toLocaleString()} تومان<br><br>`;
+            html += `وضعیت تسویه حساب:<br>`;
+
+            members.forEach(m => {
+                let balance = paidBy[m] - perPerson;
+                if (balance > 0) {
+                    html += `✨ ${m}: باید ${Math.round(balance).toLocaleString()} تومان **دریافت** کند.<br>`;
+                } else if (balance < 0) {
+                    html += `🔻 ${m}: باید ${Math.round(Math.abs(balance)).toLocaleString()} تومان **پرداخت** کند.<br>`;
+                } else {
+                    html += `⚖️ ${m}: تسویه است (بدون بدهی یا طلب).<br>`;
+                }
+            });
+
+            document.getElementById("result").innerHTML = html;
         }
     </script>
 </body>
