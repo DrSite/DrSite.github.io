@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دنگی‌منگی</title>
+    <!-- اتصال به کتابخانه رسمی تلگرام برای مینی‌اپ -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: var(--tg-theme-bg-color, #f4f4f5);
+            --text-color: var(--tg-theme-text-color, #18181b);
+            --button-color: var(--tg-theme-button-color, #6366f1);
+            --button-text: var(--tg-theme-button-text-color, #ffffff);
+            --card-bg: var(--tg-theme-secondary-bg-color, #ffffff);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        h2 {
+            text-align: center;
+            color: var(--button-color);
+        }
+        .card {
+            background-color: var(--card-bg);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--button-color);
+            color: var(--button-text);
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:active {
+            opacity: 0.9;
+        }
+        ul {
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🪙 دنگی‌منگی 💸</h2>
+        
+        <!-- بخش ساخت یا ورود به گروه -->
+        <div class="card" id="group-section">
+            <h3>ساخت گروه جدید</h3>
+            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)">
+            <input type="text" id="user-name" placeholder="نام شما در گروه">
+            <button onclick="createGroup()">ساخت گروه</button>
+        </div>
+
+        <!-- بخش ثبت هزینه (بعد از ساخت گروه نمایش داده می‌شود) -->
+        <div class="card" id="expense-section" style="display: none;">
+            <h3 id="display-group-name"></h3>
+            <p>سلام، <span id="display-user-name"></span>!</p>
+            <hr>
+            <h4>ثبت خرج جدید</h4>
+            <input type="text" id="expense-title" placeholder="بابت چی؟ (مثلا: ناهار رستوران)">
+            <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
+            <button onclick="addExpense()">ثبت هزینه</button>
+            
+            <h4>لیست هزینه‌ها:</h4>
+            <ul id="expense-list"></ul>
+            
+            <button onclick="calculateSplit()" style="background-color: #10b981;">محاسبه تسویه حساب</button>
+            <div id="result" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+    </div>
+
+    <script>
+        // راه‌اندازی اولیه تلگرام وب‌اپ
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        let currentGroup = "";
+        let currentUser = "";
+        let expenses = [];
+
+        function createGroup() {
+            const gName = document.getElementById("group-name").value;
+            const uName = document.getElementById("user-name").value;
+
+            if (!gName || !uName) {
+                alert("لطفاً نام گروه و نام خودتان را وارد کنید.");
+                return;
+            }
+
+            currentGroup = gName;
+            currentUser = uName;
+
+            // تغییر نمايش بخش‌ها
+            document.getElementById("group-section").style.display = "none";
+            document.getElementById("expense-section").style.display = "block";
+            document.getElementById("display-group-name").innerText = "گروه: " + currentGroup;
+            document.getElementById("display-user-name").innerText = currentUser;
+        }
+
+        function addExpense() {
+            const title = document.getElementById("expense-title").value;
+            const amount = document.getElementById("expense-amount").value;
+
+            if (!title || !amount) {
+                alert("عنوان و مبلغ را وارد کنید.");
+                return;
+            }
+
+            expenses.push({ title: title, amount: parseFloat(amount), payer: currentUser });
+            
+            // پاک کردن فیلدها
+            document.getElementById("expense-title").value = "";
+            document.getElementById("expense-amount").value = "";
+
+            updateExpenseList();
+        }
+
+        function updateExpenseList() {
+            const listEl = document.getElementById("expense-list");
+            listEl.innerHTML = "";
+            expenses.forEach(exp => {
+                let li = document.createElement("li");
+                li.innerText = `${exp.title}: ${exp.amount} تومان (پرداخت توسط ${exp.payer})`;
+                listEl.appendChild(li);
+            });
+        }
+
+        function calculateSplit() {
+            if (expenses.length === 0) {
+                document.getElementById("result").innerText = "هنوز هزینه‌ای ثبت نشده است!";
+                return;
+            }
+            let total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            document.getElementById("result").innerText = `مجموع کل هزینه‌های گروه: ${total} تومان`;
+        }
+    </script>
+</body>
+</html>
