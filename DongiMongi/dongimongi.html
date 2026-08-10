@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دانگی‌منگی - نسخه امن و حرفه‌ای</title>
+    <title>دنگی‌منگی - نسخه امن و ضد-زرنگی</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg-color: #f4f4f5; --card-bg: #ffffff; --primary: #6366f1; --success: #10b981; --danger: #ef4444; }
@@ -12,17 +12,17 @@
         .card { background-color: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #d1d5db; box-sizing: border-box; }
         button { background-color: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
-        .tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; color: white; }
-        .shared { background-color: #6366f1; }
-        .personal { background-color: #f59e0b; }
-        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
         .quick-btn { background-color: #e2e8f0; color: #1e293b; padding: 6px 10px; font-size: 12px; border-radius: 6px; width: auto; margin: 0; cursor: pointer; font-weight: normal; }
+        .checkbox-group { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 8px 0; max-height: 150px; overflow-y: auto; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px; cursor: pointer; }
+        .checkbox-item input { width: auto; margin: 0; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>🪙 دانگی‌منگی 💸</h2>
+        <h2>🪙 دنگی‌منگی 💸</h2>
         
         <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
@@ -35,33 +35,46 @@
         <div class="card" id="step2" style="display: none;">
             <h3 id="display-group" style="color: var(--primary); text-align: center;"></h3>
             <p style="text-align: center; font-size: 14px;">مادرخرج (کارت‌کش اصلی): <span id="display-treasurer" style="font-weight: bold; color: var(--danger);"></span></p>
+            <div id="lock-badge" style="display:none; text-align:center; background:#fee2e2; color:#991b1b; padding:8px; border-radius:6px; font-weight:bold; margin-bottom:10px;">🔒 این سفر به اتمام رسیده و حساب‌ها قفل شده است</div>
             <hr>
-            <h4>ثبت خرج جدید</h4>
             
-            <div class="quick-btns">
-                <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
-                <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
-                <button type="button" class="quick-btn" onclick="setTitle('اقامت / هتل')">🏨 اقامت/هتل</button>
-                <button type="button" class="quick-btn" onclick="setTitle('تاکسی / حمل‌ونقل')">🚕 تاکسی</button>
-                <button type="button" class="quick-btn" onclick="setTitle('کافه / بستنی')">☕ کافه/بستنی</button>
-                <button type="button" class="quick-btn" onclick="setTitle('تفریحات / ورودی')">🎟️ تفریحات</button>
-                <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
-                <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
-            </div>
+            <div id="active-forms">
+                <h4>ثبت خرج جدید</h4>
+                <div class="quick-btns">
+                    <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('اقامت / هتل')">🏨 اقامت/هتل</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('تاکسی / حمل‌ونقل')">🚕 تاکسی</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('کافه / بستنی')">☕ کافه/بستنی</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('تفریحات / ورودی')">🎟️ تفریحات</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
+                    <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
+                </div>
 
-            <input type="text" id="expense-title" placeholder="بابت چی؟ (یا انتخاب از دکمه‌های بالا)">
-            <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
-            
-            <label style="font-size: 13px; font-weight: bold;">پرداخت‌کننده:</label>
-            <select id="payer-select"></select>
-            
-            <label style="font-size: 13px; font-weight: bold;">نوع هزینه:</label>
-            <select id="type-select">
-                <option value="shared">🌐 اشتراکی (نمایش در لیست عمومی گروه)</option>
-                <option value="personal">🔒 شخصی و محرمانه (فقط در گزارش خودم)</option>
-            </select>
-            
-            <button onclick="addExpense()">ثبت هزینه</button>
+                <input type="text" id="expense-title" placeholder="عنوان کلی (یا انتخاب از دکمه‌های بالا)">
+                <input type="text" id="expense-note" placeholder="جزئیات ریز (اختیاری مثل: پفک، آدامس، نوشابه...)">
+                <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
+                
+                <label style="font-size: 13px; font-weight: bold;">ثبت‌کننده این فاکتور (چه کسی این را وارد کرد؟):</label>
+                <select id="creator-select"></select>
+
+                <label style="font-size: 13px; font-weight: bold;">پرداخت‌کننده (چه کسی کارت کشید؟):</label>
+                <select id="payer-select"></select>
+                
+                <label style="font-size: 13px; font-weight: bold;">نوع هزینه:</label>
+                <select id="type-select" onchange="toggleParticipantBox()">
+                    <option value="shared">🌐 اشتراکی (بین افراد منتخب)</option>
+                    <option value="personal">🔒 شخصی و محرمانه (فقط در گزارش خودم)</option>
+                </select>
+
+                <!-- بخش انتخاب افراد شرکت کننده در این خرج خاص -->
+                <div id="participants-container">
+                    <label style="font-size: 13px; font-weight: bold; color: var(--danger);">⚠️ این هزینه دقیقاً بین چه کسانی تقسیم شود؟ (حواست باشه کسی رو از قلم نندازی یا اضافه نکنی!)</label>
+                    <div id="participant-checkboxes" class="checkbox-group"></div>
+                </div>
+                
+                <button onclick="addExpense()">ثبت هزینه در لیست</button>
+            </div>
             
             <h4>لیست هزینه‌های اشتراکی گروه:</h4>
             <ul id="expense-list" style="list-style: none; padding: 0;"></ul>
@@ -69,22 +82,61 @@
             <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی تسویه حساب با مادرخرج</button>
             <div id="result" style="margin-top:20px; line-height: 2; font-size: 14px;"></div>
 
-            <hr style="margin: 20px 0;">
+            <!-- دکمه کپی گزارش برای تلگرام -->
+            <button id="copy-btn" style="display:none; background-color: #0ea5e9; margin-top: 10px;" onclick="copyReportToTelegram()">📋 کپی گزارش برای ارسال در گروه تلگرام</button>
+
+            <!-- دکمه پایان سفر توسط مادرخرج -->
+            <button id="end-trip-btn" style="display:none; background-color: #f59e0b; margin-top: 10px;" onclick="endTrip()">🔒 پایان سفر و قفل کردن دائمی حساب‌ها</button>
+
+            <hr style="margin: 20px 0;" id="divider-hr">
             
             <!-- بخش استعلام گزارش شخصی و محرمانه هر فرد -->
-            <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <div id="personal-section" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; color: #475569;">🔒 مشاهده گزارش شخصی و محرمانه</h4>
                 <label style="font-size: 12px; font-weight: bold;">نام خود را انتخاب کنید تا هزینه‌های شخصی‌تان را ببینید:</label>
-                <select id="personal-report-select"></select>
+                <select id="personal-report-select" onchange="showPersonalReport()"></select>
                 <button onclick="showPersonalReport()" style="background-color: #64748b; margin-top: 4px;">نمایش گزارش شخصی من</button>
                 <div id="personal-result" style="margin-top: 10px; font-size: 13px; color: #334155; font-weight: bold;"></div>
             </div>
+            
+            <!-- دکمه ریست کامل اطلاعات گروه -->
+            <button onclick="resetApp()" style="background-color: var(--danger); margin-top: 25px; font-size: 12px; padding: 8px;">🗑️ پاک کردن کل اطلاعات و شروع گروه جدید</button>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp; tg.expand();
-        let members = [], treasurer = "", expenses = [];
+        let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
+
+        window.onload = function() {
+            let savedData = localStorage.getItem("dongimongi_data");
+            if (savedData) {
+                let data = JSON.parse(savedData);
+                groupName = data.groupName || "";
+                members = data.members || [];
+                treasurer = data.treasurer || "";
+                expenses = data.expenses || [];
+                settlementStatus = data.settlementStatus || {};
+                isLocked = data.isLocked || false;
+
+                if (members.length > 0) {
+                    document.getElementById("step1").style.display = "none";
+                    document.getElementById("step2").style.display = "block";
+                    document.getElementById("display-group").innerText = "گروه: " + groupName;
+                    document.getElementById("display-treasurer").innerText = treasurer;
+                    updateDropdowns();
+                    renderParticipantCheckboxes();
+                    renderList();
+                    calculate();
+                    checkLockState();
+                }
+            }
+        };
+
+        function saveData() {
+            let data = { groupName, members, treasurer, expenses, settlementStatus, isLocked };
+            localStorage.setItem("dongimongi_data", JSON.stringify(data));
+        }
 
         function generateInputs() {
             let count = document.getElementById("member-count").value;
@@ -105,6 +157,7 @@
             let names = document.querySelectorAll(".m-name");
             let radios = document.getElementsByName("treasurer");
             members = Array.from(names).map(n => n.value.trim());
+            groupName = document.getElementById("group-name").value.trim() || "سفر";
             
             if(members.some(m => !m)) {
                 return alert("لطفاً نام تمام اعضا را وارد کنید.");
@@ -114,18 +167,62 @@
             if(tIdx == -1) return alert("لطفاً مادرخرج را انتخاب کنید.");
             
             treasurer = members[tIdx];
+            isLocked = false;
+            saveData();
+
             document.getElementById("step1").style.display = "none";
             document.getElementById("step2").style.display = "block";
-            document.getElementById("display-group").innerText = "گروه: " + document.getElementById("group-name").value;
+            document.getElementById("display-group").innerText = "گروه: " + groupName;
             document.getElementById("display-treasurer").innerText = treasurer;
             updateDropdowns();
+            renderParticipantCheckboxes();
+            checkLockState();
+        }
+
+        function renderParticipantCheckboxes() {
+            let container = document.getElementById("participant-checkboxes");
+            container.innerHTML = members.map(m => `
+                <label class="checkbox-item">
+                    <input type="checkbox" class="part-chk" value="${m}" checked> ${m}
+                </label>
+            `).join("");
+        }
+
+        function toggleParticipantBox() {
+            let type = document.getElementById("type-select").value;
+            document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
+        }
+
+        function checkLockState() {
+            if (isLocked) {
+                document.getElementById("active-forms").style.display = "none";
+                document.getElementById("lock-badge").style.display = "block";
+                document.getElementById("end-trip-btn").style.display = "none";
+            } else {
+                document.getElementById("active-forms").style.display = "block";
+                document.getElementById("lock-badge").style.display = "none";
+                document.getElementById("end-trip-btn").style.display = "block";
+            }
+        }
+
+        function endTrip() {
+            if(confirm("آیا از پایان سفر مطمئن هستید؟ با این کار فرم‌های ثبت هزینه قفل می‌شوند تا دیگر کسی نتواند چیزی را تغییر دهد.")) {
+                isLocked = true;
+                saveData();
+                checkLockState();
+                alert("سفر با موفقیت قفل شد!");
+            }
         }
 
         function setTitle(val) {
+            if (isLocked) return;
             document.getElementById("expense-title").value = val;
         }
 
         function updateDropdowns() {
+            let cSelect = document.getElementById("creator-select");
+            cSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
+
             let s1 = document.getElementById("payer-select");
             s1.innerHTML = members.map(m => `<option value="${m}">${m} ${m === treasurer ? '(مادرخرج)' : ''}</option>`).join("");
 
@@ -134,8 +231,12 @@
         }
 
         function addExpense() {
+            if (isLocked) return alert("سفر قفل شده است و امکان ثبت هزینه جدید وجود ندارد.");
             let title = document.getElementById("expense-title").value.trim();
+            let note = document.getElementById("expense-note").value.trim();
             let amount = parseFloat(document.getElementById("expense-amount").value);
+            let creator = document.getElementById("creator-select").value;
+            let payer = document.getElementById("payer-select").value;
             let type = document.getElementById("type-select").value;
             
             if(!title || isNaN(amount) || amount <= 0) {
@@ -143,17 +244,37 @@
                 return;
             }
 
+            let participants = [];
+            if (type === 'shared') {
+                let checkboxes = document.querySelectorAll(".part-chk:checked");
+                participants = Array.from(checkboxes).map(cb => cb.value);
+                if (participants.length === 0) {
+                    return alert("لطفاً حداقل یک نفر را به عنوان شریک در این هزینه انتخاب کنید.");
+                }
+            }
+
             expenses.push({
                 id: Date.now(),
                 title: title,
+                note: note,
                 amount: amount,
-                payer: document.getElementById("payer-select").value,
-                type: type
+                creator: creator,
+                payer: payer,
+                type: type,
+                participants: participants
             });
             
             document.getElementById("expense-title").value = "";
+            document.getElementById("expense-note").value = "";
             document.getElementById("expense-amount").value = "";
+            document.querySelectorAll(".part-chk").forEach(cb => cb.checked = true);
+
+            saveData();
             renderList();
+            calculate();
+            if(type === 'personal') {
+                showPersonalReport();
+            }
         }
 
         function renderList() {
@@ -166,44 +287,115 @@
             }
 
             list.innerHTML = sharedExpenses.map(e => `<li>
-                <span>${e.title}: ${e.amount.toLocaleString()} تومان (پرداخت: ${e.payer}) <span class="tag shared">اشتراکی</span></span>
-                <button onclick="deleteExpense(${e.id})" style="width:auto; padding:4px 8px; background:var(--danger); margin:0; font-size:11px;">حذف</button>
+                <span>
+                    <b>${e.title}</b> ${e.note ? '<span style="color:#64748b; font-size:12px;">(' + e.note + ')</span>' : ''}: <b>${e.amount.toLocaleString()} تومان</b> <br>
+                    <small style="color:#475569;">پرداخت: ${e.payer} | شرکا: ${e.participants.join(', ')}</small><br>
+                    <small style="color:#0284c7; font-weight:bold;">✍️ ثبت توسط: ${e.creator}</small>
+                </span>
+                ${isLocked ? '' : `<button onclick="deleteExpense(${e.id})" style="width:auto; padding:4px 8px; background:var(--danger); margin:0; font-size:11px;">حذف</button>`}
             </li>`).join("");
         }
 
         function deleteExpense(id) {
+            if (isLocked) return alert("سفر قفل شده است.");
             expenses = expenses.filter(e => e.id !== id);
+            saveData();
             renderList();
+            calculate();
+            showPersonalReport();
+        }
+
+        function toggleSettlement(member) {
+            settlementStatus[member] = !settlementStatus[member];
+            saveData();
+            calculate();
         }
 
         function calculate() {
             let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            let perPerson = members.length > 0 ? totalShared / members.length : 0;
             
-            let res = `<b>مجموع کل هزینه‌های اشتراکی گروه:</b> ${totalShared.toLocaleString()} تومان<br>`;
-            res += `<b>سهم هر نفر از هزینه‌ها:</b> ${Math.round(perPerson).toLocaleString()} تومان<hr>`;
+            let memberShares = {};
+            members.forEach(m => memberShares[m] = 0);
+
+            expenses.filter(e => e.type == 'shared').forEach(e => {
+                let sharePerPerson = e.amount / e.participants.length;
+                e.participants.forEach(p => {
+                    if (memberShares[p] !== undefined) {
+                        memberShares[p] += sharePerPerson;
+                    }
+                });
+            });
+
+            let res = `<b>مجموع کل هزینه‌های اشتراکی گروه:</b> ${totalShared.toLocaleString()} تومان<hr>`;
             res += `<b>وضعیت تسویه حساب نهایی با مادرخرج (${treasurer}):</b><br><ul style="padding-right: 15px; margin: 5px 0;">`;
 
             members.forEach(m => {
-                if (m === treasurer) return; // مادرخرج حسابش مرجع است
+                if (m === treasurer) return;
                 let paidByMember = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-                let netBalance = Math.round(perPerson - paidByMember);
+                let totalShareOfMember = memberShares[m] || 0;
+                let netBalance = Math.round(totalShareOfMember - paidByMember);
+                let isSettled = settlementStatus[m] || false;
 
+                res += `<li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                    <span>👤 <b>${m}</b> (سهم مصرفی: ${Math.round(totalShareOfMember).toLocaleString()}ت): `;
+                
                 if (netBalance > 0) {
-                    res += `<li>👤 <b>${m}</b> باید مبلغ <span style="color:var(--danger);"><b>${netBalance.toLocaleString()} تومان</b></span> به مادرخرج پرداخت کند.</li>`;
+                    res += `باید <span style="color:var(--danger);">${netBalance.toLocaleString()} تومان</span> بدهد`;
                 } else if (netBalance < 0) {
-                    res += `<li>👤 مادرخرج باید مبلغ <span style="color:var(--success);"><b>${Math.abs(netBalance).toLocaleString()} تومان</b></span> به <b>${m}</b> پس بدهد.</li>`;
+                    res += `باید <span style="color:var(--success);">${Math.abs(netBalance).toLocaleString()} تومان</span> پس بگیرد`;
                 } else {
-                    res += `<li>👤 <b>${m}</b> تسویه است و بدهکاری/طلبکاری ندارد.</li>`;
+                    res += `تسویه است`;
                 }
+
+                res += `</span><button onclick="toggleSettlement('${m}')" style="width:auto; padding:3px 8px; font-size:11px; margin:0; background:${isSettled ? 'var(--success)' : '#cbd5e1'}; color:${isSettled ? 'white' : '#334155'};">${isSettled ? 'تسویه شد ✅' : 'تسویه نشده ⏳'}</button></li>`;
             });
 
             res += `</ul>`;
             document.getElementById("result").innerHTML = res;
+            if(members.length > 0) document.getElementById("copy-btn").style.display = "block";
+        }
+
+        function copyReportToTelegram() {
+            let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
+            
+            let memberShares = {};
+            members.forEach(m => memberShares[m] = 0);
+            expenses.filter(e => e.type == 'shared').forEach(e => {
+                let sharePerPerson = e.amount / e.participants.length;
+                e.participants.forEach(p => { if (memberShares[p] !== undefined) memberShares[p] += sharePerPerson; });
+            });
+
+            let text = `📊 گزارش نهایی و قفل‌شده‌ی گروه: ${groupName}\n`;
+            text += `👑 مادرخرج: ${treasurer}\n`;
+            text += `💰 مجموع خرج‌های اشتراکی: ${totalShared.toLocaleString()} تومان\n\n`;
+            text += `📌 وضعیت تسویه با مادرخرج:\n`;
+
+            members.forEach(m => {
+                if (m === treasurer) return;
+                let paidByMember = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
+                let totalShareOfMember = memberShares[m] || 0;
+                let netBalance = Math.round(totalShareOfMember - paidByMember);
+                let isSettled = settlementStatus[m] ? '✅ تسویه شد' : '⏳ تسویه نشده';
+
+                text += `▫️ ${m}: `;
+                if (netBalance > 0) {
+                    text += `باید ${netBalance.toLocaleString()} تومان بدهد (${isSettled})\n`;
+                } else if (netBalance < 0) {
+                    text += `باید ${Math.abs(netBalance).toLocaleString()} تومان پس بگیرد (${isSettled})\n`;
+                } else {
+                    text += `بی‌حساب و کتاب (${isSettled})\n`;
+                }
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                alert("گزارش نهایی با موفقیت کپی شد!");
+            });
         }
 
         function showPersonalReport() {
             let selectedPerson = document.getElementById("personal-report-select").value;
+            if (!selectedPerson) return;
+            
             let personalExpenses = expenses.filter(e => e.payer == selectedPerson && e.type == 'personal');
             let totalPersonal = personalExpenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -211,7 +403,7 @@
             if (personalExpenses.length > 0) {
                 resHtml += `<ul style="margin: 5px 0; padding-right: 15px; font-weight: normal; font-size: 12px;">`;
                 personalExpenses.forEach(pe => {
-                    resHtml += `<li>${pe.title}: ${pe.amount.toLocaleString()} تومان</li>`;
+                    resHtml += `<li><span><b>${pe.title}</b> ${pe.note ? '(' + pe.note + ')' : ''}: ${pe.amount.toLocaleString()} تومان</span> ${isLocked ? '' : `<button onclick="deleteExpense(${pe.id})" style="width:auto; padding:2px 6px; background:var(--danger); margin:0; font-size:10px;">حذف</button>`}</li>`;
                 });
                 resHtml += `</ul>`;
             } else {
@@ -219,6 +411,13 @@
             }
 
             document.getElementById("personal-result").innerHTML = resHtml;
+        }
+
+        function resetApp() {
+            if(confirm("آیا مطمئن هستید؟ با این کار تمام اطلاعات این گروه پاک خواهد شد.")) {
+                localStorage.removeItem("dongimongi_data");
+                location.reload();
+            }
         }
     </script>
 </body>
