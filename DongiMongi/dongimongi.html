@@ -26,8 +26,8 @@
         
         <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
-            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)">
-            <input type="number" id="member-count" placeholder="تعداد کل اعضا" oninput="generateInputs()">
+            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)" oninput="saveDraft()">
+            <input type="number" id="member-count" placeholder="تعداد کل اعضا" oninput="generateInputs(); saveDraft();">
             <div id="member-inputs"></div>
             <button id="start-btn" style="display:none; background-color: var(--success);" onclick="setupGroup()">ورود به برنامه</button>
         </div>
@@ -105,7 +105,9 @@
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp; tg.expand();
+        let tg = window.Telegram.WebApp; 
+        try { tg.expand(); } catch(e) {}
+
         let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
 
         window.onload = function() {
@@ -129,13 +131,56 @@
                     renderList();
                     calculate();
                     checkLockState();
+                    return;
+                }
+            }
+
+            // بازیابی پیش‌نویس مرحله اول اگر کاربر فرم را کامل نکرده بوده
+            let savedDraft = localStorage.getItem("dongimongi_draft");
+            if (savedDraft) {
+                let draft = JSON.parse(savedDraft);
+                if (draft.groupName) document.getElementById("group-name").value = draft.groupName;
+                if (draft.memberCount) {
+                    document.getElementById("member-count").value = draft.memberCount;
+                    generateInputs();
+                    
+                    if (draft.names && draft.names.length > 0) {
+                        let nameInputs = document.querySelectorAll(".m-name");
+                        draft.names.forEach((n, idx) => {
+                            if (nameInputs[idx]) nameInputs[idx].value = n;
+                        });
+                    }
+                    
+                    if (draft.treasurerIdx !== undefined && draft.treasurerIdx >= 0) {
+                        let radios = document.getElementsByName("treasurer");
+                        if (radios[draft.treasurerIdx]) {
+                            radios[draft.treasurerIdx].checked = true;
+                        }
+                    }
                 }
             }
         };
 
+        function saveDraft() {
+            let groupNameVal = document.getElementById("group-name").value;
+            let memberCountVal = document.getElementById("member-count").value;
+            let names = Array.from(document.querySelectorAll(".m-name")).map(n => n.value);
+            let radios = document.getElementsByName("treasurer");
+            let tIdx = Array.from(radios).findIndex(r => r.checked);
+            
+            let draft = {
+                groupName: groupNameVal,
+                memberCount: memberCountVal,
+                names: names,
+                treasurerIdx: tIdx
+            };
+            localStorage.setItem("dongimongi_draft", JSON.stringify(draft));
+        }
+
         function saveData() {
             let data = { groupName, members, treasurer, expenses, settlementStatus, isLocked };
             localStorage.setItem("dongimongi_data", JSON.stringify(data));
+            localStorage.removeItem("dongimongi_draft"); // پاک کردن پیش‌نویس بعد از ثبت نهایی
         }
 
         function generateInputs() {
@@ -144,9 +189,9 @@
             container.innerHTML = "";
             for(let i=0; i<count; i++){
                 container.innerHTML += `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-                    <input type="text" class="m-name" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;">
+                    <input type="text" class="m-name" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;" oninput="saveDraft()">
                     <label style="font-size:12px; display:flex; align-items:center; gap:4px; flex:1; cursor:pointer;">
-                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;"> مادرخرج؟
+                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;" onchange="saveDraft()"> مادرخرج؟
                     </label>
                 </div>`;
             }
@@ -416,6 +461,7 @@
         function resetApp() {
             if(confirm("آیا مطمئن هستید؟ با این کار تمام اطلاعات این گروه پاک خواهد شد.")) {
                 localStorage.removeItem("dongimongi_data");
+                localStorage.removeItem("dongimongi_draft");
                 location.reload();
             }
         }
