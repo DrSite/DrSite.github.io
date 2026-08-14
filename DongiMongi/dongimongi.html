@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دنگی‌منگی - نسخه ابری و پیشرفته</title>
+    <title>دنگی‌منگی - نسخه ابری و هوشمند</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <!-- کتابخانه Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -29,7 +29,7 @@
         <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
             <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)" oninput="saveDraft()">
-            <input type="number" id="member-count" placeholder="تعداد کل اعضا" oninput="generateInputs(); saveDraft();">
+            <input type="number" id="member-count" placeholder="تعداد کل اعضا" min="1" max="20" oninput="generateInputs(); saveDraft();" onchange="generateInputs(); saveDraft();">
             <div id="member-inputs"></div>
             <button id="start-btn" style="display:none; background-color: var(--success);" onclick="setupGroup()">ورود به برنامه</button>
         </div>
@@ -104,12 +104,13 @@
         let tg = window.Telegram.WebApp; 
         try { tg.expand(); } catch(e) {}
 
-        // ⚠️ اطلاعات اتصال به Supabase خود را اینجا قرار دهید:
         const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
         const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
         const supabase = window.supabase.createClient(SUP_URL, SUP_KEY);
 
         let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
+        let tgUser = tg.initDataUnsafe?.user;
+        let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
 
         window.onload = async function() {
             try {
@@ -172,18 +173,26 @@
         }
 
         function generateInputs() {
-            let count = document.getElementById("member-count").value;
+            let countField = document.getElementById("member-count");
+            let count = parseInt(countField.value) || 0;
             let container = document.getElementById("member-inputs");
             container.innerHTML = "";
+            
             for(let i=0; i<count; i++){
+                let defaultName = (i === 0 && telegramFullName) ? telegramFullName : '';
                 container.innerHTML += `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-                    <input type="text" class="m-name" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;" oninput="saveDraft()">
+                    <input type="text" class="m-name" value="${defaultName}" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;" oninput="saveDraft()">
                     <label style="font-size:12px; display:flex; align-items:center; gap:4px; flex:1; cursor:pointer;">
-                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;"> مادرخرج؟
+                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;" ${i === 0 ? 'checked' : ''}> مادرخرج؟
                     </label>
                 </div>`;
             }
-            if(count > 0) document.getElementById("start-btn").style.display = "block";
+            
+            if(count > 0) {
+                document.getElementById("start-btn").style.display = "block";
+            } else {
+                document.getElementById("start-btn").style.display = "none";
+            }
         }
 
         async function setupGroup() {
@@ -352,7 +361,9 @@
             expenses.filter(e => e.type == 'shared').forEach(e => {
                 let sharePerPerson = e.amount / e.participants.length;
                 e.participants.forEach(p => {
-                    if (memberShares[p] !== undefined) memberShares[p] += sharePerPerson;
+                    if (memberShares[p] !== undefined) {
+                        memberShares[p] += sharePerPerson;
+                    }
                 });
             });
 
@@ -452,3 +463,4 @@
     </script>
 </body>
 </html>
+
