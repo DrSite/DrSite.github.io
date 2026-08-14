@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دنگی‌منگی - نسخه امن و ضد-زرنگی</title>
+    <title>دنگی‌منگی - نسخه ابری و پیشرفته</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- کتابخانه Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg-color: #f4f4f5; --card-bg: #ffffff; --primary: #6366f1; --success: #10b981; --danger: #ef4444; }
         body { font-family: sans-serif; background-color: var(--bg-color); margin: 0; padding: 16px; }
@@ -67,9 +69,8 @@
                     <option value="personal">🔒 شخصی و محرمانه (فقط در گزارش خودم)</option>
                 </select>
 
-                <!-- بخش انتخاب افراد شرکت کننده در این خرج خاص -->
                 <div id="participants-container">
-                    <label style="font-size: 13px; font-weight: bold; color: var(--danger);">⚠️ این هزینه دقیقاً بین چه کسانی تقسیم شود؟ (حواست باشه کسی رو از قلم نندازی یا اضافه نکنی!)</label>
+                    <label style="font-size: 13px; font-weight: bold; color: var(--danger);">⚠️ این هزینه دقیقاً بین چه کسانی تقسیم شود؟</label>
                     <div id="participant-checkboxes" class="checkbox-group"></div>
                 </div>
                 
@@ -82,15 +83,11 @@
             <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی تسویه حساب با مادرخرج</button>
             <div id="result" style="margin-top:20px; line-height: 2; font-size: 14px;"></div>
 
-            <!-- دکمه کپی گزارش برای تلگرام -->
             <button id="copy-btn" style="display:none; background-color: #0ea5e9; margin-top: 10px;" onclick="copyReportToTelegram()">📋 کپی گزارش برای ارسال در گروه تلگرام</button>
-
-            <!-- دکمه پایان سفر توسط مادرخرج -->
             <button id="end-trip-btn" style="display:none; background-color: #f59e0b; margin-top: 10px;" onclick="endTrip()">🔒 پایان سفر و قفل کردن دائمی حساب‌ها</button>
 
             <hr style="margin: 20px 0;" id="divider-hr">
             
-            <!-- بخش استعلام گزارش شخصی و محرمانه هر فرد -->
             <div id="personal-section" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
                 <h4 style="margin-top: 0; color: #475569;">🔒 مشاهده گزارش شخصی و محرمانه</h4>
                 <label style="font-size: 12px; font-weight: bold;">نام خود را انتخاب کنید تا هزینه‌های شخصی‌تان را ببینید:</label>
@@ -99,7 +96,6 @@
                 <div id="personal-result" style="margin-top: 10px; font-size: 13px; color: #334155; font-weight: bold;"></div>
             </div>
             
-            <!-- دکمه ریست کامل اطلاعات گروه -->
             <button onclick="resetApp()" style="background-color: var(--danger); margin-top: 25px; font-size: 12px; padding: 8px;">🗑️ پاک کردن کل اطلاعات و شروع گروه جدید</button>
         </div>
     </div>
@@ -108,20 +104,33 @@
         let tg = window.Telegram.WebApp; 
         try { tg.expand(); } catch(e) {}
 
+        // ⚠️ اطلاعات اتصال به Supabase خود را اینجا قرار دهید:
+        const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
+        const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
+        const supabase = window.supabase.createClient(SUP_URL, SUP_KEY);
+
         let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
 
-        window.onload = function() {
-            let savedData = localStorage.getItem("dongimongi_data");
-            if (savedData) {
-                let data = JSON.parse(savedData);
-                groupName = data.groupName || "";
-                members = data.members || [];
-                treasurer = data.treasurer || "";
-                expenses = data.expenses || [];
-                settlementStatus = data.settlementStatus || {};
-                isLocked = data.isLocked || false;
+        window.onload = async function() {
+            try {
+                let { data: groupsData } = await supabase
+                    .from('groups')
+                    .select('*')
+                    .limit(1);
 
-                if (members.length > 0) {
+                if (groupsData && groupsData.length > 0) {
+                    let g = groupsData[0];
+                    groupName = g.group_name;
+                    treasurer = g.treasurer;
+                    members = g.members || [];
+                    isLocked = g.is_locked || false;
+
+                    let { data: expData } = await supabase
+                        .from('expenses')
+                        .select('*');
+                    
+                    expenses = expData || [];
+
                     document.getElementById("step1").style.display = "none";
                     document.getElementById("step2").style.display = "block";
                     document.getElementById("display-group").innerText = "گروه: " + groupName;
@@ -133,9 +142,10 @@
                     checkLockState();
                     return;
                 }
+            } catch(err) {
+                console.error("خطا در دریافت اطلاعات از دیتابیس:", err);
             }
 
-            // بازیابی پیش‌نویس مرحله اول اگر کاربر فرم را کامل نکرده بوده
             let savedDraft = localStorage.getItem("dongimongi_draft");
             if (savedDraft) {
                 let draft = JSON.parse(savedDraft);
@@ -143,19 +153,11 @@
                 if (draft.memberCount) {
                     document.getElementById("member-count").value = draft.memberCount;
                     generateInputs();
-                    
                     if (draft.names && draft.names.length > 0) {
                         let nameInputs = document.querySelectorAll(".m-name");
                         draft.names.forEach((n, idx) => {
                             if (nameInputs[idx]) nameInputs[idx].value = n;
                         });
-                    }
-                    
-                    if (draft.treasurerIdx !== undefined && draft.treasurerIdx >= 0) {
-                        let radios = document.getElementsByName("treasurer");
-                        if (radios[draft.treasurerIdx]) {
-                            radios[draft.treasurerIdx].checked = true;
-                        }
                     }
                 }
             }
@@ -165,22 +167,8 @@
             let groupNameVal = document.getElementById("group-name").value;
             let memberCountVal = document.getElementById("member-count").value;
             let names = Array.from(document.querySelectorAll(".m-name")).map(n => n.value);
-            let radios = document.getElementsByName("treasurer");
-            let tIdx = Array.from(radios).findIndex(r => r.checked);
-            
-            let draft = {
-                groupName: groupNameVal,
-                memberCount: memberCountVal,
-                names: names,
-                treasurerIdx: tIdx
-            };
+            let draft = { groupName: groupNameVal, memberCount: memberCountVal, names: names };
             localStorage.setItem("dongimongi_draft", JSON.stringify(draft));
-        }
-
-        function saveData() {
-            let data = { groupName, members, treasurer, expenses, settlementStatus, isLocked };
-            localStorage.setItem("dongimongi_data", JSON.stringify(data));
-            localStorage.removeItem("dongimongi_draft"); // پاک کردن پیش‌نویس بعد از ثبت نهایی
         }
 
         function generateInputs() {
@@ -191,37 +179,37 @@
                 container.innerHTML += `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
                     <input type="text" class="m-name" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;" oninput="saveDraft()">
                     <label style="font-size:12px; display:flex; align-items:center; gap:4px; flex:1; cursor:pointer;">
-                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;" onchange="saveDraft()"> مادرخرج؟
+                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;"> مادرخرج؟
                     </label>
                 </div>`;
             }
             if(count > 0) document.getElementById("start-btn").style.display = "block";
         }
 
-        function setupGroup() {
+        async function setupGroup() {
             let names = document.querySelectorAll(".m-name");
             let radios = document.getElementsByName("treasurer");
             members = Array.from(names).map(n => n.value.trim());
             groupName = document.getElementById("group-name").value.trim() || "سفر";
             
-            if(members.some(m => !m)) {
-                return alert("لطفاً نام تمام اعضا را وارد کنید.");
-            }
-
+            if(members.some(m => !m)) return alert("لطفاً نام تمام اعضا را وارد کنید.");
             let tIdx = Array.from(radios).findIndex(r => r.checked);
             if(tIdx == -1) return alert("لطفاً مادرخرج را انتخاب کنید.");
             
             treasurer = members[tIdx];
             isLocked = false;
-            saveData();
 
-            document.getElementById("step1").style.display = "none";
-            document.getElementById("step2").style.display = "block";
-            document.getElementById("display-group").innerText = "گروه: " + groupName;
-            document.getElementById("display-treasurer").innerText = treasurer;
-            updateDropdowns();
-            renderParticipantCheckboxes();
-            checkLockState();
+            let { error } = await supabase.from('groups').upsert([
+                { id: 'main_group', group_name: groupName, treasurer: treasurer, members: members, is_locked: isLocked }
+            ]);
+
+            if (error) {
+                alert("خطا در ثبت گروه: " + error.message);
+                return;
+            }
+
+            localStorage.removeItem("dongimongi_draft");
+            location.reload();
         }
 
         function renderParticipantCheckboxes() {
@@ -250,12 +238,13 @@
             }
         }
 
-        function endTrip() {
-            if(confirm("آیا از پایان سفر مطمئن هستید؟ با این کار فرم‌های ثبت هزینه قفل می‌شوند تا دیگر کسی نتواند چیزی را تغییر دهد.")) {
+        async function endTrip() {
+            if(confirm("آیا از پایان سفر مطمئن هستید؟")) {
                 isLocked = true;
-                saveData();
+                let { error } = await supabase.from('groups').update({ is_locked: true }).eq('id', 'main_group');
+                if (error) return alert("خطا: " + error.message);
                 checkLockState();
-                alert("سفر با موفقیت قفل شد!");
+                alert("سفر قفل شد!");
             }
         }
 
@@ -275,8 +264,8 @@
             s2.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
         }
 
-        function addExpense() {
-            if (isLocked) return alert("سفر قفل شده است و امکان ثبت هزینه جدید وجود ندارد.");
+        async function addExpense() {
+            if (isLocked) return alert("سفر قفل شده است.");
             let title = document.getElementById("expense-title").value.trim();
             let note = document.getElementById("expense-note").value.trim();
             let amount = parseFloat(document.getElementById("expense-amount").value);
@@ -284,22 +273,17 @@
             let payer = document.getElementById("payer-select").value;
             let type = document.getElementById("type-select").value;
             
-            if(!title || isNaN(amount) || amount <= 0) {
-                alert("عنوان و مبلغ معتبر وارد کنید.");
-                return;
-            }
+            if(!title || isNaN(amount) || amount <= 0) return alert("عنوان و مبلغ معتبر وارد کنید.");
 
             let participants = [];
             if (type === 'shared') {
-                let checkboxes = document.querySelectorAll(".part-chk:checked");
-                participants = Array.from(checkboxes).map(cb => cb.value);
-                if (participants.length === 0) {
-                    return alert("لطفاً حداقل یک نفر را به عنوان شریک در این هزینه انتخاب کنید.");
-                }
+                participants = Array.from(document.querySelectorAll(".part-chk:checked")).map(cb => cb.value);
+                if (participants.length === 0) return alert("لطفاً حداقل یک نفر را انتخاب کنید.");
             }
 
-            expenses.push({
+            let newExp = {
                 id: Date.now(),
+                group_id: 'main_group',
                 title: title,
                 note: note,
                 amount: amount,
@@ -307,19 +291,21 @@
                 payer: payer,
                 type: type,
                 participants: participants
-            });
+            };
+
+            let { error } = await supabase.from('expenses').insert([newExp]);
+            if (error) return alert("خطا در ثبت هزینه: " + error.message);
+
+            expenses.push(newExp);
             
             document.getElementById("expense-title").value = "";
             document.getElementById("expense-note").value = "";
             document.getElementById("expense-amount").value = "";
             document.querySelectorAll(".part-chk").forEach(cb => cb.checked = true);
 
-            saveData();
             renderList();
             calculate();
-            if(type === 'personal') {
-                showPersonalReport();
-            }
+            if(type === 'personal') showPersonalReport();
         }
 
         function renderList() {
@@ -341,10 +327,13 @@
             </li>`).join("");
         }
 
-        function deleteExpense(id) {
+        async function deleteExpense(id) {
             if (isLocked) return alert("سفر قفل شده است.");
+            
+            let { error } = await supabase.from('expenses').delete().eq('id', id);
+            if (error) return alert("خطا در حذف: " + error.message);
+
             expenses = expenses.filter(e => e.id !== id);
-            saveData();
             renderList();
             calculate();
             showPersonalReport();
@@ -352,22 +341,18 @@
 
         function toggleSettlement(member) {
             settlementStatus[member] = !settlementStatus[member];
-            saveData();
             calculate();
         }
 
         function calculate() {
             let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            
             let memberShares = {};
             members.forEach(m => memberShares[m] = 0);
 
             expenses.filter(e => e.type == 'shared').forEach(e => {
                 let sharePerPerson = e.amount / e.participants.length;
                 e.participants.forEach(p => {
-                    if (memberShares[p] !== undefined) {
-                        memberShares[p] += sharePerPerson;
-                    }
+                    if (memberShares[p] !== undefined) memberShares[p] += sharePerPerson;
                 });
             });
 
@@ -402,7 +387,6 @@
 
         function copyReportToTelegram() {
             let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            
             let memberShares = {};
             members.forEach(m => memberShares[m] = 0);
             expenses.filter(e => e.type == 'shared').forEach(e => {
@@ -458,9 +442,9 @@
             document.getElementById("personal-result").innerHTML = resHtml;
         }
 
-        function resetApp() {
-            if(confirm("آیا مطمئن هستید؟ با این کار تمام اطلاعات این گروه پاک خواهد شد.")) {
-                localStorage.removeItem("dongimongi_data");
+        async function resetApp() {
+            if(confirm("آیا مطمئن هستید؟ با این کار تمام اطلاعات این گروه از پایگاه داده پاک خواهد شد.")) {
+                await supabase.from('groups').delete().eq('id', 'main_group');
                 localStorage.removeItem("dongimongi_draft");
                 location.reload();
             }
