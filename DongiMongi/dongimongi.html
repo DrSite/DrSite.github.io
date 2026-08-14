@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>دنگی‌منگی - نسخه ابری و هوشمند</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- کتابخانه Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root { --bg-color: #f4f4f5; --card-bg: #ffffff; --primary: #6366f1; --success: #10b981; --danger: #ef4444; }
@@ -144,22 +143,26 @@
                     return;
                 }
             } catch(err) {
-                console.error("خطا در دریافت اطلاعات از دیتابیس:", err);
+                console.error("خطا در ارتباط با سوپابیس:", err);
             }
 
             let savedDraft = localStorage.getItem("dongimongi_draft");
             if (savedDraft) {
-                let draft = JSON.parse(savedDraft);
-                if (draft.groupName) document.getElementById("group-name").value = draft.groupName;
-                if (draft.memberCount) {
-                    document.getElementById("member-count").value = draft.memberCount;
-                    generateInputs();
-                    if (draft.names && draft.names.length > 0) {
-                        let nameInputs = document.querySelectorAll(".m-name");
-                        draft.names.forEach((n, idx) => {
-                            if (nameInputs[idx]) nameInputs[idx].value = n;
-                        });
+                try {
+                    let draft = JSON.parse(savedDraft);
+                    if (draft.groupName) document.getElementById("group-name").value = draft.groupName;
+                    if (draft.memberCount) {
+                        document.getElementById("member-count").value = draft.memberCount;
+                        generateInputs();
+                        if (draft.names && draft.names.length > 0) {
+                            let nameInputs = document.querySelectorAll(".m-name");
+                            draft.names.forEach((n, idx) => {
+                                if (nameInputs[idx]) nameInputs[idx].value = n;
+                            });
+                        }
                     }
+                } catch(e) {
+                    console.error("خطا در خواندن اطلاعات ذخیره شده:", e);
                 }
             }
         };
@@ -176,6 +179,7 @@
             let countField = document.getElementById("member-count");
             let count = parseInt(countField.value) || 0;
             let container = document.getElementById("member-inputs");
+            if (!container) return;
             container.innerHTML = "";
             
             for(let i=0; i<count; i++){
@@ -188,10 +192,9 @@
                 </div>`;
             }
             
-            if(count > 0) {
-                document.getElementById("start-btn").style.display = "block";
-            } else {
-                document.getElementById("start-btn").style.display = "none";
+            let startBtn = document.getElementById("start-btn");
+            if(startBtn) {
+                startBtn.style.display = (count > 0) ? "block" : "none";
             }
         }
 
