@@ -23,7 +23,7 @@
 <body>
     <div class="container">
         <h2>🪙 دنگی‌منگی 💸</h2>
-        
+
         <div class="card" id="step1">
             <h3>تنظیمات اولیه گروه</h3>
             <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)" oninput="saveDraft()">
@@ -101,7 +101,6 @@
         let tg = window.Telegram.WebApp; 
         try { tg.expand(); } catch(e) {}
 
-        // مشخصات Supabase شما
         const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
         const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
 
@@ -109,24 +108,31 @@
         let tgUser = tg.initDataUnsafe?.user;
         let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
 
-        // توابع ارتباط مستقیم با Supabase بدون نیاز به کتابخانه خارجی
         async function dbFetch(endpoint, method = 'GET', data = null) {
-            if (SUP_URL === 'لینک_supabase_شما') return null;
             try {
                 let options = {
-                    method: method,
+                    method,
                     headers: {
                         'apikey': SUP_KEY,
-                        'Authorization': 'Bearer ' + SUP_KEY,
+                        'Authorization': `Bearer ${SUP_KEY}`,
                         'Content-Type': 'application/json',
                         'Prefer': 'resolution=merge-duplicates'
                     }
                 };
+
                 if (data) options.body = JSON.stringify(data);
-                let response = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
-                if (method === 'GET') return await response.json();
-                return response.ok;
-            } catch(e) {
+
+                const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+
+                if (!res.ok) {
+                    console.log("❌ DB ERROR:", res.status, await res.text());
+                    return null;
+                }
+
+                if (method === 'GET') return await res.json();
+                return true;
+
+            } catch (e) {
                 console.log("DB error:", e);
                 return null;
             }
