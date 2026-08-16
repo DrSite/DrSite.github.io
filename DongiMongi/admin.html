@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="utf-8" />
-<title>پنل ادمین حرفه‌ای</title>
+<title>پنل ادمین حرفه‌ای Dongimongi</title>
 <style>
 body {
     background:#0f172a;
@@ -11,7 +11,7 @@ body {
     padding:40px;
 }
 .box {
-    max-width:600px;
+    max-width:700px;
     margin:auto;
     background:#1e293b;
     padding:20px;
@@ -52,24 +52,61 @@ button {
 .action-btn-danger {
     background:#ef4444;
 }
+#login-box {
+    max-width:350px;
+    margin:auto;
+    background:#1e293b;
+    padding:20px;
+    border-radius:12px;
+}
 </style>
 </head>
 <body>
 
-<div class="box">
-    <h2>پنل ادمین حرفه‌ای</h2>
+<!-- LOGIN -->
+<div id="login-box">
+    <h2>ورود ادمین</h2>
+    <input id="admin-user" placeholder="نام کاربری" />
+    <input id="admin-pass" placeholder="رمز عبور" type="password" />
+    <button onclick="adminLogin()">ورود</button>
+    <p id="login-msg" style="color:#ef4444"></p>
+</div>
 
-    <input id="search" placeholder="جستجوی کاربر با آیدی یا نام..." oninput="searchUser()" />
+<!-- PANEL -->
+<div id="panel" style="display:none">
+    <div class="box">
+        <h2>پنل ادمین حرفه‌ای</h2>
 
-    <div id="results"></div>
+        <input id="search" placeholder="جستجوی کاربر با آیدی یا نام..." oninput="searchUser()" />
 
-    <p id="msg" style="margin-top:15px;color:#22c55e"></p>
+        <div id="results"></div>
+
+        <p id="msg" style="margin-top:15px;color:#22c55e"></p>
+    </div>
 </div>
 
 <script>
+/* ====== تنظیمات سوپابیس ====== */
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
 
+/* ====== ورود ادمین ====== */
+const ADMIN_USER = "dongimongi";     // نام کاربری ادمین
+const ADMIN_PASS = "A97gg%20ffB6@";    // رمز ادمین
+
+function adminLogin() {
+    let u = document.getElementById("admin-user").value.trim();
+    let p = document.getElementById("admin-pass").value.trim();
+
+    if (u === ADMIN_USER && p === ADMIN_PASS) {
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+    } else {
+        document.getElementById("login-msg").innerText = "نام کاربری یا رمز اشتباه است.";
+    }
+}
+
+/* ====== توابع سوپابیس ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
     try {
         let options = {
@@ -89,6 +126,7 @@ async function dbFetch(endpoint, method = 'GET', data = null) {
     } catch(e) { return null; }
 }
 
+/* ====== جستجوی کاربر ====== */
 async function searchUser() {
     let q = document.getElementById("search").value.trim();
     if (!q) {
@@ -116,6 +154,7 @@ async function searchUser() {
             <button class="action-btn action-btn-danger" onclick="removePremium(${u.id})">حذف اشتراک</button>
             <button class="action-btn action-btn-danger" onclick="lockAllGroups(${u.id})">قفل همه گروه‌ها</button>
             <button class="action-btn action-btn-danger" onclick="deleteAllGroups(${u.id})">حذف همه گروه‌ها</button>
+            <button class="action-btn" onclick="showGroups(${u.id})">نمایش گروه‌ها</button>
         </div>
         `;
     });
@@ -123,6 +162,7 @@ async function searchUser() {
     document.getElementById("results").innerHTML = html;
 }
 
+/* ====== فعال‌سازی اشتراک ====== */
 async function activatePremium(userId) {
     let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
     await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
@@ -132,6 +172,7 @@ async function activatePremium(userId) {
     document.getElementById("msg").innerText = "اشتراک فعال شد!";
 }
 
+/* ====== تمدید اشتراک ====== */
 async function extendPremium(userId) {
     let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
     await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
@@ -140,6 +181,7 @@ async function extendPremium(userId) {
     document.getElementById("msg").innerText = "اشتراک تمدید شد!";
 }
 
+/* ====== حذف اشتراک ====== */
 async function removePremium(userId) {
     await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
         plan: 'free',
@@ -148,6 +190,7 @@ async function removePremium(userId) {
     document.getElementById("msg").innerText = "اشتراک حذف شد!";
 }
 
+/* ====== قفل همه گروه‌ها ====== */
 async function lockAllGroups(userId) {
     await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', {
         is_locked: true
@@ -155,9 +198,35 @@ async function lockAllGroups(userId) {
     document.getElementById("msg").innerText = "همه گروه‌ها قفل شدند!";
 }
 
+/* ====== حذف همه گروه‌ها ====== */
 async function deleteAllGroups(userId) {
     await dbFetch(`groups?user_id=eq.${userId}`, 'DELETE');
     document.getElementById("msg").innerText = "همه گروه‌ها حذف شدند!";
+}
+
+/* ====== نمایش گروه‌های کاربر ====== */
+async function showGroups(userId) {
+    let groups = await dbFetch(`groups?user_id=eq.${userId}`);
+    if (!groups || groups.length === 0) {
+        document.getElementById("msg").innerText = "هیچ گروهی یافت نشد.";
+        return;
+    }
+
+    let html = "<h3>گروه‌های کاربر:</h3>";
+    groups.forEach(g => {
+        html += `
+            <div class="user-item">
+                <b>${g.group_name}</b><br>
+                آیدی گروه: ${g.id}<br>
+                مادرخرج: ${g.treasurer}<br>
+                اعضا: ${g.members.join(", ")}<br>
+                وضعیت: ${g.is_locked ? "قفل" : "باز"}<br>
+                تاریخ ساخت: ${g.created_at}<br>
+            </div>
+        `;
+    });
+
+    document.getElementById("results").innerHTML = html;
 }
 </script>
 
