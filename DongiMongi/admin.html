@@ -2,7 +2,7 @@
 <html lang="fa">
 <head>
 <meta charset="utf-8" />
-<title>پنل ادمین - فعال‌سازی اشتراک</title>
+<title>پنل ادمین حرفه‌ای</title>
 <style>
 body {
     background:#0f172a;
@@ -11,13 +11,13 @@ body {
     padding:40px;
 }
 .box {
-    max-width:400px;
+    max-width:600px;
     margin:auto;
     background:#1e293b;
     padding:20px;
     border-radius:12px;
 }
-input {
+input, select {
     width:100%;
     padding:10px;
     margin-top:10px;
@@ -35,16 +35,33 @@ button {
     font-size:16px;
     cursor:pointer;
 }
+.user-item {
+    background:#0f172a;
+    padding:10px;
+    border-radius:8px;
+    margin-top:10px;
+}
+.action-btn {
+    background:#22c55e;
+    padding:6px 10px;
+    border-radius:6px;
+    border:0;
+    cursor:pointer;
+    margin-left:5px;
+}
+.action-btn-danger {
+    background:#ef4444;
+}
 </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>فعال‌سازی اشتراک پریمیوم</h2>
-    <p>آیدی تلگرام کاربر را وارد کنید:</p>
-    <input id="uid" placeholder="مثلاً: 123456789" />
+    <h2>پنل ادمین حرفه‌ای</h2>
 
-    <button onclick="activatePremium()">فعال‌سازی اشتراک</button>
+    <input id="search" placeholder="جستجوی کاربر با آیدی یا نام..." oninput="searchUser()" />
+
+    <div id="results"></div>
 
     <p id="msg" style="margin-top:15px;color:#22c55e"></p>
 </div>
@@ -72,25 +89,75 @@ async function dbFetch(endpoint, method = 'GET', data = null) {
     } catch(e) { return null; }
 }
 
-async function activatePremium() {
-    let userId = document.getElementById("uid").value.trim();
-    if (!userId) {
-        document.getElementById("msg").innerText = "آیدی را وارد کنید.";
+async function searchUser() {
+    let q = document.getElementById("search").value.trim();
+    if (!q) {
+        document.getElementById("results").innerHTML = "";
         return;
     }
 
-    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+    let users = await dbFetch(`users?full_name=ilike.*${q}*`);
+    let byId = await dbFetch(`users?id=eq.${q}`);
 
-    let ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
+    let all = [...(users || []), ...(byId || [])];
+
+    let html = "";
+    all.forEach(u => {
+        html += `
+        <div class="user-item">
+            <b>${u.full_name}</b><br>
+            آیدی: ${u.id}<br>
+            پلن: ${u.plan}<br>
+            معرفی‌ها: ${u.referral_count || 0}<br>
+            پایان اشتراک: ${u.premium_expire_at || "—"}<br>
+
+            <button class="action-btn" onclick="activatePremium(${u.id})">فعال‌سازی پریمیوم</button>
+            <button class="action-btn" onclick="extendPremium(${u.id})">تمدید ۳۰ روز</button>
+            <button class="action-btn action-btn-danger" onclick="removePremium(${u.id})">حذف اشتراک</button>
+            <button class="action-btn action-btn-danger" onclick="lockAllGroups(${u.id})">قفل همه گروه‌ها</button>
+            <button class="action-btn action-btn-danger" onclick="deleteAllGroups(${u.id})">حذف همه گروه‌ها</button>
+        </div>
+        `;
+    });
+
+    document.getElementById("results").innerHTML = html;
+}
+
+async function activatePremium(userId) {
+    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
         plan: 'premium',
         premium_expire_at: expire
     });
+    document.getElementById("msg").innerText = "اشتراک فعال شد!";
+}
 
-    if (ok) {
-        document.getElementById("msg").innerText = "اشتراک پریمیوم فعال شد!";
-    } else {
-        document.getElementById("msg").innerText = "خطا در فعال‌سازی اشتراک.";
-    }
+async function extendPremium(userId) {
+    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
+        premium_expire_at: expire
+    });
+    document.getElementById("msg").innerText = "اشتراک تمدید شد!";
+}
+
+async function removePremium(userId) {
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
+        plan: 'free',
+        premium_expire_at: null
+    });
+    document.getElementById("msg").innerText = "اشتراک حذف شد!";
+}
+
+async function lockAllGroups(userId) {
+    await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', {
+        is_locked: true
+    });
+    document.getElementById("msg").innerText = "همه گروه‌ها قفل شدند!";
+}
+
+async function deleteAllGroups(userId) {
+    await dbFetch(`groups?user_id=eq.${userId}`, 'DELETE');
+    document.getElementById("msg").innerText = "همه گروه‌ها حذف شدند!";
 }
 </script>
 
