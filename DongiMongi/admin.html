@@ -2,87 +2,183 @@
 <html lang="fa">
 <head>
 <meta charset="utf-8" />
-<title>پنل ادمین حرفه‌ای Dongimongi</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>پنل ادمین Enterprise - Dongimongi</title>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
-body {
-    background:#0f172a;
-    color:white;
-    font-family:tahoma;
-    padding:40px;
+:root{
+  --bg:#071029; --card:#0b1220; --muted:#94a3b8; --accent:#0284c7;
+  --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.03);
 }
-.box {
-    max-width:700px;
-    margin:auto;
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-}
-input, select {
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border-radius:8px;
-    border:0;
-}
-button {
-    width:100%;
-    padding:12px;
-    margin-top:15px;
-    background:#0284c7;
-    color:white;
-    border:0;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-}
-.user-item {
-    background:#0f172a;
-    padding:10px;
-    border-radius:8px;
-    margin-top:10px;
-}
-.action-btn {
-    background:#22c55e;
-    padding:6px 10px;
-    border-radius:6px;
-    border:0;
-    cursor:pointer;
-    margin-left:5px;
-}
-.action-btn-danger {
-    background:#ef4444;
-}
-#login-box {
-    max-width:350px;
-    margin:auto;
-    background:#1e293b;
-    padding:20px;
-    border-radius:12px;
-}
+body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#071029,#071a2a);color:#e6eef8}
+.container{max-width:1200px;margin:24px auto;padding:18px;background:var(--card);border-radius:12px;box-shadow:0 8px 40px rgba(2,6,23,0.6)}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.h-title{font-weight:700;font-size:20px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+.row{display:flex;gap:8px;align-items:center}
+.input,select{width:100%;padding:8px;border-radius:8px;border:0;background:var(--glass);color:#e6eef8}
+.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+.btn-sm{padding:6px 8px;font-size:13px}
+.btn-danger{background:var(--danger)}
+.table{width:100%;border-collapse:collapse;margin-top:8px}
+.table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:right;font-size:13px}
+.user-item{display:flex;justify-content:space-between;align-items:center}
+.kpi{display:flex;gap:10px;align-items:center}
+.kpi .box{background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;text-align:center;min-width:120px}
+.log{max-height:220px;overflow:auto;padding:6px;background:rgba(0,0,0,0.12);border-radius:8px}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
+.badge{background:#0ea5e9;color:#042f4a;padding:4px 8px;border-radius:8px;font-weight:600}
 </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="login-box">
-    <h2>ورود ادمین</h2>
-    <input id="admin-user" placeholder="نام کاربری" />
-    <input id="admin-pass" placeholder="رمز عبور" type="password" />
-    <button onclick="adminLogin()">ورود</button>
-    <p id="login-msg" style="color:#ef4444"></p>
-</div>
-
-<!-- PANEL -->
-<div id="panel" style="display:none">
-    <div class="box">
-        <h2>پنل ادمین حرفه‌ای</h2>
-
-        <input id="search" placeholder="جستجوی کاربر با آیدی یا نام..." oninput="searchUser()" />
-
-        <div id="results"></div>
-
-        <p id="msg" style="margin-top:15px;color:#22c55e"></p>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="h-title">پنل ادمین Enterprise — Dongimongi</div>
+      <div class="small">داشبورد مدیریتی، گزارش‌ها و ابزارهای کنترلی</div>
     </div>
+    <div class="row">
+      <div class="small">وارد شده به عنوان</div>
+      <div class="badge" id="admin-name">Admin</div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login" class="card" style="margin-top:14px">
+    <div style="max-width:420px;margin:auto">
+      <h3>ورود ادمین</h3>
+      <input id="admin-user" class="input" placeholder="نام کاربری" />
+      <input id="admin-pass" class="input" placeholder="رمز عبور" type="password" style="margin-top:8px" />
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn" onclick="adminLogin()">ورود</button>
+        <button class="btn btn-sm" onclick="fillDemo()">پر کردن نمونه</button>
+      </div>
+      <div id="login-msg" class="small" style="margin-top:8px;color:#fca5a5"></div>
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div id="panel" style="display:none">
+    <div class="grid">
+      <div>
+        <!-- KPIs -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4 style="margin:0">خلاصه سریع</h4>
+            <div class="small">به‌روز: <span id="now-time"></span></div>
+          </div>
+          <div class="kpi" style="margin-top:12px">
+            <div class="box">
+              <div class="small">کاربران</div>
+              <div id="k-users" style="font-weight:700;font-size:18px">—</div>
+            </div>
+            <div class="box">
+              <div class="small">گروه‌های فعال</div>
+              <div id="k-active-groups" style="font-weight:700;font-size:18px">—</div>
+            </div>
+            <div class="box">
+              <div class="small">درآمد ماه</div>
+              <div id="k-month-rev" style="font-weight:700;font-size:18px">—</div>
+            </div>
+            <div class="box">
+              <div class="small">ظرفیت مصرفی</div>
+              <div id="k-storage" style="font-weight:700;font-size:18px">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">نمودارها</h4>
+          <canvas id="chart-revenue" height="120"></canvas>
+          <div style="height:12px"></div>
+          <canvas id="chart-active-users" height="80"></canvas>
+        </div>
+
+        <!-- Users & Search -->
+        <div class="card" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4 style="margin:0">مدیریت کاربران</h4>
+            <div style="display:flex;gap:8px">
+              <input id="search" class="input" placeholder="جستجو با آیدی یا نام..." oninput="searchUser()" style="width:320px" />
+              <select id="filter-plan" class="input" onchange="searchUser()" style="width:140px">
+                <option value="">همه پلن‌ها</option>
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table" id="users-table" style="margin-top:10px">
+            <thead>
+              <tr><th>نام</th><th>آیدی</th><th>پلن</th><th>پایان اشتراک</th><th>عملیات</th></tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Groups & Expenses -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">مدیریت گروه‌ها و هزینه‌ها</h4>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="g-user-id" class="input" placeholder="آیدی کاربر برای مشاهده گروه‌ها" style="width:220px" />
+            <button class="btn btn-sm" onclick="loadUserGroups()">نمایش گروه‌ها</button>
+            <input id="g-group-id" class="input" placeholder="آیدی گروه برای مشاهده هزینه‌ها" style="width:220px" />
+            <button class="btn btn-sm" onclick="loadGroupExpenses()">نمایش هزینه‌ها</button>
+          </div>
+
+          <div id="groups-list" style="margin-top:10px"></div>
+          <div id="expenses-list" style="margin-top:10px"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div>
+        <!-- Financial Reports -->
+        <div class="card">
+          <h4 style="margin:0">گزارش‌های مالی</h4>
+          <div style="margin-top:8px">
+            <label class="small">بازه زمانی</label>
+            <input id="report-from" type="date" class="input" />
+            <input id="report-to" type="date" class="input" style="margin-top:6px" />
+            <button class="btn" style="margin-top:8px" onclick="generateFinancialReport()">ایجاد گزارش</button>
+          </div>
+          <div id="financial-report" style="margin-top:10px"></div>
+        </div>
+
+        <!-- Activity Logs -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0">لاگ فعالیت‌ها</h4>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="log-filter" class="input" placeholder="فیلتر لاگ (آیدی، نوع، متن)..." oninput="renderLogs()" />
+            <button class="btn btn-sm" onclick="clearLogs()">پاک کردن لاگ‌ها</button>
+          </div>
+          <div class="log" id="logs"></div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0">عملیات سریع</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <input id="quick-uid" class="input" placeholder="آیدی کاربر" />
+            <button class="btn" onclick="activatePremiumQuick()">فعال‌سازی ۳۰ روزه</button>
+            <button class="btn" onclick="extendPremiumQuick()">تمدید ۳۰ روزه</button>
+            <button class="btn btn-danger" onclick="removePremiumQuick()">حذف اشتراک</button>
+            <button class="btn btn-danger" onclick="lockAllGroupsQuick()">قفل همه گروه‌ها</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="footer">پنل ادمین Enterprise — Dongimongi</div>
+  </div>
 </div>
 
 <script>
@@ -90,145 +186,381 @@ button {
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
 
+/* ====== اعتبارسنجی ادمین (ساده) ====== */
+const ADMIN_USER = "admin";
+const ADMIN_PASS = "StrongPassword123!"; // حتماً تغییر بده
+
+/* ====== وضعیت داخلی ====== */
+let logs = []; // لاگ‌های محلی (همچنین می‌توانی لاگ‌ها را در جدول logs در سوپابیس ذخیره کنی)
+function pushLog(type, userId, message) {
+  const item = { ts: new Date().toISOString(), type, userId: userId||'', message };
+  logs.unshift(item);
+  renderLogs();
+}
+
+/* ====== توابع کمکی برای سوپابیس ====== */
+async function dbFetch(endpoint, method='GET', data=null) {
+  try {
+    let options = { method, headers: {
+      'apikey': SUP_KEY,
+      'Authorization': `Bearer ${SUP_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    }};
+    if (data) options.body = JSON.stringify(data);
+    const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+    if (!res.ok) {
+      console.error('DB ERR', res.status, await res.text());
+      return null;
+    }
+    if (method === 'GET') return await res.json();
+    return true;
+  } catch(e) {
+    console.error(e);
+    return null;
+  }
+}
+
 /* ====== ورود ادمین ====== */
-const ADMIN_USER = "dongimongi";     // نام کاربری ادمین
-const ADMIN_PASS = "A97gg%20ffB6@";    // رمز ادمین
-
 function adminLogin() {
-    let u = document.getElementById("admin-user").value.trim();
-    let p = document.getElementById("admin-pass").value.trim();
-
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-        document.getElementById("login-box").style.display = "none";
-        document.getElementById("panel").style.display = "block";
-    } else {
-        document.getElementById("login-msg").innerText = "نام کاربری یا رمز اشتباه است.";
-    }
+  const u = document.getElementById('admin-user').value.trim();
+  const p = document.getElementById('admin-pass').value.trim();
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('panel').style.display = 'block';
+    document.getElementById('admin-name').innerText = u;
+    document.getElementById('now-time').innerText = new Date().toLocaleString();
+    loadKPIs();
+    initCharts();
+    pushLog('admin_login', '', `Admin ${u} logged in`);
+  } else {
+    document.getElementById('login-msg').innerText = 'نام کاربری یا رمز اشتباه است.';
+  }
 }
 
-/* ====== توابع سوپابیس ====== */
-async function dbFetch(endpoint, method = 'GET', data = null) {
-    try {
-        let options = {
-            method,
-            headers: {
-                'apikey': SUP_KEY,
-                'Authorization': `Bearer ${SUP_KEY}`,
-                'Content-Type': 'application/json',
-                'Prefer': 'resolution=merge-duplicates'
-            }
-        };
-        if (data) options.body = JSON.stringify(data);
-        const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
-        if (!res.ok) return null;
-        if (method === 'GET') return await res.json();
-        return true;
-    } catch(e) { return null; }
+/* ====== پر کردن نمونه برای تست ====== */
+function fillDemo() {
+  document.getElementById('admin-user').value = ADMIN_USER;
+  document.getElementById('admin-pass').value = ADMIN_PASS;
 }
 
-/* ====== جستجوی کاربر ====== */
+/* ====== KPI ها ====== */
+async function loadKPIs() {
+  // کاربران
+  let users = await dbFetch('users?select=id,plan');
+  let userCount = users ? users.length : 0;
+  document.getElementById('k-users').innerText = userCount;
+
+  // گروه‌های فعال
+  let groups = await dbFetch('groups?select=id,is_locked&is_locked=eq.false');
+  document.getElementById('k-active-groups').innerText = groups ? groups.length : 0;
+
+  // درآمد ماهیانه (فرض: جدول payments یا محاسبه از users/referrals)
+  // اگر جدول payments نداری، این بخش نمونه است و باید با منطق پرداخت واقعی جایگزین شود.
+  let payments = await dbFetch('payments?created_at=gte.' + new Date(new Date().getFullYear(), new Date().getMonth(),1).toISOString());
+  let monthRev = 0;
+  if (payments) monthRev = payments.reduce((s,p)=>s+(p.amount||0),0);
+  document.getElementById('k-month-rev').innerText = monthRev ? monthRev.toLocaleString() + ' تومان' : '—';
+
+  // ظرفیت مصرفی (نمونه: محاسبه از گروه‌ها و هزینه‌ها)
+  let allGroups = await dbFetch('groups?select=id,members,created_at');
+  let storageEstimate = 0;
+  if (allGroups) storageEstimate = JSON.stringify(allGroups).length;
+  let usedMB = (storageEstimate/1024).toFixed(1);
+  document.getElementById('k-storage').innerText = usedMB + ' KB';
+}
+
+/* ====== نمودارها ====== */
+let chartRevenue=null, chartActive=null;
+function initCharts() {
+  const ctx = document.getElementById('chart-revenue').getContext('2d');
+  chartRevenue = new Chart(ctx, {
+    type: 'line',
+    data: { labels: [], datasets: [{ label:'درآمد', data:[], borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.08)', tension:0.3 }]},
+    options: { responsive:true, plugins:{legend:{display:false}}}
+  });
+
+  const ctx2 = document.getElementById('chart-active-users').getContext('2d');
+  chartActive = new Chart(ctx2, {
+    type: 'bar',
+    data: { labels: [], datasets: [{ label:'کاربران فعال', data:[], backgroundColor:'#60a5fa' }]},
+    options: { responsive:true, plugins:{legend:{display:false}}}
+  });
+
+  // بارگذاری نمونه داده‌ها
+  loadChartData();
+}
+
+async function loadChartData() {
+  // نمونه‌سازی: اگر جدول payments داری از آن استفاده کن
+  // اینجا برای 6 ماه گذشته نمونه تولید می‌کنیم
+  let labels = [], revData = [], activeData = [];
+  for (let i=5;i>=0;i--) {
+    let d = new Date();
+    d.setMonth(d.getMonth()-i);
+    labels.push(d.toLocaleString('fa-IR',{month:'short',year:'numeric'}));
+    revData.push(Math.floor(Math.random()*5000000)); // نمونه
+    activeData.push(Math.floor(Math.random()*200)); // نمونه
+  }
+  chartRevenue.data.labels = labels;
+  chartRevenue.data.datasets[0].data = revData;
+  chartRevenue.update();
+
+  chartActive.data.labels = labels;
+  chartActive.data.datasets[0].data = activeData;
+  chartActive.update();
+}
+
+/* ====== جستجوی کاربران ====== */
+let lastUsersResult = [];
 async function searchUser() {
-    let q = document.getElementById("search").value.trim();
-    if (!q) {
-        document.getElementById("results").innerHTML = "";
-        return;
-    }
+  const q = document.getElementById('search').value.trim();
+  const plan = document.getElementById('filter-plan').value;
+  let endpoint = 'users?select=id,full_name,plan,premium_expire_at,referral_count';
+  let filters = [];
+  if (q) {
+    if (/^\d+$/.test(q)) filters.push(`id=eq.${q}`);
+    filters.push(`full_name=ilike.*${q}*`);
+  }
+  if (plan) filters.push(`plan=eq.${plan}`);
+  if (filters.length) endpoint += '&or=(' + filters.join(',') + ')';
 
-    let users = await dbFetch(`users?full_name=ilike.*${q}*`);
-    let byId = await dbFetch(`users?id=eq.${q}`);
-
-    let all = [...(users || []), ...(byId || [])];
-
-    let html = "";
-    all.forEach(u => {
-        html += `
-        <div class="user-item">
-            <b>${u.full_name}</b><br>
-            آیدی: ${u.id}<br>
-            پلن: ${u.plan}<br>
-            معرفی‌ها: ${u.referral_count || 0}<br>
-            پایان اشتراک: ${u.premium_expire_at || "—"}<br>
-
-            <button class="action-btn" onclick="activatePremium(${u.id})">فعال‌سازی پریمیوم</button>
-            <button class="action-btn" onclick="extendPremium(${u.id})">تمدید ۳۰ روز</button>
-            <button class="action-btn action-btn-danger" onclick="removePremium(${u.id})">حذف اشتراک</button>
-            <button class="action-btn action-btn-danger" onclick="lockAllGroups(${u.id})">قفل همه گروه‌ها</button>
-            <button class="action-btn action-btn-danger" onclick="deleteAllGroups(${u.id})">حذف همه گروه‌ها</button>
-            <button class="action-btn" onclick="showGroups(${u.id})">نمایش گروه‌ها</button>
-        </div>
-        `;
-    });
-
-    document.getElementById("results").innerHTML = html;
+  let users = await dbFetch(endpoint);
+  lastUsersResult = users || [];
+  renderUsersTable();
 }
 
-/* ====== فعال‌سازی اشتراک ====== */
+function renderUsersTable() {
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = '';
+  lastUsersResult.forEach(u => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${u.full_name || '—'}</td>
+      <td>${u.id}</td>
+      <td>${u.plan || '—'}</td>
+      <td>${u.premium_expire_at ? new Date(u.premium_expire_at).toLocaleString() : '—'}</td>
+      <td>
+        <button class="btn btn-sm" onclick="openUser(${u.id})">باز کردن</button>
+        <button class="btn btn-sm" onclick="activatePremium(${u.id})">فعال</button>
+        <button class="btn btn-sm" onclick="extendPremium(${u.id})">تمدید</button>
+        <button class="btn btn-sm btn-danger" onclick="removePremium(${u.id})">حذف</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ====== باز کردن کاربر (جزئیات) ====== */
+async function openUser(userId) {
+  pushLog('view_user', userId, 'مشاهده جزئیات کاربر');
+  // نمایش گروه‌ها و هزینه‌ها در بخش مربوطه
+  document.getElementById('g-user-id').value = userId;
+  await loadUserGroups();
+}
+
+/* ====== مدیریت گروه‌ها ====== */
+async function loadUserGroups() {
+  const uid = document.getElementById('g-user-id').value.trim();
+  if (!uid) return alert('آیدی کاربر را وارد کنید.');
+  pushLog('load_groups', uid, 'بارگذاری گروه‌های کاربر');
+  const groups = await dbFetch(`groups?user_id=eq.${uid}`);
+  const container = document.getElementById('groups-list');
+  if (!groups || groups.length === 0) {
+    container.innerHTML = '<div class="small">گروهی یافت نشد.</div>';
+    return;
+  }
+  let html = '<h4>گروه‌ها</h4>';
+  groups.forEach(g => {
+    html += `<div class="user-item" style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.02);border-radius:8px">
+      <div>
+        <div><b>${g.group_name}</b> <span class="small">(${g.id})</span></div>
+        <div class="small">مادرخرج: ${g.treasurer} — اعضا: ${g.members ? g.members.join(', ') : '—'}</div>
+        <div class="small">وضعیت: ${g.is_locked ? 'قفل' : 'باز'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn btn-sm" onclick="viewGroup(${g.id})">نمایش هزینه‌ها</button>
+        <button class="btn btn-sm" onclick="toggleLockGroup(${g.id}, ${g.is_locked})">${g.is_locked ? 'باز کردن' : 'قفل کردن'}</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteGroup(${g.id})">حذف گروه</button>
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+/* ====== مشاهده هزینه‌های گروه ====== */
+async function viewGroup(groupId) {
+  document.getElementById('g-group-id').value = groupId;
+  await loadGroupExpenses();
+}
+
+async function loadGroupExpenses() {
+  const gid = document.getElementById('g-group-id').value.trim();
+  if (!gid) return alert('آیدی گروه را وارد کنید.');
+  pushLog('load_expenses', gid, 'بارگذاری هزینه‌های گروه');
+  const exps = await dbFetch(`expenses?group_id=eq.${gid}`);
+  const container = document.getElementById('expenses-list');
+  if (!exps || exps.length === 0) {
+    container.innerHTML = '<div class="small">هیچ هزینه‌ای ثبت نشده.</div>';
+    return;
+  }
+  let html = '<h4>هزینه‌ها</h4><table class="table"><thead><tr><th>عنوان</th><th>مبلغ</th><th>پرداخت‌کننده</th><th>نوع</th><th>عملیات</th></tr></thead><tbody>';
+  exps.forEach(e => {
+    html += `<tr>
+      <td>${e.title}</td>
+      <td>${(e.amount||0).toLocaleString()}</td>
+      <td>${e.payer}</td>
+      <td>${e.type}</td>
+      <td>
+        <button class="btn btn-sm" onclick="deleteExpense(${e.id})">حذف</button>
+      </td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  container.innerHTML = html;
+}
+
+/* ====== عملیات گروه ====== */
+async function toggleLockGroup(groupId, currentlyLocked) {
+  const ok = await dbFetch(`groups?id=eq.${groupId}`, 'PATCH', { is_locked: !currentlyLocked });
+  if (ok) {
+    pushLog('toggle_lock', groupId, `تغییر قفل به ${!currentlyLocked}`);
+    alert('وضعیت گروه تغییر کرد.');
+    loadUserGroups();
+  } else alert('خطا');
+}
+
+async function deleteGroup(groupId) {
+  if (!confirm('آیا از حذف گروه مطمئن هستید؟')) return;
+  const ok = await dbFetch(`groups?id=eq.${groupId}`, 'DELETE');
+  if (ok) {
+    pushLog('delete_group', groupId, 'حذف گروه');
+    alert('گروه حذف شد.');
+    loadUserGroups();
+  } else alert('خطا');
+}
+
+/* ====== عملیات هزینه ====== */
+async function deleteExpense(expId) {
+  if (!confirm('آیا از حذف هزینه مطمئن هستید؟')) return;
+  const ok = await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
+  if (ok) {
+    pushLog('delete_expense', expId, 'حذف هزینه');
+    alert('هزینه حذف شد.');
+    loadGroupExpenses();
+  } else alert('خطا');
+}
+
+/* ====== عملیات اشتراک (سریع) ====== */
 async function activatePremium(userId) {
-    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
-    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
-        plan: 'premium',
-        premium_expire_at: expire
-    });
-    document.getElementById("msg").innerText = "اشتراک فعال شد!";
+  const expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan:'premium', premium_expire_at: expire });
+  if (ok) {
+    pushLog('activate_premium', userId, 'فعال‌سازی ۳۰ روزه');
+    alert('اشتراک فعال شد.');
+    searchUser();
+  } else alert('خطا');
 }
-
-/* ====== تمدید اشتراک ====== */
 async function extendPremium(userId) {
-    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
-    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
-        premium_expire_at: expire
-    });
-    document.getElementById("msg").innerText = "اشتراک تمدید شد!";
+  const expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { premium_expire_at: expire });
+  if (ok) {
+    pushLog('extend_premium', userId, 'تمدید ۳۰ روزه');
+    alert('اشتراک تمدید شد.');
+    searchUser();
+  } else alert('خطا');
 }
-
-/* ====== حذف اشتراک ====== */
 async function removePremium(userId) {
-    await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
-        plan: 'free',
-        premium_expire_at: null
-    });
-    document.getElementById("msg").innerText = "اشتراک حذف شد!";
+  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan:'free', premium_expire_at: null });
+  if (ok) {
+    pushLog('remove_premium', userId, 'حذف اشتراک');
+    alert('اشتراک حذف شد.');
+    searchUser();
+  } else alert('خطا');
 }
 
-/* ====== قفل همه گروه‌ها ====== */
+/* ====== Quick actions (از ورودی سمت راست) ====== */
+function activatePremiumQuick(){ const uid=document.getElementById('quick-uid').value.trim(); if(uid) activatePremium(uid); }
+function extendPremiumQuick(){ const uid=document.getElementById('quick-uid').value.trim(); if(uid) extendPremium(uid); }
+function removePremiumQuick(){ const uid=document.getElementById('quick-uid').value.trim(); if(uid) removePremium(uid); }
+function lockAllGroupsQuick(){ const uid=document.getElementById('quick-uid').value.trim(); if(uid) lockAllGroups(uid); }
+
+/* ====== قفل همه گروه‌ها و حذف همه گروه‌ها ====== */
 async function lockAllGroups(userId) {
-    await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', {
-        is_locked: true
-    });
-    document.getElementById("msg").innerText = "همه گروه‌ها قفل شدند!";
+  const ok = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked:true });
+  if (ok) {
+    pushLog('lock_all_groups', userId, 'قفل همه گروه‌ها');
+    alert('همه گروه‌ها قفل شدند.');
+  } else alert('خطا');
 }
 
 /* ====== حذف همه گروه‌ها ====== */
 async function deleteAllGroups(userId) {
-    await dbFetch(`groups?user_id=eq.${userId}`, 'DELETE');
-    document.getElementById("msg").innerText = "همه گروه‌ها حذف شدند!";
+  if (!confirm('آیا از حذف همه گروه‌ها مطمئن هستید؟')) return;
+  const ok = await dbFetch(`groups?user_id=eq.${userId}`, 'DELETE');
+  if (ok) {
+    pushLog('delete_all_groups', userId, 'حذف همه گروه‌ها');
+    alert('همه گروه‌ها حذف شدند.');
+  } else alert('خطا');
 }
 
-/* ====== نمایش گروه‌های کاربر ====== */
-async function showGroups(userId) {
-    let groups = await dbFetch(`groups?user_id=eq.${userId}`);
-    if (!groups || groups.length === 0) {
-        document.getElementById("msg").innerText = "هیچ گروهی یافت نشد.";
-        return;
-    }
+/* ====== گزارش مالی ====== */
+async function generateFinancialReport() {
+  const from = document.getElementById('report-from').value;
+  const to = document.getElementById('report-to').value;
+  if (!from || !to) return alert('بازه زمانی را انتخاب کنید.');
+  pushLog('generate_report', '', `گزارش مالی از ${from} تا ${to}`);
 
-    let html = "<h3>گروه‌های کاربر:</h3>";
-    groups.forEach(g => {
-        html += `
-            <div class="user-item">
-                <b>${g.group_name}</b><br>
-                آیدی گروه: ${g.id}<br>
-                مادرخرج: ${g.treasurer}<br>
-                اعضا: ${g.members.join(", ")}<br>
-                وضعیت: ${g.is_locked ? "قفل" : "باز"}<br>
-                تاریخ ساخت: ${g.created_at}<br>
-            </div>
-        `;
+  // اگر جدول payments داری از آن استفاده کن؛ در غیر این صورت از expenses نمونه می‌سازیم
+  let payments = await dbFetch(`payments?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
+  let html = '<h4>گزارش مالی</h4>';
+  if (payments && payments.length) {
+    let total = payments.reduce((s,p)=>s+(p.amount||0),0);
+    html += `<div class="small">جمع پرداخت‌ها: ${total.toLocaleString()} تومان</div>`;
+    html += '<table class="table"><thead><tr><th>تاریخ</th><th>آیدی کاربر</th><th>مبلغ</th><th>روش</th></tr></thead><tbody>';
+    payments.forEach(p=>{
+      html += `<tr><td>${p.created_at}</td><td>${p.user_id}</td><td>${(p.amount||0).toLocaleString()}</td><td>${p.method||'—'}</td></tr>`;
     });
-
-    document.getElementById("results").innerHTML = html;
+    html += '</tbody></table>';
+  } else {
+    // fallback: محاسبه از expenses
+    let exps = await dbFetch(`expenses?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
+    if (!exps || exps.length===0) html += '<div class="small">موردی یافت نشد.</div>';
+    else {
+      let total = exps.reduce((s,e)=>s+(e.amount||0),0);
+      html += `<div class="small">جمع هزینه‌ها: ${total.toLocaleString()} تومان</div>`;
+      html += '<table class="table"><thead><tr><th>تاریخ</th><th>عنوان</th><th>مبلغ</th><th>پرداخت‌کننده</th></tr></thead><tbody>';
+      exps.forEach(e=>{
+        html += `<tr><td>${e.created_at||'—'}</td><td>${e.title}</td><td>${(e.amount||0).toLocaleString()}</td><td>${e.payer}</td></tr>`;
+      });
+      html += '</tbody></table>';
+    }
+  }
+  document.getElementById('financial-report').innerHTML = html;
 }
-</script>
 
+/* ====== لاگ‌ها ====== */
+function renderLogs() {
+  const filter = document.getElementById('log-filter').value.trim().toLowerCase();
+  const container = document.getElementById('logs');
+  let items = logs;
+  if (filter) items = items.filter(l => (l.userId + ' ' + l.type + ' ' + l.message).toLowerCase().includes(filter));
+  container.innerHTML = items.map(l => `<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div class="small">${l.ts} — <b>${l.type}</b> — ${l.userId}</div><div>${l.message}</div></div>`).join('');
+}
+
+function clearLogs() {
+  if (!confirm('آیا لاگ‌ها پاک شوند؟')) return;
+  logs = [];
+  renderLogs();
+  pushLog('clear_logs', '', 'پاکسازی لاگ‌ها');
+}
+
+/* ====== کمکی: بارگذاری اولیه ====== */
+window.onload = function() {
+  document.getElementById('now-time').innerText = new Date().toLocaleString();
+  // می‌توان لاگ‌ها را از سوپابیس خواند اگر جدول logs داشته باشی
+  pushLog('panel_load', '', 'بارگذاری پنل ادمین');
+};
+</script>
 </body>
 </html>
