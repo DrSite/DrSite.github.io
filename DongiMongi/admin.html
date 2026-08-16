@@ -222,21 +222,22 @@ async function dbFetch(endpoint, method='GET', data=null) {
 }
 
 /* ====== ورود ادمین ====== */
+const ADMIN_USER = "dongimongi";          // اینجا نام کاربری ادمین را بگذار
+const ADMIN_PASS = "A97gg%20ffB6@"; // اینجا رمز ادمین را بگذار
+
 function adminLogin() {
   const u = document.getElementById('admin-user').value.trim();
   const p = document.getElementById('admin-pass').value.trim();
-  if (u === dongimongi && p === A97gg%20ffB6@) {
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('panel').style.display = 'block';
-    document.getElementById('admin-name').innerText = u;
-    document.getElementById('now-time').innerText = new Date().toLocaleString();
-    loadKPIs();
-    initCharts();
-    pushLog('admin_login', '', `Admin ${u} logged in`);
+
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("panel").style.display = "block";
+      document.getElementById("admin-name").innerText = ADMIN_USER;
   } else {
-    document.getElementById('login-msg').innerText = 'نام کاربری یا رمز اشتباه است.';
+      document.getElementById("login-msg").innerText = "نام کاربری یا رمز اشتباه است.";
   }
 }
+
 
 /* ====== پر کردن نمونه برای تست ====== */
 function fillDemo() {
