@@ -12,26 +12,32 @@
   --bg:#071029; --card:#0b1220; --muted:#94a3b8; --accent:#0284c7;
   --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.03);
 }
-body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#071029,#071a2a);color:#e6eef8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#071029,#071a2a);color:#e6eef8;direction:rtl}
 .container{max-width:1200px;margin:24px auto;padding:18px;background:var(--card);border-radius:12px;box-shadow:0 8px 40px rgba(2,6,23,0.6)}
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .h-title{font-weight:700;font-size:20px}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px}
 .card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
 .row{display:flex;gap:8px;align-items:center}
-.input,select{width:100%;padding:8px;border-radius:8px;border:0;background:var(--glass);color:#e6eef8}
+.input,select{width:100%;padding:10px;border-radius:8px;border:0;background:var(--glass);color:#e6eef8}
 .btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
 .btn-sm{padding:6px 8px;font-size:13px}
 .btn-danger{background:var(--danger)}
 .table{width:100%;border-collapse:collapse;margin-top:8px}
 .table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:right;font-size:13px}
 .user-item{display:flex;justify-content:space-between;align-items:center}
-.kpi{display:flex;gap:10px;align-items:center}
+.kpi{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .kpi .box{background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;text-align:center;min-width:120px}
 .log{max-height:220px;overflow:auto;padding:6px;background:rgba(0,0,0,0.12);border-radius:8px}
 .small{font-size:13px;color:var(--muted)}
 .footer{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
-.badge{background:#0ea5e9;color:#042f4a;padding:4px 8px;border-radius:8px;font-weight:600}
+.badge{background:#0ea5e9;color:#042f4a;padding:6px 10px;border-radius:8px;font-weight:700}
+.login-card{max-width:420px;margin:0 auto;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px}
+.form-label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+.chart-empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:18px}
+.code-sample{background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;margin-top:8px;font-family:monospace;color:#e6eef8}
 </style>
 </head>
 <body>
@@ -49,17 +55,34 @@ body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(1
     </div>
   </div>
 
-  <!-- LOGIN (فقط یک نسخه) -->
+  <!-- LOGIN (یک فرم عمودی: یوزرنیم بالا، پسورد زیرش) -->
   <div id="login" class="card" style="margin-top:14px">
-    <div style="max-width:420px;margin:auto">
-      <h3>ورود ادمین</h3>
-      <input id="admin-user" class="input" placeholder="نام کاربری" />
-      <input id="admin-pass" class="input" placeholder="رمز عبور" type="password" style="margin-top:8px" />
-      <div style="display:flex;gap:8px;margin-top:10px">
+    <div class="login-card">
+      <h3 style="margin:0 0 8px 0">ورود ادمین</h3>
+      <div class="small" style="margin-bottom:12px">نام کاربری و رمز عبور را وارد کنید.</div>
+
+      <label class="form-label">نام کاربری</label>
+      <input id="admin-user" class="input" placeholder="نام کاربری ادمین" />
+
+      <label class="form-label" style="margin-top:10px">رمز عبور</label>
+      <input id="admin-pass" class="input" placeholder="رمز عبور ادمین" type="password" />
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-start">
         <button class="btn" onclick="adminLogin()">ورود</button>
         <button class="btn btn-sm" onclick="fillDemo()">پر کردن نمونه</button>
+        <button class="btn btn-sm" onclick="togglePasswordVisibility()">نمایش/مخفی رمز</button>
       </div>
-      <div id="login-msg" class="small" style="margin-top:8px;color:#fca5a5"></div>
+
+      <div id="login-msg" class="small" style="margin-top:10px;color:#fca5a5"></div>
+
+      <div class="hint">
+        <strong>تذکر:</strong> مقادیر نمونه در پایین نمایش داده شده‌اند؛ در محیط تولید حتماً آن‌ها را تغییر دهید.
+      </div>
+
+      <div class="code-sample">
+        نام کاربری: <span id="sample-user">dongimongi_admin</span><br/>
+        رمز پیشنهادی: <span id="sample-pass">D0ng!M0ng1#2026</span>
+      </div>
     </div>
   </div>
 
@@ -87,9 +110,15 @@ body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(1
         <!-- Charts -->
         <div class="card" style="margin-top:12px">
           <h4 style="margin:0 0 8px 0">نمودارها</h4>
-          <canvas id="chart-revenue" height="120"></canvas>
+          <div id="chart-area-rev">
+            <canvas id="chart-revenue" height="120"></canvas>
+            <div id="chart-revenue-empty" class="chart-empty" style="display:none">داده‌ای برای نمودار درآمد وجود ندارد.</div>
+          </div>
           <div style="height:12px"></div>
-          <canvas id="chart-active-users" height="80"></canvas>
+          <div id="chart-area-act">
+            <canvas id="chart-active-users" height="80"></canvas>
+            <div id="chart-active-empty" class="chart-empty" style="display:none">داده‌ای برای نمودار کاربران فعال وجود ندارد.</div>
+          </div>
         </div>
 
         <!-- Users -->
@@ -180,9 +209,9 @@ body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(1
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
 
-/* ====== ADMIN ====== */
+/* ====== ADMIN (مقادیر نمونه؛ در محیط تولید حتماً تغییر دهید) ====== */
 const ADMIN_USER = "dongimongi";
-const ADMIN_PASS = "A97gg%ffB@";
+const ADMIN_PASS = "A97gg%20ffB6@";
 
 /* ====== LOGS ====== */
 let logs = [];
@@ -194,6 +223,9 @@ function pushLog(type, userId, message) {
 /* ====== FETCH ====== */
 async function dbFetch(endpoint, method='GET', data=null) {
   try {
+    if (!SUP_URL || !SUP_KEY) {
+      return null;
+    }
     let options = { method, headers:{
       'apikey': SUP_KEY,
       'Authorization': `Bearer ${SUP_KEY}`,
@@ -227,7 +259,6 @@ function adminLogin() {
     document.getElementById("panel").style.display = "block";
     document.getElementById("admin-name").innerText = ADMIN_USER;
     pushLog('admin_login', '', `Admin ${u} logged in`);
-    // بارگذاری اولیه پنل
     loadKPIs();
     initCharts();
   } else {
@@ -235,7 +266,14 @@ function adminLogin() {
     pushLog('admin_login_failed', '', `Failed login attempt for ${u}`);
   }
 }
-function fillDemo(){ document.getElementById('admin-user').value=ADMIN_USER; document.getElementById('admin-pass').value=ADMIN_PASS; }
+function fillDemo(){
+  document.getElementById('admin-user').value = ADMIN_USER;
+  document.getElementById('admin-pass').value = ADMIN_PASS;
+}
+function togglePasswordVisibility(){
+  const el = document.getElementById('admin-pass');
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
 
 /* ====== KPIs ====== */
 async function loadKPIs() {
@@ -265,7 +303,7 @@ function initCharts() {
     });
     chartActive = new Chart(document.getElementById('chart-active-users'), {
       type:'bar',
-      data:{ labels:[], datasets:[{ label:'فعال', data:[], backgroundColor:'#60a5fa' }]},
+      data:{ labels:[], datasets:[{ label:'کاربران فعال', data:[], backgroundColor:'#60a5fa' }]},
       options:{ plugins:{legend:{display:false}}, responsive:true }
     });
     loadChartData();
@@ -275,22 +313,55 @@ function initCharts() {
 }
 
 async function loadChartData() {
-  let labels=[], rev=[], act=[];
-  for(let i=5;i>=0;i--){
-    let d=new Date(); d.setMonth(d.getMonth()-i);
-    labels.push(d.toLocaleString('fa-IR',{month:'short',year:'numeric'}));
-    rev.push(Math.floor(Math.random()*5000000));
-    act.push(Math.floor(Math.random()*200));
-  }
-  if (chartRevenue) {
-    chartRevenue.data.labels=labels;
-    chartRevenue.data.datasets[0].data=rev;
-    chartRevenue.update();
-  }
-  if (chartActive) {
-    chartActive.data.labels=labels;
-    chartActive.data.datasets[0].data=act;
-    chartActive.update();
+  try {
+    const now = new Date();
+    const labels = [];
+    const revData = [];
+    const activeData = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
+      const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
+
+      const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
+      const monthSum = payments && payments.length ? payments.reduce((s,p)=>s+(p.amount||0),0) : 0;
+      revData.push(monthSum);
+
+      const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
+      const activeCount = users ? users.length : 0;
+      activeData.push(activeCount);
+
+      labels.push(d.toLocaleString('fa-IR',{month:'short',year:'numeric'}));
+    }
+
+    const hasAnyData = revData.some(v=>v>0) || activeData.some(v=>v>0);
+
+    if (chartRevenue) {
+      chartRevenue.data.labels = labels;
+      chartRevenue.data.datasets[0].data = revData;
+      chartRevenue.update();
+    }
+    if (chartActive) {
+      chartActive.data.labels = labels;
+      chartActive.data.datasets[0].data = activeData;
+      chartActive.update();
+    }
+
+    const revEmptyEl = document.getElementById('chart-revenue-empty');
+    const actEmptyEl = document.getElementById('chart-active-empty');
+    if (!hasAnyData) {
+      if (revEmptyEl) revEmptyEl.style.display = 'flex';
+      if (actEmptyEl) actEmptyEl.style.display = 'flex';
+    } else {
+      if (revEmptyEl) revEmptyEl.style.display = 'none';
+      if (actEmptyEl) actEmptyEl.style.display = 'none';
+    }
+
+    pushLog('charts_loaded', '', hasAnyData ? 'نمودارها با داده واقعی بارگذاری شدند' : 'نمودارها بدون داده واقعی بارگذاری شدند');
+  } catch (e) {
+    console.error('loadChartData error', e);
+    pushLog('chart_error', '', 'خطا در بارگذاری نمودارها');
   }
 }
 
@@ -488,7 +559,6 @@ async function generateFinancialReport() {
   pushLog('generate_report', '', `گزارش مالی از ${from} تا ${to}`);
 
   let html = '<h4>گزارش مالی</h4>';
-  // تلاش برای خواندن از payments
   let payments = await dbFetch(`payments?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
   if (payments && payments.length) {
     let total = payments.reduce((s,p)=>s+(p.amount||0),0);
@@ -499,7 +569,6 @@ async function generateFinancialReport() {
     });
     html += '</tbody></table>';
   } else {
-    // fallback به expenses
     let exps = await dbFetch(`expenses?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
     if (!exps || exps.length===0) html += '<div class="small">موردی یافت نشد.</div>';
     else {
@@ -535,7 +604,7 @@ function clearLogs() {
 window.onload = function() {
   document.getElementById('now-time').innerText = new Date().toLocaleString();
   pushLog('panel_load', '', 'بارگذاری پنل ادمین');
-  // توجه: بارگذاری KPI و چارت‌ها بعد از ورود انجام می‌شود
+  // KPI و چارت‌ها بعد از ورود بارگذاری می‌شوند
 };
 </script>
 </body>
