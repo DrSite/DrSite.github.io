@@ -55,7 +55,7 @@ body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(1
     </div>
   </div>
 
-  <!-- LOGIN (یک فرم عمودی: یوزرنیم بالا، پسورد زیرش) -->
+  <!-- LOGIN (فرم عمودی: یوزرنیم بالا، پسورد زیرش) -->
   <div id="login" class="card" style="margin-top:14px">
     <div class="login-card">
       <h3 style="margin:0 0 8px 0">ورود ادمین</h3>
@@ -79,10 +79,7 @@ body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(1
         <strong>تذکر:</strong> مقادیر نمونه در پایین نمایش داده شده‌اند؛ در محیط تولید حتماً آن‌ها را تغییر دهید.
       </div>
 
-      <div class="code-sample">
-        نام کاربری: <span id="sample-user">dongimongi_admin</span><br/>
-        رمز پیشنهادی: <span id="sample-pass">D0ng!M0ng1#2026</span>
-      </div>
+      
     </div>
   </div>
 
@@ -224,6 +221,7 @@ function pushLog(type, userId, message) {
 async function dbFetch(endpoint, method='GET', data=null) {
   try {
     if (!SUP_URL || !SUP_KEY) {
+      // اگر سوپابیس تنظیم نشده، بازگرداندن null تا UI دادهٔ جعلی نساخته شود
       return null;
     }
     let options = { method, headers:{
@@ -267,6 +265,7 @@ function adminLogin() {
   }
 }
 function fillDemo(){
+  // فقط پر کردن فرم با مقادیر نمونه؛ هیچ دادهٔ فیکی وارد دیتابیس نمی‌شود
   document.getElementById('admin-user').value = ADMIN_USER;
   document.getElementById('admin-pass').value = ADMIN_PASS;
 }
@@ -277,16 +276,20 @@ function togglePasswordVisibility(){
 
 /* ====== KPIs ====== */
 async function loadKPIs() {
+  // کاربران
   let users = await dbFetch('users?select=id');
   document.getElementById('k-users').innerText = users ? users.length : 0;
 
+  // گروه‌های فعال
   let groups = await dbFetch('groups?select=id,is_locked&is_locked=eq.false');
   document.getElementById('k-active-groups').innerText = groups ? groups.length : 0;
 
+  // درآمد ماهیانه (از payments)
   let payments = await dbFetch('payments?created_at=gte.' + new Date(new Date().getFullYear(), new Date().getMonth(),1).toISOString());
   let monthRev = payments ? payments.reduce((s,p)=>s+(p.amount||0),0) : 0;
   document.getElementById('k-month-rev').innerText = monthRev ? monthRev.toLocaleString() + ' تومان' : '—';
 
+  // ظرفیت مصرفی (نمونه محاسبه)
   let allGroups = await dbFetch('groups?select=id,members');
   let storageEstimate = allGroups ? JSON.stringify(allGroups).length : 0;
   document.getElementById('k-storage').innerText = (storageEstimate/1024).toFixed(1) + ' KB';
@@ -312,6 +315,7 @@ function initCharts() {
   }
 }
 
+/* ====== loadChartData: فقط از داده واقعی استفاده می‌کند؛ اگر داده نباشد پیام خالی نشان می‌دهد ====== */
 async function loadChartData() {
   try {
     const now = new Date();
@@ -324,10 +328,12 @@ async function loadChartData() {
       const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
       const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
+      // خواندن پرداخت‌ها در بازه ماه
       const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
       const monthSum = payments && payments.length ? payments.reduce((s,p)=>s+(p.amount||0),0) : 0;
       revData.push(monthSum);
 
+      // خواندن کاربران ثبت‌شده در آن ماه (معیار ساده)
       const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
       const activeCount = users ? users.length : 0;
       activeData.push(activeCount);
