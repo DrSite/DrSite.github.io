@@ -1,134 +1,127 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<!doctype html>
+<html lang="fa">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>دنگی‌منگی - نسخه ابری و هوشمند</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root { --bg-color: #f4f4f5; --card-bg: #ffffff; --primary: #6366f1; --success: #10b981; --danger: #ef4444; }
-        body { font-family: sans-serif; background-color: var(--bg-color); margin: 0; padding: 16px; }
-        .container { max-width: 500px; margin: 0 auto; }
-        .card { background-color: var(--card-bg); padding: 16px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #d1d5db; box-sizing: border-box; font-size: 14px; }
-        button { background-color: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
-        li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-        .quick-btn { background-color: #e2e8f0; color: #1e293b; padding: 6px 10px; font-size: 12px; border-radius: 6px; width: auto; margin: 0; cursor: pointer; font-weight: normal; }
-        .checkbox-group { background: #f8fafc; padding: 10px; border-radius: 8px; border: 1px solid #e2e8f0; margin: 8px 0; max-height: 150px; overflow-y: auto; }
-        .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 6px; cursor: pointer; }
-        .checkbox-item input { width: auto; margin: 0; }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dongimongi - گروهی</title>
+<style>
+:root{
+  --bg:#0f172a; --card:#0b1220; --muted:#94a3b8; --accent:#0284c7;
+  --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.03);
+}
+html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#071029 0%, #071a2a 100%);color:#e6eef8}
+.container{max-width:820px;margin:18px auto;padding:18px;background:var(--card);border-radius:12px;box-shadow:0 6px 30px rgba(2,6,23,0.6)}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.h-title{font-weight:700;font-size:18px}
+.small{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.input,select,textarea{background:var(--glass);border:1px solid rgba(255,255,255,0.03);padding:8px;border-radius:8px;color:#e6eef8}
+.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+.btn-danger{background:var(--danger)}
+.list{margin-top:12px;padding:10px;background:rgba(255,255,255,0.02);border-radius:8px}
+.checkbox-item{display:inline-block;margin:6px 8px}
+#premium-banner{display:none}
+.lock-badge{background:#fde68a;color:#92400e;padding:6px 10px;border-radius:8px}
+#expense-list li{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+</style>
 </head>
 <body>
-    <div class="container">
-        <h2>🪙 دنگی‌منگی 💸</h2>
+<div class="container">
+  <div class="header">
+    <div>
+      <div class="h-title">Dongimongi</div>
+      <div class="small" id="display-group">گروه: —</div>
+    </div>
+    <div style="text-align:right">
+      <div class="small">کاربر: <span id="display-treasurer">—</span></div>
+      <div id="premium-banner">🔓 برای امکانات کامل، اشتراک پریمیوم تهیه کنید</div>
+    </div>
+  </div>
 
-        <div class="card" id="step1">
-            <h3>تنظیمات اولیه گروه</h3>
-            <input type="text" id="group-name" placeholder="نام گروه (مثلا: سفر شمال)" oninput="saveDraft()">
-            <input type="number" id="member-count" placeholder="تعداد کل اعضا (مثلا 4)" min="1" max="20" oninput="generateInputs(); saveDraft();">
-            <div id="member-inputs"></div>
-            <button id="start-btn" style="display:none; background-color: var(--success);" onclick="setupGroup()">ورود به برنامه</button>
-        </div>
+  <div id="step1">
+    <div style="margin-bottom:10px">
+      <input id="group-name" class="input" placeholder="نام گروه" />
+      <input id="member-count" class="input" type="number" min="2" max="10" placeholder="تعداد اعضا" style="width:120px" />
+      <button class="btn" onclick="generateInputs()">ایجاد فرم اعضا</button>
+    </div>
+    <div id="members-inputs" class="list"></div>
+    <div style="margin-top:10px">
+      <button class="btn" onclick="setupGroup()">ساخت گروه</button>
+    </div>
+  </div>
 
-        <div class="card" id="step2" style="display: none;">
-            <h3 id="display-group" style="color: var(--primary); text-align: center;"></h3>
-            <p style="text-align: center; font-size: 14px;">مادرخرج (کارت‌کش اصلی): <span id="display-treasurer" style="font-weight: bold; color: var(--danger);"></span></p>
-            <div id="lock-badge" style="display:none; text-align:center; background:#fee2e2; color:#991b1b; padding:8px; border-radius:6px; font-weight:bold; margin-bottom:10px;">🔒 این سفر به اتمام رسیده و حساب‌ها قفل شده است</div>
-            <hr>
-            
-            <div id="active-forms">
-                <h4>ثبت خرج جدید</h4>
-                <div class="quick-btns">
-                    <button type="button" class="quick-btn" onclick="setTitle('ناهار / شام')">🍔 ناهار/شام</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('بنزین')">⛽ بنزین</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('اقامت / هتل')">🏨 اقامت/هتل</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('تاکسی / حمل‌ونقل')">🚕 تاکسی</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('کافه / بستنی')">☕ کافه/بستنی</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('تفریحات / ورودی')">🎟️ تفریحات</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('تنقلات')">🍫 تنقلات</button>
-                    <button type="button" class="quick-btn" onclick="setTitle('خرید کلی')">🛒 خرید کلی</button>
-                </div>
-
-                <input type="text" id="expense-title" placeholder="عنوان کلی (یا انتخاب از دکمه‌های بالا)">
-                <input type="text" id="expense-note" placeholder="جزئیات ریز (اختیاری مثل: پفک، آدامس...)">
-                <input type="number" id="expense-amount" placeholder="مبلغ (تومان)">
-                
-                <label style="font-size: 13px; font-weight: bold;">ثبت‌کننده این فاکتور:</label>
-                <select id="creator-select"></select>
-
-                <label style="font-size: 13px; font-weight: bold;">پرداخت‌کننده (چه کسی کارت کشید؟):</label>
-                <select id="payer-select"></select>
-                
-                <label style="font-size: 13px; font-weight: bold;">نوع هزینه:</label>
-                <select id="type-select" onchange="toggleParticipantBox()">
-                    <option value="shared">🌐 اشتراکی (بین افراد منتخب)</option>
-                    <option value="personal">🔒 شخصی و محرمانه</option>
-                </select>
-
-                <div id="participants-container">
-                    <label style="font-size: 13px; font-weight: bold; color: var(--danger);">⚠️ این هزینه بین چه کسانی تقسیم شود؟</label>
-                    <div id="participant-checkboxes" class="checkbox-group"></div>
-                </div>
-                
-                <button onclick="addExpense()">ثبت هزینه در لیست</button>
-            </div>
-            
-            <h4>لیست هزینه‌های اشتراکی گروه:</h4>
-            <ul id="expense-list" style="list-style: none; padding: 0;"></ul>
-            
-            <button style="background-color: var(--success); margin-top: 15px;" onclick="calculate()">محاسبه نهایی تسویه حساب</button>
-            <div id="result" style="margin-top:20px; line-height: 2; font-size: 14px;"></div>
-
-            <button id="copy-btn" style="display:none; background-color: #0ea5e9; margin-top: 10px;" onclick="copyReportToTelegram()">📋 کپی گزارش برای ارسال در تلگرام</button>
-            <button id="end-trip-btn" style="display:none; background-color: #f59e0b; margin-top: 10px;" onclick="endTrip()">🔒 پایان سفر و قفل کردن حساب‌ها</button>
-
-            <hr style="margin: 20px 0;">
-            
-            <div id="personal-section" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                <h4 style="margin-top: 0; color: #475569;">🔒 مشاهده گزارش شخصی و محرمانه</h4>
-                <select id="personal-report-select" onchange="showPersonalReport()"></select>
-                <button onclick="showPersonalReport()" style="background-color: #64748b; margin-top: 4px;">نمایش گزارش شخصی من</button>
-                <div id="personal-result" style="margin-top: 10px; font-size: 13px; color: #334155; font-weight: bold;"></div>
-            </div>
-            
-            <button onclick="resetApp()" style="background-color: var(--danger); margin-top: 25px; font-size: 12px; padding: 8px;">🗑️ پاک کردن کل اطلاعات و شروع گروه جدید</button>
-        </div>
+  <div id="step2" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div id="lock-badge" class="lock-badge" style="display:none">🔒 گروه قفل شده</div>
+      <div>
+        <button id="end-trip-btn" class="btn" onclick="endTrip()">قفل گروه</button>
+        <button class="btn btn-danger" onclick="resetApp()">پاک کردن گروه</button>
+      </div>
     </div>
 
-    <script>
-        let tg = window.Telegram.WebApp; 
-        try { tg.expand(); } catch(e) {}
+    <div id="active-forms">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <input id="expense-title" class="input" placeholder="عنوان هزینه" style="flex:1" />
+        <input id="expense-amount" class="input" placeholder="مبلغ" style="width:140px" />
+        <select id="type-select" class="input" onchange="toggleParticipantBox()" style="width:160px">
+          <option value="shared">اشتراکی</option>
+          <option value="personal">شخصی</option>
+        </select>
+        <select id="creator-select" class="input" style="width:160px"></select>
+        <select id="payer-select" class="input" style="width:160px"></select>
+      </div>
 
-        const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
-        const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
+      <div id="participants-container" style="margin-bottom:8px">
+        <div id="participant-checkboxes"></div>
+      </div>
 
-        let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
-        let tgUser = tg.initDataUnsafe?.user;
+      <div style="display:flex;gap:8px;margin-bottom:8px">
+        <input id="expense-note" class="input" placeholder="یادداشت (اختیاری)" style="flex:1" />
+        <button class="btn" onclick="addExpense()">ثبت هزینه</button>
+      </div>
+    </div>
+
+    <div class="list">
+      <h4 style="margin:6px 0">هزینه‌های اشتراکی</h4>
+      <ul id="expense-list" style="list-style:none;padding:0;margin:0"></ul>
+    </div>
+
+    <div class="list" style="margin-top:10px">
+      <div id="result"></div>
+      <button id="copy-btn" class="btn" style="display:none;margin-top:8px" onclick="copyReportToTelegram()">کپی گزارش</button>
+    </div>
+
+    <div id="personal-section" class="list" style="margin-top:10px">
+      <h4 style="margin:6px 0">گزارش شخصی</h4>
+      <select id="personal-report-select" class="input" onchange="showPersonalReport()"></select>
+      <div id="personal-result" style="margin-top:8px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== تنظیمات سوپابیس ====== */
+const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
+const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
+
+/* ====== وضعیت محلی ====== */
+let tg = window.Telegram?.WebApp || {};
+try { tg.expand(); } catch(e) {}
+let tgUser = tg.initDataUnsafe?.user;
 let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
-let userId = tgUser?.id;
-let userPlan = "free";   // پیش‌فرض
+let userId = tgUser?.id || null;
+let userPlan = "free";
+let premiumExpire = null;
 let currentGroupId = null;
+let groupName = "";
+let treasurer = "";
+let members = [];
+let expenses = [];
+let isLocked = false;
+let settlementStatus = {};
+let referralParam = new URLSearchParams(location.search).get('ref');
 
-async function loadUserPlan() {
-    if (!userId) return;
-
-    let userData = await dbFetch(`users?id=eq.${userId}`);
-
-    if (!userData || userData.length === 0) {
-        // کاربر جدید → ثبت در سوپابیس
-        await dbFetch('users', 'POST', {
-            id: userId,
-            full_name: telegramFullName,
-            plan: 'free'
-        });
-        userPlan = 'free';
-    } else {
-        userPlan = userData[0].plan;
-    }
-}
-
+/* ====== توابع کمکی ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
     try {
         let options = {
@@ -140,388 +133,228 @@ async function dbFetch(endpoint, method = 'GET', data = null) {
                 'Prefer': 'resolution=merge-duplicates'
             }
         };
-
         if (data) options.body = JSON.stringify(data);
-
         const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
-
-        if (!res.ok) {
-            console.log("❌ DB ERROR:", res.status, await res.text());
-            return null;
-        }
-
+        if (!res.ok) return null;
         if (method === 'GET') return await res.json();
         return true;
+    } catch (e) { return null; }
+}
 
-    } catch (e) {
-        console.log("DB error:", e);
-        return null;
+/* ====== مدیریت کاربر و اشتراک ====== */
+async function loadUserPlan() {
+    if (!userId) return;
+
+    let userData = await dbFetch(`users?id=eq.${userId}`);
+    let isNew = false;
+
+    if (!userData || userData.length === 0) {
+        await dbFetch('users', 'POST', {
+            id: userId,
+            full_name: telegramFullName,
+            plan: 'free'
+        });
+        userPlan = 'free';
+        isNew = true;
+    } else {
+        let u = userData[0];
+        userPlan = u.plan || 'free';
+        premiumExpire = u.premium_expire_at ? new Date(u.premium_expire_at) : null;
+
+        if (premiumExpire && premiumExpire < new Date()) {
+            // پایان اشتراک → قفل همه گروه‌ها
+            await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
+
+            // تبدیل به رایگان
+            await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
+                plan: 'free',
+                premium_expire_at: null
+            });
+
+            userPlan = 'free';
+        }
+    }
+
+    // سیستم معرفی
+    if (referralParam && referralParam !== String(userId) && isNew) {
+        let refUser = await dbFetch(`users?id=eq.${referralParam}`);
+        if (refUser && refUser.length > 0) {
+            let newCount = (refUser[0].referral_count || 0) + 1;
+            let patch = { referral_count: newCount };
+            if (newCount >= 15) {
+                let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+                patch.plan = 'premium';
+                patch.premium_expire_at = expire;
+            }
+            await dbFetch(`users?id=eq.${referralParam}`, 'PATCH', patch);
+        }
+    }
+
+    if (userPlan === 'free') {
+        document.getElementById("premium-banner").style.display = "block";
     }
 }
 
+/* ====== قفل خودکار گروه‌های قدیمی ====== */
+async function autoLockOldGroups() {
+    let ts = new Date(Date.now() - 24*3600*1000).toISOString();
+    await dbFetch(`groups?is_locked=eq.false&created_at=lt.${ts}`, 'PATCH', { is_locked: true });
+    await dbFetch(`groups?is_locked=eq.true&created_at=lt.${ts}`, 'DELETE');
+}
 
-                if (data) options.body = JSON.stringify(data);
+/* ====== تولید فرم اعضا ====== */
+function generateInputs() {
+    let cnt = parseInt(document.getElementById("member-count").value) || 0;
+    if (cnt < 2) return alert("حداقل ۲ عضو لازم است.");
+    let container = document.getElementById("members-inputs");
+    container.innerHTML = "";
+    for (let i=0;i<cnt;i++){
+        container.innerHTML += `
+            <div style="margin-bottom:6px">
+                <input class="input m-name" placeholder="نام عضو ${i+1}" style="width:60%"/>
+                <label class="small">مادرخرج؟ <input type="checkbox" class="is-treasurer" /></label>
+            </div>`;
+    }
+}
 
-                const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+/* ====== ساخت گروه ====== */
+async function setupGroup() {
+    if (!userId) return alert("کاربر نامشخص است.");
 
-                if (!res.ok) {
-                    console.log("❌ DB ERROR:", res.status, await res.text());
-                    return null;
-                }
+    let name = document.getElementById("group-name").value.trim();
+    if (!name) return alert("نام گروه را وارد کنید.");
 
-                if (method === 'GET') return await res.json();
-                return true;
+    let nameInputs = Array.from(document.querySelectorAll(".m-name")).map(i => i.value.trim()).filter(x=>x);
+    if (nameInputs.length === 0) return alert("حداقل یک عضو وارد کنید.");
 
-            } catch (e) {
-                console.log("DB error:", e);
-                return null;
-            }
+    /* ===== نسخه رایگان ===== */
+    if (userPlan === 'free') {
+        if (currentGroupId) return alert("نسخه رایگان فقط یک گروه فعال دارد.");
+        let userData = await dbFetch(`users?id=eq.${userId}`);
+        let lastCreated = userData[0].last_group_created_at;
+        if (lastCreated) {
+            let diffHours = (Date.now() - new Date(lastCreated)) / 3600000;
+            if (diffHours < 168) return alert("نسخه رایگان هفته‌ای فقط یک گروه می‌تواند بسازد.");
+        }
+        if (nameInputs.length > 3) return alert("نسخه رایگان فقط ۳ عضو دارد.");
+    }
+
+    /* ===== نسخه پریمیوم ===== */
+    if (userPlan === 'premium') {
+        // محدودیت ۳ گروه فعال
+        let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
+        if (activeGroups.length >= 3) return alert("شما ۳ گروه فعال دارید. ابتدا یکی را قفل کنید.");
+
+        // محدودیت ۱۰ گروه در ماه
+        let monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0,0,0,0);
+        let monthlyGroups = await dbFetch(`groups?user_id=eq.${userId}&created_at=gte.${monthStart.toISOString()}`);
+        if (monthlyGroups.length >= 10) return alert("نسخه پریمیوم ماهانه حداکثر ۱۰ گروه دارد.");
+
+        // محدودیت ساخت هر ۱۲ ساعت
+        let userData = await dbFetch(`users?id=eq.${userId}`);
+        let lastCreated = userData[0].last_group_created_at;
+        if (lastCreated) {
+            let diffHours = (Date.now() - new Date(lastCreated)) / 3600000;
+            if (diffHours < 12) return alert("نسخه پریمیوم هر ۱۲ ساعت فقط یک گروه می‌تواند بسازد.");
         }
 
-        window.onload = async function() {
-               await loadUserPlan();
+        // محدودیت اعضا
+        if (nameInputs.length > 10) return alert("نسخه پریمیوم حداکثر ۱۰ عضو دارد.");
+    }
 
-            currentGroupId = localStorage.getItem("current_group_id");
+    /* ===== ظرفیت حجمی ===== */
+    let size = JSON.stringify(nameInputs).length;
+    if (size > 1024*1024) return alert("ظرفیت ۱MB شما پر شده است.");
 
-            if (currentGroupId) {
-                let groupsData = await dbFetch(`groups?id=eq.${currentGroupId}`);
-                if (groupsData && groupsData.length > 0) {
-                    let g = groupsData[0];
-                    groupName = g.group_name;
-                    treasurer = g.treasurer;
-                    members = g.members || [];
-                    isLocked = g.is_locked || false;
+    /* ===== ساخت گروه ===== */
+    let tre = null;
+    let checkboxes = Array.from(document.querySelectorAll(".is-treasurer"));
+    for (let i=0;i<checkboxes.length;i++){
+        if (checkboxes[i].checked) { tre = nameInputs[i]; break; }
+    }
+    if (!tre) tre = nameInputs[0];
 
-                    let expData = await dbFetch(`expenses?group_id=eq.${currentGroupId}`);
-                    expenses = expData || [];
+    let newGroup = {
+        id: Date.now(),
+        user_id: userId,
+        group_name: name,
+        treasurer: tre,
+        members: nameInputs,
+        is_locked: false,
+        created_at: new Date().toISOString()
+    };
 
-                    document.getElementById("step1").style.display = "none";
-                    document.getElementById("step2").style.display = "block";
-                    document.getElementById("display-group").innerText = "گروه: " + groupName;
-                    document.getElementById("display-treasurer").innerText = treasurer;
-                    updateDropdowns();
-                    renderParticipantCheckboxes();
-                    renderList();
-                    calculate();
-                    checkLockState();
-                    return;
-                } else {
-                    localStorage.removeItem("current_group_id");
-                    currentGroupId = null;
-                }
-            }
+    let ok = await dbFetch('groups', 'POST', newGroup);
+    if (!ok) return alert("خطا در ایجاد گروه.");
 
-            let savedDraft = localStorage.getItem("dongimongi_draft");
-            if (savedDraft) {
-                try {
-                    let draft = JSON.parse(savedDraft);
-                    if (draft.groupName) document.getElementById("group-name").value = draft.groupName;
-                    if (draft.memberCount) {
-                        document.getElementById("member-count").value = draft.memberCount;
-                        generateInputs();
-                        if (draft.names && draft.names.length > 0) {
-                            let nameInputs = document.querySelectorAll(".m-name");
-                            draft.names.forEach((n, idx) => {
-                                if (nameInputs[idx]) nameInputs[idx].value = n;
-                            });
-                        }
-                    }
-                } catch(e) {}
-            }
-        };
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', { last_group_created_at: new Date().toISOString() });
 
-        function saveDraft() {
-            let groupNameVal = document.getElementById("group-name").value;
-            let memberCountVal = document.getElementById("member-count").value;
-            let names = Array.from(document.querySelectorAll(".m-name")).map(n => n.value);
-            let draft = { groupName: groupNameVal, memberCount: memberCountVal, names: names };
-            localStorage.setItem("dongimongi_draft", JSON.stringify(draft));
-        }
+    currentGroupId = newGroup.id;
+    localStorage.setItem("current_group_id", currentGroupId);
 
-        function generateInputs() {
-            let countField = document.getElementById("member-count");
-            if (!countField) return;
-            let count = parseInt(countField.value) || 0;
-            let container = document.getElementById("member-inputs");
-            if (!container) return;
-            container.innerHTML = "";
-            
-            for(let i=0; i<count; i++){
-                let defaultName = (i === 0 && telegramFullName) ? telegramFullName : '';
-                container.innerHTML += `<div style="display:flex; gap:8px; align-items:center; margin-bottom:6px;">
-                    <input type="text" class="m-name" value="${defaultName}" placeholder="نام نفر ${i+1}" style="margin:0; flex:2;" oninput="saveDraft()">
-                    <label style="font-size:12px; display:flex; align-items:center; gap:4px; flex:1; cursor:pointer;">
-                        <input type="radio" name="treasurer" value="${i}" style="width:auto; margin:0;" ${i === 0 ? 'checked' : ''}> مادرخرج؟
-                    </label>
-                </div>`;
-            }
-            
-            let startBtn = document.getElementById("start-btn");
-            if(startBtn) {
-                startBtn.style.display = (count > 0) ? "block" : "none";
-            }
-        }
+    groupName = name;
+    treasurer = tre;
+    members = nameInputs;
+    expenses = [];
+    isLocked = false;
+    settlementStatus = {};
+    members.forEach(m => settlementStatus[m] = false);
 
-        async function setupGroup() {
-            let names = document.querySelectorAll(".m-name");
-            let radios = document.getElementsByName("treasurer");
-            members = Array.from(names).map(n => n.value.trim());
-            groupName = document.getElementById("group-name").value.trim() || "سفر";
-            
-            if(members.some(m => !m)) return alert("لطفاً نام تمام اعضا را وارد کنید.");
-            let tIdx = Array.from(radios).findIndex(r => r.checked);
-            if(tIdx == -1) return alert("لطفاً مادرخرج را انتخاب کنید.");
-            
-            treasurer = members[tIdx];
-            isLocked = false;
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+    document.getElementById("display-group").innerText = "گروه: " + groupName;
+    document.getElementById("display-treasurer").innerText = treasurer;
+    updateDropdowns();
+    renderParticipantCheckboxes();
+    renderList();
+    calculate();
+    checkLockState();
+}
 
-            let newGroupId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("group_" + Date.now());
-            currentGroupId = newGroupId;
+/* ====== چک‌باکس اعضا ====== */
+function renderParticipantCheckboxes() {
+    let container = document.getElementById("participant-checkboxes");
+    if (!container) return;
+    container.innerHTML = members.map(m => `
+        <label class="checkbox-item">
+            <input type="checkbox" class="part-chk" value="${m}" checked> ${m}
+        </label>
+    `).join("");
+}
 
-            await dbFetch('groups', 'POST', {
-                id: newGroupId,
-                group_name: groupName,
-                treasurer: treasurer,
-                members: members,
-                is_locked: isLocked
-            });
+/* ====== نمایش شرکا ====== */
+function toggleParticipantBox() {
+    let type = document.getElementById("type-select").value;
+    document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
+}
 
-            localStorage.setItem("current_group_id", newGroupId);
-            localStorage.removeItem("dongimongi_draft");
-            location.reload();
-        }
+/* ====== وضعیت قفل ====== */
+function checkLockState() {
+    if (isLocked) {
+        document.getElementById("active-forms").style.display = "none";
+        document.getElementById("lock-badge").style.display = "block";
+        document.getElementById("end-trip-btn").style.display = "none";
+    } else {
+        document.getElementById("active-forms").style.display = "block";
+        document.getElementById("lock-badge").style.display = "none";
+        document.getElementById("end-trip-btn").style.display = "block";
+    }
+}
 
-        function renderParticipantCheckboxes() {
-            let container = document.getElementById("participant-checkboxes");
-            if (!container) return;
-            container.innerHTML = members.map(m => `
-                <label class="checkbox-item">
-                    <input type="checkbox" class="part-chk" value="${m}" checked> ${m}
-                </label>
-            `).join("");
-        }
+/* ====== قفل گروه ====== */
+async function endTrip() {
+    if(confirm("آیا از پایان سفر مطمئن هستید؟")) {
+        if (!currentGroupId) return;
+        isLocked = true;
+        await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
+        checkLockState();
+        alert("سفر قفل شد!");
+    }
+}
 
-        function toggleParticipantBox() {
-            let type = document.getElementById("type-select").value;
-            document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
-        }
-
-        function checkLockState() {
-            if (isLocked) {
-                document.getElementById("active-forms").style.display = "none";
-                document.getElementById("lock-badge").style.display = "block";
-                document.getElementById("end-trip-btn").style.display = "none";
-            } else {
-                document.getElementById("active-forms").style.display = "block";
-                document.getElementById("lock-badge").style.display = "none";
-                document.getElementById("end-trip-btn").style.display = "block";
-            }
-        }
-
-        async function endTrip() {
-            if(confirm("آیا از پایان سفر مطمئن هستید؟")) {
-                if (!currentGroupId) return;
-                isLocked = true;
-                await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
-                checkLockState();
-                alert("سفر قفل شد!");
-            }
-        }
-
-        function setTitle(val) {
-            if (isLocked) return;
-            document.getElementById("expense-title").value = val;
-        }
-
-        function updateDropdowns() {
-            let cSelect = document.getElementById("creator-select");
-            if (cSelect) cSelect.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
-
-            let s1 = document.getElementById("payer-select");
-            if (s1) s1.innerHTML = members.map(m => `<option value="${m}">${m} ${m === treasurer ? '(مادرخرج)' : ''}</option>`).join("");
-
-            let s2 = document.getElementById("personal-report-select");
-            if (s2) s2.innerHTML = members.map(m => `<option value="${m}">${m}</option>`).join("");
-        }
-
-        async function addExpense() {
-            if (isLocked) return alert("سفر قفل شده است.");
-            if (!currentGroupId) return alert("گروه نامعتبر است.");
-            let title = document.getElementById("expense-title").value.trim();
-            let note = document.getElementById("expense-note").value.trim();
-            let amount = parseFloat(document.getElementById("expense-amount").value);
-            let creator = document.getElementById("creator-select").value;
-            let payer = document.getElementById("payer-select").value;
-            let type = document.getElementById("type-select").value;
-            
-            if(!title || isNaN(amount) || amount <= 0) return alert("عنوان و مبلغ معتبر وارد کنید.");
-
-            let participants = [];
-            if (type === 'shared') {
-                participants = Array.from(document.querySelectorAll(".part-chk:checked")).map(cb => cb.value);
-                if (participants.length === 0) return alert("لطفاً حداقل یک نفر را انتخاب کنید.");
-            }
-
-            let newExp = {
-                id: Date.now(),
-                group_id: currentGroupId,
-                title: title,
-                note: note,
-                amount: amount,
-                creator: creator,
-                payer: payer,
-                type: type,
-                participants: participants
-            };
-
-            await dbFetch('expenses', 'POST', newExp);
-            expenses.push(newExp);
-            
-            document.getElementById("expense-title").value = "";
-            document.getElementById("expense-note").value = "";
-            document.getElementById("expense-amount").value = "";
-            document.querySelectorAll(".part-chk").forEach(cb => cb.checked = true);
-
-            renderList();
-            calculate();
-            if(type === 'personal') showPersonalReport();
-        }
-
-        function renderList() {
-            let list = document.getElementById("expense-list");
-            if (!list) return;
-            let sharedExpenses = expenses.filter(e => e.type == 'shared');
-            
-            if (sharedExpenses.length === 0) {
-                list.innerHTML = "<p style='color: #71717a; font-size: 13px; text-align: center;'>هنوز هزینه اشتراکی ثبت نشده است.</p>";
-                return;
-            }
-
-            list.innerHTML = sharedExpenses.map(e => `<li>
-                <span>
-                    <b>${e.title}</b> ${e.note ? '<span style="color:#64748b; font-size:12px;">(' + e.note + ')</span>' : ''}: <b>${e.amount.toLocaleString()} تومان</b> <br>
-                    <small style="color:#475569;">پرداخت: ${e.payer} | شرکا: ${e.participants.join(', ')}</small><br>
-                    <small style="color:#0284c7; font-weight:bold;">✍️ ثبت توسط: ${e.creator}</small>
-                </span>
-                ${isLocked ? '' : `<button onclick="deleteExpense(${e.id})" style="width:auto; padding:4px 8px; background:var(--danger); margin:0; font-size:11px;">حذف</button>`}
-            </li>`).join("");
-        }
-
-        async function deleteExpense(id) {
-            if (isLocked) return alert("سفر قفل شده است.");
-            await dbFetch(`expenses?id=eq.${id}`, 'DELETE');
-            expenses = expenses.filter(e => e.id !== id);
-            renderList();
-            calculate();
-            showPersonalReport();
-        }
-
-        function toggleSettlement(member) {
-            settlementStatus[member] = !settlementStatus[member];
-            calculate();
-        }
-
-        function calculate() {
-            let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            let memberShares = {};
-            members.forEach(m => memberShares[m] = 0);
-
-            expenses.filter(e => e.type == 'shared').forEach(e => {
-                let sharePerPerson = e.amount / e.participants.length;
-                e.participants.forEach(p => {
-                    if (memberShares[p] !== undefined) memberShares[p] += sharePerPerson;
-                });
-            });
-
-            let res = `<b>مجموع کل هزینه‌های اشتراکی:</b> ${totalShared.toLocaleString()} تومان<hr>`;
-            res += `<b>وضعیت تسویه حساب با مادرخرج (${treasurer}):</b><br><ul style="padding-right: 15px; margin: 5px 0;">`;
-
-            members.forEach(m => {
-                if (m === treasurer) return;
-                let paidByMember = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-                let totalShareOfMember = memberShares[m] || 0;
-                let netBalance = Math.round(totalShareOfMember - paidByMember);
-                let isSettled = settlementStatus[m] || false;
-
-                res += `<li style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                    <span>👤 <b>${m}</b> (سهم: ${Math.round(totalShareOfMember).toLocaleString()}ت): `;
-                
-                if (netBalance > 0) {
-                    res += `باید <span style="color:var(--danger);">${netBalance.toLocaleString()} تومان</span> بدهد`;
-                } else if (netBalance < 0) {
-                    res += `باید <span style="color:var(--success);">${Math.abs(netBalance).toLocaleString()} تومان</span> پس بگیرد`;
-                } else {
-                    res += `تسویه است`;
-                }
-
-                res += `</span><button onclick="toggleSettlement('${m}')" style="width:auto; padding:3px 8px; font-size:11px; margin:0; background:${isSettled ? 'var(--success)' : '#cbd5e1'}; color:${isSettled ? 'white' : '#334155'};">${isSettled ? 'تسویه شد ✅' : 'تسویه نشده ⏳'}</button></li>`;
-            });
-
-            res += `</ul>`;
-            let resDiv = document.getElementById("result");
-            if (resDiv) resDiv.innerHTML = res;
-            let copyBtn = document.getElementById("copy-btn");
-            if (copyBtn && members.length > 0) copyBtn.style.display = "block";
-        }
-
-        function copyReportToTelegram() {
-            let totalShared = expenses.filter(e => e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-            let memberShares = {};
-            members.forEach(m => memberShares[m] = 0);
-            expenses.filter(e => e.type == 'shared').forEach(e => {
-                let sharePerPerson = e.amount / e.participants.length;
-                e.participants.forEach(p => { if (memberShares[p] !== undefined) memberShares[p] += sharePerPerson; });
-            });
-
-            let text = `📊 گزارش نهایی گروه: ${groupName}\n👑 مادرخرج: ${treasurer}\n💰 مجموع خرج‌ها: ${totalShared.toLocaleString()} تومان\n\n`;
-            members.forEach(m => {
-                if (m === treasurer) return;
-                let paidByMember = expenses.filter(e => e.payer == m && e.type == 'shared').reduce((sum, e) => sum + e.amount, 0);
-                let totalShareOfMember = memberShares[m] || 0;
-                let netBalance = Math.round(totalShareOfMember - paidByMember);
-                let isSettled = settlementStatus[m] ? '✅ تسویه' : '⏳ تسویه نشده';
-
-                text += `▫️ ${m}: `;
-                if (netBalance > 0) text += `باید ${netBalance.toLocaleString()} تومان بدهد (${isSettled})\n`;
-                else if (netBalance < 0) text += `باید ${Math.abs(netBalance).toLocaleString()} تومان پس بگیرد (${isSettled})\n`;
-                else text += `بی‌حساب (${isSettled})\n`;
-            });
-
-            navigator.clipboard.writeText(text).then(() => alert("گزارش کپی شد!"));
-        }
-
-        function showPersonalReport() {
-            let selectedPerson = document.getElementById("personal-report-select").value;
-            if (!selectedPerson) return;
-            
-            let personalExpenses = expenses.filter(e => e.payer == selectedPerson && e.type == 'personal');
-            let totalPersonal = personalExpenses.reduce((sum, e) => sum + e.amount, 0);
-
-            let resHtml = `👤 نام: ${selectedPerson}<br>مجموع هزینه‌های شخصی: ${totalPersonal.toLocaleString()} تومان`;
-            if (personalExpenses.length > 0) {
-                resHtml += `<ul style="margin: 5px 0; padding-right: 15px; font-weight: normal; font-size: 12px;">`;
-                personalExpenses.forEach(pe => {
-                    resHtml += `<li><span><b>${pe.title}</b>: ${pe.amount.toLocaleString()} تومان</span> ${isLocked ? '' : `<button onclick="deleteExpense(${pe.id})" style="width:auto; padding:2px 6px; background:var(--danger); margin:0; font-size:10px;">حذف</button>`}</li>`;
-                });
-                resHtml += `</ul>`;
-            } else {
-                resHtml += ` (موردی ثبت نشده است)`;
-            }
-
-            let pRes = document.getElementById("personal-result");
-            if (pRes) pRes.innerHTML = resHtml;
-        }
-
-        async function resetApp() {
-            if(confirm("آیا مطمئن هستید؟")) {
-                if (currentGroupId) {
-                    await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
-                }
-                localStorage.removeItem("dongimongi_draft");
-                localStorage.removeItem("current_group_id");
-                location.reload();
-            }
-        }
-    </script>
-</body>
-</html>
+/* ====== افزودن هزینه ====== */
+async function addExpense() {
+    if (isLocked) return alert("سفر قفل شده است.");
+    if (!current
