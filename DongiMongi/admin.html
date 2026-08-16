@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<title>پنل ادمین - فعال‌سازی اشتراک</title>
+<style>
+body {
+    background:#0f172a;
+    color:white;
+    font-family:tahoma;
+    padding:40px;
+}
+.box {
+    max-width:400px;
+    margin:auto;
+    background:#1e293b;
+    padding:20px;
+    border-radius:12px;
+}
+input {
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border-radius:8px;
+    border:0;
+}
+button {
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    background:#0284c7;
+    color:white;
+    border:0;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2>فعال‌سازی اشتراک پریمیوم</h2>
+    <p>آیدی تلگرام کاربر را وارد کنید:</p>
+    <input id="uid" placeholder="مثلاً: 123456789" />
+
+    <button onclick="activatePremium()">فعال‌سازی اشتراک</button>
+
+    <p id="msg" style="margin-top:15px;color:#22c55e"></p>
+</div>
+
+<script>
+const SUP_URL = "https://YOUR-PROJECT.supabase.co";
+const SUP_KEY = "YOUR_SUPABASE_KEY";
+
+async function dbFetch(endpoint, method = 'GET', data = null) {
+    try {
+        let options = {
+            method,
+            headers: {
+                'apikey': SUP_KEY,
+                'Authorization': `Bearer ${SUP_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            }
+        };
+        if (data) options.body = JSON.stringify(data);
+        const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+        if (!res.ok) return null;
+        if (method === 'GET') return await res.json();
+        return true;
+    } catch(e) { return null; }
+}
+
+async function activatePremium() {
+    let userId = document.getElementById("uid").value.trim();
+    if (!userId) {
+        document.getElementById("msg").innerText = "آیدی را وارد کنید.";
+        return;
+    }
+
+    let expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
+
+    let ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', {
+        plan: 'premium',
+        premium_expire_at: expire
+    });
+
+    if (ok) {
+        document.getElementById("msg").innerText = "اشتراک پریمیوم فعال شد!";
+    } else {
+        document.getElementById("msg").innerText = "خطا در فعال‌سازی اشتراک.";
+    }
+}
+</script>
+
+</body>
+</html>
