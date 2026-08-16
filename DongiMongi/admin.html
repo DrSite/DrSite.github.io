@@ -389,23 +389,436 @@ async function searchUser() {
   renderUsersTable();
 }
 
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>پنل ادمین Enterprise - Dongimongi</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+  --bg:#071029; --card:#0b1220; --muted:#94a3b8; --accent:#0284c7;
+  --success:#16a34a; --danger:#ef4444; --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,#071029,#071a2a);color:#e6eef8;direction:rtl}
+.container{max-width:1200px;margin:24px auto;padding:18px;background:var(--card);border-radius:12px;box-shadow:0 8px 40px rgba(2,6,23,0.6)}
+.header{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.h-title{font-weight:700;font-size:20px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:16px}
+.card{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+.row{display:flex;gap:8px;align-items:center}
+.input,select{width:100%;padding:10px;border-radius:8px;border:0;background:var(--glass);color:#e6eef8}
+.btn{background:var(--accent);color:white;padding:8px 12px;border-radius:8px;border:0;cursor:pointer}
+.btn-sm{padding:6px 8px;font-size:13px}
+.btn-danger{background:var(--danger)}
+.table{width:100%;border-collapse:collapse;margin-top:8px}
+.table th,.table td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:right;font-size:13px}
+.user-item{display:flex;justify-content:space-between;align-items:center}
+.kpi{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.kpi .box{background:rgba(255,255,255,0.03);padding:10px;border-radius:8px;text-align:center;min-width:120px}
+.log{max-height:220px;overflow:auto;padding:6px;background:rgba(0,0,0,0.12);border-radius:8px}
+.small{font-size:13px;color:var(--muted)}
+.footer{margin-top:12px;text-align:center;color:var(--muted);font-size:12px}
+.badge{background:#0ea5e9;color:#042f4a;padding:6px 10px;border-radius:8px;font-weight:700}
+.login-card{max-width:420px;margin:0 auto;padding:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px}
+.form-label{display:block;margin-bottom:6px;color:var(--muted);font-size:13px}
+.hint{font-size:12px;color:var(--muted);margin-top:8px}
+.chart-empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:18px}
+.code-sample{background:rgba(255,255,255,0.01);padding:8px;border-radius:8px;margin-top:8px;font-family:monospace;color:#e6eef8}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="h-title">پنل ادمین Enterprise — Dongimongi</div>
+      <div class="small">داشبورد مدیریتی، گزارش‌ها و ابزارهای کنترلی</div>
+    </div>
+    <div class="row">
+      <div class="small">وارد شده به عنوان</div>
+      <div class="badge" id="admin-name">Admin</div>
+    </div>
+  </div>
+
+  <!-- LOGIN (فرم عمودی: یوزرنیم بالا، پسورد زیرش) -->
+  <div id="login" class="card" style="margin-top:14px">
+    <div class="login-card">
+      <h3 style="margin:0 0 8px 0">ورود ادمین</h3>
+      <div class="small" style="margin-bottom:12px">نام کاربری و رمز عبور را وارد کنید.</div>
+
+      <label class="form-label">نام کاربری</label>
+      <input id="admin-user" class="input" placeholder="نام کاربری ادمین" />
+
+      <label class="form-label" style="margin-top:10px">رمز عبور</label>
+      <input id="admin-pass" class="input" placeholder="رمز عبور ادمین" type="password" />
+
+      <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-start">
+        <button class="btn" onclick="adminLogin()">ورود</button>
+        <button class="btn btn-sm" onclick="fillDemo()">پر کردن نمونه</button>
+        <button class="btn btn-sm" onclick="togglePasswordVisibility()">نمایش/مخفی رمز</button>
+      </div>
+
+      <div id="login-msg" class="small" style="margin-top:10px;color:#fca5a5"></div>
+
+      <div class="hint">
+        <strong>تذکر:</strong> مقادیر نمونه در پایین نمایش داده شده‌اند؛ در محیط تولید حتماً آن‌ها را تغییر دهید.
+      </div>
+
+      
+    </div>
+  </div>
+
+  <!-- MAIN PANEL -->
+  <div id="panel" style="display:none">
+    <div class="grid">
+
+      <!-- LEFT -->
+      <div>
+
+        <!-- KPIs -->
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4 style="margin:0">خلاصه سریع</h4>
+            <div class="small">به‌روز: <span id="now-time"></span></div>
+          </div>
+          <div class="kpi" style="margin-top:12px">
+            <div class="box"><div class="small">کاربران</div><div id="k-users" style="font-weight:700;font-size:18px">—</div></div>
+            <div class="box"><div class="small">گروه‌های فعال</div><div id="k-active-groups" style="font-weight:700;font-size:18px">—</div></div>
+            <div class="box"><div class="small">درآمد ماه</div><div id="k-month-rev" style="font-weight:700;font-size:18px">—</div></div>
+            <div class="box"><div class="small">ظرفیت مصرفی</div><div id="k-storage" style="font-weight:700;font-size:18px">—</div></div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">نمودارها</h4>
+          <div id="chart-area-rev">
+            <canvas id="chart-revenue" height="120"></canvas>
+            <div id="chart-revenue-empty" class="chart-empty" style="display:none">داده‌ای برای نمودار درآمد وجود ندارد.</div>
+          </div>
+          <div style="height:12px"></div>
+          <div id="chart-area-act">
+            <canvas id="chart-active-users" height="80"></canvas>
+            <div id="chart-active-empty" class="chart-empty" style="display:none">داده‌ای برای نمودار کاربران فعال وجود ندارد.</div>
+          </div>
+        </div>
+
+        <!-- Users -->
+        <div class="card" style="margin-top:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4 style="margin:0">مدیریت کاربران</h4>
+            <div style="display:flex;gap:8px">
+              <input id="search" class="input" placeholder="جستجو با آیدی یا نام..." oninput="searchUser()" style="width:320px" />
+              <select id="filter-plan" class="input" onchange="searchUser()" style="width:140px">
+                <option value="">همه پلن‌ها</option>
+                <option value="free">Free</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table" id="users-table" style="margin-top:10px">
+            <thead>
+              <tr><th>نام</th><th>آیدی</th><th>پلن</th><th>پایان اشتراک</th><th>عملیات</th></tr>
+            </thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Groups -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0 0 8px 0">مدیریت گروه‌ها و هزینه‌ها</h4>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="g-user-id" class="input" placeholder="آیدی کاربر" style="width:220px" />
+            <button class="btn btn-sm" onclick="loadUserGroups()">نمایش گروه‌ها</button>
+            <input id="g-group-id" class="input" placeholder="آیدی گروه" style="width:220px" />
+            <button class="btn btn-sm" onclick="loadGroupExpenses()">نمایش هزینه‌ها</button>
+          </div>
+
+          <div id="groups-list" style="margin-top:10px"></div>
+          <div id="expenses-list" style="margin-top:10px"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT -->
+      <div>
+
+        <!-- Financial -->
+        <div class="card">
+          <h4 style="margin:0">گزارش‌های مالی</h4>
+          <div style="margin-top:8px">
+            <label class="small">بازه زمانی</label>
+            <input id="report-from" type="date" class="input" />
+            <input id="report-to" type="date" class="input" style="margin-top:6px" />
+            <button class="btn" style="margin-top:8px" onclick="generateFinancialReport()">ایجاد گزارش</button>
+          </div>
+          <div id="financial-report" style="margin-top:10px"></div>
+        </div>
+
+        <!-- Logs -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0">لاگ فعالیت‌ها</h4>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input id="log-filter" class="input" placeholder="فیلتر لاگ..." oninput="renderLogs()" />
+            <button class="btn btn-sm" onclick="clearLogs()">پاک کردن</button>
+          </div>
+          <div class="log" id="logs"></div>
+        </div>
+
+        <!-- Quick -->
+        <div class="card" style="margin-top:12px">
+          <h4 style="margin:0">عملیات سریع</h4>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+            <input id="quick-uid" class="input" placeholder="آیدی کاربر" />
+            <button class="btn" onclick="activatePremiumQuick()">فعال‌سازی ۳۰ روزه</button>
+            <button class="btn" onclick="extendPremiumQuick()">تمدید ۳۰ روزه</button>
+            <button class="btn btn-danger" onclick="removePremiumQuick()">حذف اشتراک</button>
+            <button class="btn btn-danger" onclick="lockAllGroupsQuick()">قفل همه گروه‌ها</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="footer">پنل ادمین Enterprise — Dongimongi</div>
+  </div>
+</div>
+
+<script>
+/* ====== SUPABASE (خالی بگذارید و خودتان پر کنید) ====== */
+const SUP_URL = (typeof SUP_URL !== 'undefined' ? String(SUP_URL).trim() : 'https://xdghwghwakalwykkedgr.supabase.co');
+const SUP_KEY = (typeof SUP_KEY !== 'undefined' ? String(SUP_KEY).trim() : 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw');
+
+/* ====== ADMIN (مقادیر نمونه؛ در محیط تولید حتماً تغییر دهید) ====== */
+const ADMIN_USER = "dongimongi";
+const ADMIN_PASS = "A97gg%20ffB6@";
+
+/* ====== LOGS ====== */
+let logs = [];
+function pushLog(type, userId, message) {
+  logs.unshift({ ts: new Date().toISOString(), type, userId: userId||'', message });
+  renderLogs();
+}
+
+/* ====== FETCH ====== */
+async function dbFetch(endpoint, method='GET', data=null) {
+  try {
+    if (!SUP_URL || !SUP_KEY) {
+      // اگر سوپابیس تنظیم نشده، بازگرداندن null تا UI دادهٔ جعلی نساخته شود
+      console.warn('Supabase not configured (SUP_URL or SUP_KEY empty)');
+      return null;
+    }
+    // timeout با AbortController
+    const controller = new AbortController();
+    const timeout = setTimeout(()=>controller.abort(), 10000);
+
+    let options = { method, headers:{
+      'apikey': SUP_KEY,
+      'Authorization': `Bearer ${SUP_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates'
+    }, signal: controller.signal };
+    if (data) options.body = JSON.stringify(data);
+    const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+    clearTimeout(timeout);
+    if (!res.ok) {
+      console.error('DB ERR', res.status, await res.text().catch(()=>'<no body>'));
+      return null;
+    }
+    return method === 'GET' ? await res.json() : true;
+  } catch(e){
+    console.error('Fetch error', e);
+    return null;
+  }
+}
+
+/* ====== LOGIN ====== */
+function adminLogin() {
+  document.getElementById('login-msg').innerText = '';
+  const u = document.getElementById('admin-user').value.trim();
+  const p = document.getElementById('admin-pass').value.trim();
+  if (!u || !p) {
+    document.getElementById('login-msg').innerText = 'نام کاربری و رمز را وارد کنید.';
+    return;
+  }
+  if (u === ADMIN_USER && p === ADMIN_PASS) {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("panel").style.display = "block";
+    document.getElementById("admin-name").innerText = ADMIN_USER;
+    pushLog('admin_login', '', `Admin ${u} logged in`);
+    loadKPIs();
+    initCharts();
+  } else {
+    document.getElementById("login-msg").innerText = "نام کاربری یا رمز اشتباه است.";
+    pushLog('admin_login_failed', '', `Failed login attempt for ${u}`);
+  }
+}
+function fillDemo(){
+  // فقط پر کردن فرم با مقادیر نمونه؛ هیچ دادهٔ فیکی وارد دیتابیس نمی‌شود
+  document.getElementById('admin-user').value = ADMIN_USER;
+  document.getElementById('admin-pass').value = ADMIN_PASS;
+}
+function togglePasswordVisibility(){
+  const el = document.getElementById('admin-pass');
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+/* ====== KPIs ====== */
+async function loadKPIs() {
+  // کاربران
+  let users = await dbFetch('users?select=id');
+  document.getElementById('k-users').innerText = users ? users.length : 0;
+
+  // گروه‌های فعال
+  let groups = await dbFetch('groups?select=id,is_locked&is_locked=eq.false');
+  document.getElementById('k-active-groups').innerText = groups ? groups.length : 0;
+
+  // درآمد ماهیانه (از payments)
+  let payments = await dbFetch('payments?created_at=gte.' + new Date(new Date().getFullYear(), new Date().getMonth(),1).toISOString());
+  let monthRev = payments ? payments.reduce((s,p)=>s+(p.amount||0),0) : 0;
+  document.getElementById('k-month-rev').innerText = monthRev ? monthRev.toLocaleString() + ' تومان' : '—';
+
+  // ظرفیت مصرفی (نمونه محاسبه)
+  let allGroups = await dbFetch('groups?select=id,members');
+  let storageEstimate = allGroups ? JSON.stringify(allGroups).length : 0;
+  document.getElementById('k-storage').innerText = (storageEstimate/1024).toFixed(1) + ' KB';
+}
+
+/* ====== CHARTS ====== */
+let chartRevenue=null, chartActive=null;
+function initCharts() {
+  try {
+    chartRevenue = new Chart(document.getElementById('chart-revenue'), {
+      type:'line',
+      data:{ labels:[], datasets:[{ label:'درآمد', data:[], borderColor:'#34d399', backgroundColor:'rgba(52,211,153,0.08)', tension:0.3 }]},
+      options:{ plugins:{legend:{display:false}}, responsive:true }
+    });
+    chartActive = new Chart(document.getElementById('chart-active-users'), {
+      type:'bar',
+      data:{ labels:[], datasets:[{ label:'کاربران فعال', data:[], backgroundColor:'#60a5fa' }]},
+      options:{ plugins:{legend:{display:false}}, responsive:true }
+    });
+    loadChartData();
+  } catch(e){
+    console.error('Chart init error', e);
+  }
+}
+
+/* ====== loadChartData: فقط از داده واقعی استفاده می‌کند؛ اگر داده نباشد پیام خالی نشان می‌دهد ====== */
+async function loadChartData() {
+  try {
+    const now = new Date();
+    const labels = [];
+    const revData = [];
+    const activeData = [];
+
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
+      const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
+
+      // خواندن پرداخت‌ها در بازه ماه
+      const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
+      const monthSum = payments && payments.length ? payments.reduce((s,p)=>s+(p.amount||0),0) : 0;
+      revData.push(monthSum);
+
+      // خواندن کاربران ثبت‌شده در آن ماه (معیار ساده)
+      const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
+      const activeCount = users ? users.length : 0;
+      activeData.push(activeCount);
+
+      labels.push(d.toLocaleString('fa-IR',{month:'short',year:'numeric'}));
+    }
+
+    const hasAnyData = revData.some(v=>v>0) || activeData.some(v=>v>0);
+
+    if (chartRevenue) {
+      chartRevenue.data.labels = labels;
+      chartRevenue.data.datasets[0].data = revData;
+      chartRevenue.update();
+    }
+    if (chartActive) {
+      chartActive.data.labels = labels;
+      chartActive.data.datasets[0].data = activeData;
+      chartActive.update();
+    }
+
+    const revEmptyEl = document.getElementById('chart-revenue-empty');
+    const actEmptyEl = document.getElementById('chart-active-empty');
+    if (!hasAnyData) {
+      if (revEmptyEl) revEmptyEl.style.display = 'flex';
+      if (actEmptyEl) actEmptyEl.style.display = 'flex';
+    } else {
+      if (revEmptyEl) revEmptyEl.style.display = 'none';
+      if (actEmptyEl) actEmptyEl.style.display = 'none';
+    }
+
+    pushLog('charts_loaded', '', hasAnyData ? 'نمودارها با داده واقعی بارگذاری شدند' : 'نمودارها بدون داده واقعی بارگذاری شدند');
+  } catch (e) {
+    console.error('loadChartData error', e);
+    pushLog('chart_error', '', 'خطا در بارگذاری نمودارها');
+  }
+}
+
+/* ====== USERS ====== */
+let lastUsersResult=[];
+async function searchUser() {
+  const q=document.getElementById('search').value.trim();
+  const plan=document.getElementById('filter-plan').value;
+  let endpoint='users?select=id,full_name,plan,premium_expire_at';
+  let filters=[];
+  if(q){
+    if(/^\d+$/.test(q)) filters.push(`id=eq.${q}`);
+    filters.push(`full_name=ilike.*${q}*`);
+  }
+  if(plan) filters.push(`plan=eq.${plan}`);
+  if(filters.length) endpoint+='&or=(' + filters.join(',') + ')';
+  let users=await dbFetch(endpoint);
+  lastUsersResult=users||[];
+  renderUsersTable();
+}
+
+/* ====== renderUsersTable (دست نخورده به ساختار اصلی، اما امن‌تر) ====== */
+function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
 function renderUsersTable() {
   const tbody=document.getElementById('users-tbody');
   tbody.innerHTML='';
   lastUsersResult.forEach(u=>{
     const tr=document.createElement('tr');
+    // نگه داشتن ساختار دکمه‌ها ولی امن‌تر کردن id با encodeURIComponent
     tr.innerHTML=`
-      <td>${u.full_name||'—'}</td>
-      <td>${u.id}</td>
-      <td>${u.plan||'—'}</td>
-      <td>${u.premium_expire_at?new Date(u.premium_expire_at).toLocaleString():'—'}</td>
+      <td>${escapeHtml(u.full_name||'—')}</td>
+      <td>${escapeHtml(String(u.id))}</td>
+      <td>${escapeHtml(u.plan||'—')}</td>
+      <td>${u.premium_expire_at && !isNaN(new Date(u.premium_expire_at)) ? escapeHtml(new Date(u.premium_expire_at).toLocaleString()) : '—'}</td>
       <td>
-        <button class="btn btn-sm" onclick="openUser(${u.id})">باز کردن</button>
-        <button class="btn btn-sm" onclick="activatePremium(${u.id})">فعال</button>
-        <button class="btn btn-sm" onclick="extendPremium(${u.id})">تمدید</button>
-        <button class="btn btn-sm btn-danger" onclick="removePremium(${u.id})">حذف</button>
+        <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="open">باز کردن</button>
+        <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="activate">فعال</button>
+        <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="extend">تمدید</button>
+        <button class="btn btn-sm btn-danger" data-uid="${encodeURIComponent(String(u.id))}" data-action="remove">حذف</button>
       </td>`;
     tbody.appendChild(tr);
+
+    // اضافه کردن event listener به جای inline onclick
+    tr.querySelectorAll('button[data-action]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const uid = decodeURIComponent(btn.dataset.uid);
+        const action = btn.dataset.action;
+        if(action === 'open') openUser(uid);
+        else if(action === 'activate') activatePremium(uid);
+        else if(action === 'extend') extendPremium(uid);
+        else if(action === 'remove') removePremium(uid);
+      });
+    });
   });
 }
 
@@ -419,25 +832,37 @@ async function loadUserGroups() {
   const uid=document.getElementById('g-user-id').value.trim();
   if(!uid) return alert('آیدی کاربر را وارد کنید.');
   pushLog('load_groups', uid, 'بارگذاری گروه‌های کاربر');
-  const groups=await dbFetch(`groups?user_id=eq.${uid}`);
+  const groups=await dbFetch(`groups?user_id=eq.${encodeURIComponent(uid)}`);
   const container=document.getElementById('groups-list');
-  if(!groups||groups.length===0){
+  if(!groups){
+    container.innerHTML='<div class="small">خطا در اتصال به دیتابیس.</div>';
+    return;
+  }
+  if(groups.length===0){
     container.innerHTML='<div class="small">گروهی یافت نشد.</div>';
     return;
   }
   let html = '<h4>گروه‌ها</h4>';
   groups.forEach(g => {
+    // members ممکن است آرایه یا رشته JSON باشد
+    let membersText = '—';
+    if (g.members) {
+      if (Array.isArray(g.members)) membersText = g.members.join(', ');
+      else {
+        try { membersText = JSON.parse(g.members).join(', '); } catch(e){ membersText = String(g.members); }
+      }
+    }
     html += `
       <div class="user-item" style="margin-top:8px;padding:8px;background:rgba(255,255,255,0.02);border-radius:8px">
         <div>
-          <div><b>${g.group_name||'—'}</b> <span class="small">(${g.id})</span></div>
-          <div class="small">مادرخرج: ${g.treasurer||'—'} — اعضا: ${g.members ? (Array.isArray(g.members)?g.members.join(', '):g.members) : '—'}</div>
+          <div><b>${escapeHtml(g.group_name||'—')}</b> <span class="small">(${escapeHtml(String(g.id))})</span></div>
+          <div class="small">مادرخرج: ${escapeHtml(g.treasurer||'—')} — اعضا: ${escapeHtml(membersText)}</div>
           <div class="small">وضعیت: ${g.is_locked ? 'قفل' : 'باز'}</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px">
-          <button class="btn btn-sm" onclick="viewGroup(${g.id})">نمایش هزینه‌ها</button>
-          <button class="btn btn-sm" onclick="toggleLockGroup(${g.id}, ${g.is_locked})">${g.is_locked ? 'باز کردن' : 'قفل کردن'}</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteGroup(${g.id})">حذف گروه</button>
+          <button class="btn btn-sm" onclick="viewGroup('${encodeURIComponent(String(g.id))}')">نمایش هزینه‌ها</button>
+          <button class="btn btn-sm" onclick="toggleLockGroup('${encodeURIComponent(String(g.id))}', ${g.is_locked})">${g.is_locked ? 'باز کردن' : 'قفل کردن'}</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteGroup('${encodeURIComponent(String(g.id))}')">حذف گروه</button>
         </div>
       </div>
     `;
@@ -446,7 +871,7 @@ async function loadUserGroups() {
 }
 
 function viewGroup(groupId){
-  document.getElementById('g-group-id').value = groupId;
+  document.getElementById('g-group-id').value = decodeURIComponent(groupId);
   loadGroupExpenses();
 }
 
@@ -454,8 +879,12 @@ async function loadGroupExpenses() {
   const gid=document.getElementById('g-group-id').value.trim();
   if(!gid) return alert('آیدی گروه را وارد کنید.');
   pushLog('load_expenses', gid, 'بارگذاری هزینه‌های گروه');
-  const exps = await dbFetch(`expenses?group_id=eq.${gid}`);
+  const exps = await dbFetch(`expenses?group_id=eq.${encodeURIComponent(gid)}`);
   const container = document.getElementById('expenses-list');
+  if(!exps){
+    container.innerHTML = '<div class="small">خطا در اتصال به دیتابیس.</div>';
+    return;
+  }
   if(!exps || exps.length===0){
     container.innerHTML = '<div class="small">هیچ هزینه‌ای ثبت نشده.</div>';
     return;
@@ -463,10 +892,10 @@ async function loadGroupExpenses() {
   let html = '<h4>هزینه‌ها</h4><table class="table"><thead><tr><th>عنوان</th><th>مبلغ</th><th>پرداخت‌کننده</th><th>نوع</th><th>عملیات</th></tr></thead><tbody>';
   exps.forEach(e=>{
     html += `<tr>
-      <td>${e.title||'—'}</td>
+      <td>${escapeHtml(e.title||'—')}</td>
       <td>${(e.amount||0).toLocaleString()}</td>
-      <td>${e.payer||'—'}</td>
-      <td>${e.type||'—'}</td>
+      <td>${escapeHtml(e.payer||'—')}</td>
+      <td>${escapeHtml(e.type||'—')}</td>
       <td><button class="btn btn-sm" onclick="deleteExpense(${e.id})">حذف</button></td>
     </tr>`;
   });
@@ -476,19 +905,21 @@ async function loadGroupExpenses() {
 
 /* ====== عملیات گروه ====== */
 async function toggleLockGroup(groupId, currentlyLocked) {
-  const ok = await dbFetch(`groups?id=eq.${groupId}`, 'PATCH', { is_locked: !currentlyLocked });
+  const gid = decodeURIComponent(groupId);
+  const ok = await dbFetch(`groups?id=eq.${encodeURIComponent(gid)}`, 'PATCH', { is_locked: !currentlyLocked });
   if (ok) {
-    pushLog('toggle_lock', groupId, `تغییر قفل به ${!currentlyLocked}`);
+    pushLog('toggle_lock', gid, `تغییر قفل به ${!currentlyLocked}`);
     alert('وضعیت گروه تغییر کرد.');
     loadUserGroups();
   } else alert('خطا در تغییر وضعیت');
 }
 
 async function deleteGroup(groupId) {
+  const gid = decodeURIComponent(groupId);
   if (!confirm('آیا از حذف گروه مطمئن هستید؟')) return;
-  const ok = await dbFetch(`groups?id=eq.${groupId}`, 'DELETE');
+  const ok = await dbFetch(`groups?id=eq.${encodeURIComponent(gid)}`, 'DELETE');
   if (ok) {
-    pushLog('delete_group', groupId, 'حذف گروه');
+    pushLog('delete_group', gid, 'حذف گروه');
     alert('گروه حذف شد.');
     loadUserGroups();
   } else alert('خطا در حذف گروه');
@@ -508,16 +939,33 @@ async function deleteExpense(expId) {
 /* ====== اشتراک ====== */
 async function activatePremium(userId) {
   const expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
-  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan:'premium', premium_expire_at: expire });
+  const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan:'premium', premium_expire_at: expire });
   if (ok) {
     pushLog('activate_premium', userId, 'فعال‌سازی ۳۰ روزه');
     alert('اشتراک فعال شد.');
     searchUser();
+
+    // اگر telegram_id موجود است، از سرور بخواه پیام بفرستد
+    const rows = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}&select=telegram_id,full_name`);
+    const u = rows && rows[0];
+    if (u && u.telegram_id) {
+      // فراخوانی endpoint سرور برای ارسال پیام تلگرام
+      // توجه: این endpoint باید در سرور شما پیاده‌سازی و امن شود
+      try {
+        await fetch('/api/notify-telegram', {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({ telegram_id: u.telegram_id, text: `اشتراک شما فعال شد تا ${expire}` })
+        });
+      } catch(e){
+        console.warn('notify-telegram failed', e);
+      }
+    }
   } else alert('خطا در فعال‌سازی');
 }
 async function extendPremium(userId) {
   const expire = new Date(Date.now() + 30*24*3600*1000).toISOString();
-  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { premium_expire_at: expire });
+  const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { premium_expire_at: expire });
   if (ok) {
     pushLog('extend_premium', userId, 'تمدید ۳۰ روزه');
     alert('اشتراک تمدید شد.');
@@ -525,7 +973,7 @@ async function extendPremium(userId) {
   } else alert('خطا در تمدید');
 }
 async function removePremium(userId) {
-  const ok = await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan:'free', premium_expire_at: null });
+  const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan:'free', premium_expire_at: null });
   if (ok) {
     pushLog('remove_premium', userId, 'حذف اشتراک');
     alert('اشتراک حذف شد.');
@@ -541,7 +989,7 @@ function lockAllGroupsQuick(){ const uid=document.getElementById('quick-uid').va
 
 /* ====== قفل و حذف همه گروه‌ها ====== */
 async function lockAllGroups(userId) {
-  const ok = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked:true });
+  const ok = await dbFetch(`groups?user_id=eq.${encodeURIComponent(userId)}&is_locked=eq.false`, 'PATCH', { is_locked:true });
   if (ok) {
     pushLog('lock_all_groups', userId, 'قفل همه گروه‌ها');
     alert('همه گروه‌ها قفل شدند.');
@@ -550,7 +998,7 @@ async function lockAllGroups(userId) {
 
 async function deleteAllGroups(userId) {
   if (!confirm('آیا از حذف همه گروه‌ها مطمئن هستید؟')) return;
-  const ok = await dbFetch(`groups?user_id=eq.${userId}`, 'DELETE');
+  const ok = await dbFetch(`groups?user_id=eq.${encodeURIComponent(userId)}`, 'DELETE');
   if (ok) {
     pushLog('delete_all_groups', userId, 'حذف همه گروه‌ها');
     alert('همه گروه‌ها حذف شدند.');
@@ -571,7 +1019,7 @@ async function generateFinancialReport() {
     html += `<div class="small">جمع پرداخت‌ها: ${total.toLocaleString()} تومان</div>`;
     html += '<table class="table"><thead><tr><th>تاریخ</th><th>آیدی کاربر</th><th>مبلغ</th><th>روش</th></tr></thead><tbody>';
     payments.forEach(p=>{
-      html += `<tr><td>${p.created_at||'—'}</td><td>${p.user_id||'—'}</td><td>${(p.amount||0).toLocaleString()}</td><td>${p.method||'—'}</td></tr>`;
+      html += `<tr><td>${escapeHtml(p.created_at||'—')}</td><td>${escapeHtml(p.user_id||'—')}</td><td>${(p.amount||0).toLocaleString()}</td><td>${escapeHtml(p.method||'—')}</td></tr>`;
     });
     html += '</tbody></table>';
   } else {
@@ -582,7 +1030,7 @@ async function generateFinancialReport() {
       html += `<div class="small">جمع هزینه‌ها: ${total.toLocaleString()} تومان</div>`;
       html += '<table class="table"><thead><tr><th>تاریخ</th><th>عنوان</th><th>مبلغ</th><th>پرداخت‌کننده</th></tr></thead><tbody>';
       exps.forEach(e=>{
-        html += `<tr><td>${e.created_at||'—'}</td><td>${e.title||'—'}</td><td>${(e.amount||0).toLocaleString()}</td><td>${e.payer||'—'}</td></tr>`;
+        html += `<tr><td>${escapeHtml(e.created_at||'—')}</td><td>${escapeHtml(e.title||'—')}</td><td>${(e.amount||0).toLocaleString()}</td><td>${escapeHtml(e.payer||'—')}</td></tr>`;
       });
       html += '</tbody></table>';
     }
@@ -596,7 +1044,7 @@ function renderLogs() {
   const container = document.getElementById('logs');
   let items = logs.slice();
   if (filter) items = items.filter(l => (l.userId + ' ' + l.type + ' ' + l.message).toLowerCase().includes(filter));
-  container.innerHTML = items.map(l => `<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div class="small">${l.ts} — <b>${l.type}</b> — ${l.userId}</div><div>${l.message}</div></div>`).join('');
+  container.innerHTML = items.map(l => `<div style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)"><div class="small">${l.ts} — <b>${l.type}</b> — ${escapeHtml(l.userId)}</div><div>${escapeHtml(l.message)}</div></div>`).join('');
 }
 
 function clearLogs() {
@@ -606,11 +1054,88 @@ function clearLogs() {
   pushLog('clear_logs', '', 'پاکسازی لاگ‌ها');
 }
 
+/* ====== قابلیت جدید: ثبت نام دستی و لینک تلگرام ====== */
+/* registerManualUser: وقتی کاربر نام وارد می‌کند، رکورد users ساخته می‌شود و local ذخیره می‌شود */
+async function registerManualUser(name) {
+  const nm = (name || '').trim();
+  if (!nm) return { ok:false, msg:'نام را وارد کنید.' };
+
+  // ساخت رکورد در users
+  const payload = {
+    full_name: nm,
+    manual_name: nm,
+    plan: 'free',
+    created_at: new Date().toISOString()
+  };
+
+  const postOk = await dbFetch('users', 'POST', payload);
+  if (!postOk) return { ok:false, msg:'خطا در ثبت نام. اتصال به سرور را بررسی کنید.' };
+
+  // خواندن رکورد ساخته‌شده (ممکن است چند رکورد با manual_name وجود داشته باشد؛ اولین را می‌گیریم)
+  const rows = await dbFetch(`users?manual_name=eq.${encodeURIComponent(nm)}&select=*`);
+  const me = rows && rows[0];
+  if (me) {
+    localStorage.setItem('manual_user_id', String(me.id));
+    localStorage.setItem('manual_user_name', nm);
+    pushLog('manual_register', me.id, `Manual user registered: ${nm}`);
+    return { ok:true, user:me };
+  } else {
+    return { ok:false, msg:'ثبت انجام شد اما نتوانستم رکورد را بخوانم.' };
+  }
+}
+
+/* tryLinkTelegramUser: اگر WebApp داخل تلگرام باز شد و tg.initDataUnsafe.user موجود بود، رکورد را لینک کن */
+async function tryLinkTelegramUser(tg) {
+  try {
+    const tgUser = tg?.initDataUnsafe?.user;
+    if (!tgUser) return;
+    const telegramId = String(tgUser.id);
+
+    // اگر local manual name داریم، سعی کن رکورد manual را پیدا و لینک کنی
+    const localManual = localStorage.getItem('manual_user_name');
+    if (localManual) {
+      const rows = await dbFetch(`users?manual_name=eq.${encodeURIComponent(localManual)}&select=*`);
+      if (rows && rows.length) {
+        const user = rows[0];
+        await dbFetch(`users?id=eq.${encodeURIComponent(user.id)}`, 'PATCH', { telegram_id: telegramId });
+        pushLog('link_telegram', user.id, `Linked telegram ${telegramId} to manual user`);
+        return;
+      }
+    }
+
+    // اگر رکوردی با telegram_id وجود دارد، کاری لازم نیست
+    const existing = await dbFetch(`users?telegram_id=eq.${encodeURIComponent(telegramId)}&select=*`);
+    if (existing && existing.length) return;
+
+    // در غیر این صورت، یک کاربر جدید بساز با اطلاعات تلگرام
+    const payload = {
+      full_name: tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : ''),
+      telegram_id: telegramId,
+      plan: 'free',
+      created_at: new Date().toISOString()
+    };
+    await dbFetch('users', 'POST', payload);
+    pushLog('create_user_from_telegram', '', `Created user for telegram ${telegramId}`);
+  } catch(e){
+    console.error('tryLinkTelegramUser error', e);
+  }
+}
+
 /* ====== INIT ====== */
 window.onload = function() {
   document.getElementById('now-time').innerText = new Date().toLocaleString();
   pushLog('panel_load', '', 'بارگذاری پنل ادمین');
-  // KPI و چارت‌ها بعد از ورود بارگذاری می‌شوند
+
+  // اگر WebApp تلگرام در دسترس است، تلاش برای لینک کردن کاربر
+  try {
+    if (window.Telegram && window.Telegram.WebApp) {
+      const tg = window.Telegram.WebApp;
+      // فراخوانی غیرمسدودکننده
+      tryLinkTelegramUser(tg);
+    }
+  } catch(e){ /* ignore */ }
+
+  // KPI و چارت‌ها بعد از ورود بارگذاری می‌شوند (پس از لاگین)
 };
 </script>
 </body>
