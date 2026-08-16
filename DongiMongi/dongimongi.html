@@ -106,20 +106,59 @@
 
         let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
         let tgUser = tg.initDataUnsafe?.user;
-        let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
-        let currentGroupId = null;
+let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
+let userId = tgUser?.id;
+let userPlan = "free";   // پیش‌فرض
+let currentGroupId = null;
 
-        async function dbFetch(endpoint, method = 'GET', data = null) {
-            try {
-                let options = {
-                    method,
-                    headers: {
-                        'apikey': SUP_KEY,
-                        'Authorization': `Bearer ${SUP_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'resolution=merge-duplicates'
-                    }
-                };
+async function loadUserPlan() {
+    if (!userId) return;
+
+    let userData = await dbFetch(`users?id=eq.${userId}`);
+
+    if (!userData || userData.length === 0) {
+        // کاربر جدید → ثبت در سوپابیس
+        await dbFetch('users', 'POST', {
+            id: userId,
+            full_name: telegramFullName,
+            plan: 'free'
+        });
+        userPlan = 'free';
+    } else {
+        userPlan = userData[0].plan;
+    }
+}
+
+async function dbFetch(endpoint, method = 'GET', data = null) {
+    try {
+        let options = {
+            method,
+            headers: {
+                'apikey': SUP_KEY,
+                'Authorization': `Bearer ${SUP_KEY}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            }
+        };
+
+        if (data) options.body = JSON.stringify(data);
+
+        const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+
+        if (!res.ok) {
+            console.log("❌ DB ERROR:", res.status, await res.text());
+            return null;
+        }
+
+        if (method === 'GET') return await res.json();
+        return true;
+
+    } catch (e) {
+        console.log("DB error:", e);
+        return null;
+    }
+}
+
 
                 if (data) options.body = JSON.stringify(data);
 
@@ -140,6 +179,8 @@
         }
 
         window.onload = async function() {
+               await loadUserPlan();
+
             currentGroupId = localStorage.getItem("current_group_id");
 
             if (currentGroupId) {
