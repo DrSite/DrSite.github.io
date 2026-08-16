@@ -107,6 +107,7 @@
         let groupName = "", members = [], treasurer = "", expenses = [], settlementStatus = {}, isLocked = false;
         let tgUser = tg.initDataUnsafe?.user;
         let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
+        let currentGroupId = null;
 
         async function dbFetch(endpoint, method = 'GET', data = null) {
             try {
@@ -139,27 +140,34 @@
         }
 
         window.onload = async function() {
-            let groupsData = await dbFetch('groups?id=eq.main_group');
-            if (groupsData && groupsData.length > 0) {
-                let g = groupsData[0];
-                groupName = g.group_name;
-                treasurer = g.treasurer;
-                members = g.members || [];
-                isLocked = g.is_locked || false;
+            currentGroupId = localStorage.getItem("current_group_id");
 
-                let expData = await dbFetch('expenses?group_id=eq.main_group');
-                expenses = expData || [];
+            if (currentGroupId) {
+                let groupsData = await dbFetch(`groups?id=eq.${currentGroupId}`);
+                if (groupsData && groupsData.length > 0) {
+                    let g = groupsData[0];
+                    groupName = g.group_name;
+                    treasurer = g.treasurer;
+                    members = g.members || [];
+                    isLocked = g.is_locked || false;
 
-                document.getElementById("step1").style.display = "none";
-                document.getElementById("step2").style.display = "block";
-                document.getElementById("display-group").innerText = "گروه: " + groupName;
-                document.getElementById("display-treasurer").innerText = treasurer;
-                updateDropdowns();
-                renderParticipantCheckboxes();
-                renderList();
-                calculate();
-                checkLockState();
-                return;
+                    let expData = await dbFetch(`expenses?group_id=eq.${currentGroupId}`);
+                    expenses = expData || [];
+
+                    document.getElementById("step1").style.display = "none";
+                    document.getElementById("step2").style.display = "block";
+                    document.getElementById("display-group").innerText = "گروه: " + groupName;
+                    document.getElementById("display-treasurer").innerText = treasurer;
+                    updateDropdowns();
+                    renderParticipantCheckboxes();
+                    renderList();
+                    calculate();
+                    checkLockState();
+                    return;
+                } else {
+                    localStorage.removeItem("current_group_id");
+                    currentGroupId = null;
+                }
             }
 
             let savedDraft = localStorage.getItem("dongimongi_draft");
@@ -226,10 +234,18 @@
             treasurer = members[tIdx];
             isLocked = false;
 
+            let newGroupId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ("group_" + Date.now());
+            currentGroupId = newGroupId;
+
             await dbFetch('groups', 'POST', {
-                id: 'main_group', group_name: groupName, treasurer: treasurer, members: members, is_locked: isLocked
+                id: newGroupId,
+                group_name: groupName,
+                treasurer: treasurer,
+                members: members,
+                is_locked: isLocked
             });
 
+            localStorage.setItem("current_group_id", newGroupId);
             localStorage.removeItem("dongimongi_draft");
             location.reload();
         }
@@ -263,8 +279,9 @@
 
         async function endTrip() {
             if(confirm("آیا از پایان سفر مطمئن هستید؟")) {
+                if (!currentGroupId) return;
                 isLocked = true;
-                await dbFetch('groups?id=eq.main_group', 'PATCH', { is_locked: true });
+                await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
                 checkLockState();
                 alert("سفر قفل شد!");
             }
@@ -288,6 +305,7 @@
 
         async function addExpense() {
             if (isLocked) return alert("سفر قفل شده است.");
+            if (!currentGroupId) return alert("گروه نامعتبر است.");
             let title = document.getElementById("expense-title").value.trim();
             let note = document.getElementById("expense-note").value.trim();
             let amount = parseFloat(document.getElementById("expense-amount").value);
@@ -305,7 +323,7 @@
 
             let newExp = {
                 id: Date.now(),
-                group_id: 'main_group',
+                group_id: currentGroupId,
                 title: title,
                 note: note,
                 amount: amount,
@@ -455,8 +473,11 @@
 
         async function resetApp() {
             if(confirm("آیا مطمئن هستید؟")) {
-                await dbFetch('groups?id=eq.main_group', 'DELETE');
+                if (currentGroupId) {
+                    await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
+                }
                 localStorage.removeItem("dongimongi_draft");
+                localStorage.removeItem("current_group_id");
                 location.reload();
             }
         }
