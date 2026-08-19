@@ -64,7 +64,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
     </div>
   </div>
 
-  <!-- STEP 1: فرم ساخت گروه (مدرن و ایموجی‌دار) -->
+  <!-- STEP 1: فرم ساخت گروه -->
   <div id="step1" class="list">
     <div class="section-title">✨ ساخت گروه جدید</div>
 
@@ -76,7 +76,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 
     <div id="members-inputs" style="margin-top:8px"></div>
 
-    <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
+    <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
       <button class="btn" onclick="setupGroup()">🎉 ساخت گروه</button>
       <button class="btn btn-sm" onclick="loadSavedGroup()">📂 بارگذاری گروه ذخیره‌شده</button>
       <div class="hint">حداقل ۲ عضو؛ برای مادرخرج تیک بزنید. (رایگان: حداکثر ۳ عضو)</div>
@@ -144,7 +144,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 </div>
 
 <script>
-/* ====== تنظیمات سوپابیس (در صورت استفاده) ====== */
+/* ====== تنظیمات سوپابیس ====== */
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
 
@@ -168,7 +168,6 @@ let referralParam = new URLSearchParams(location.search).get('ref');
 
 /* ====== توابع کمکی ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
-    // اگر SUP_URL یا SUP_KEY مقداردهی نشده، از حالت محلی استفاده می‌کنیم (localStorage)
     if (!SUP_URL || !SUP_KEY || SUP_URL.includes('YOUR-PROJECT')) {
         try {
             if (method === 'GET') {
@@ -248,7 +247,6 @@ async function dbFetch(endpoint, method = 'GET', data = null) {
         }
     }
 
-    // اگر سوپابیس تنظیم شده باشد، از آن استفاده کن
     try {
         let options = {
             method,
@@ -315,7 +313,7 @@ async function autoLockOldGroups() {
     await dbFetch(`groups?is_locked=eq.true&created_at=lt.${ts}`, 'DELETE');
 }
 
-/* ====== تولید فرم اعضا (با محدودیت بر اساس پلن) ====== */
+/* ====== تولید فرم اعضا ====== */
 function generateInputs() {
     let cnt = parseInt(document.getElementById("member-count").value) || 0;
     if (cnt < 2) return showToast("حداقل ۲ عضو لازم است.", "danger");
@@ -352,13 +350,11 @@ async function setupGroup() {
     let nameInputs = Array.from(document.querySelectorAll(".m-name")).map(i => i.value.trim()).filter(x=>x);
     if (nameInputs.length === 0) return showToast("حداقل یک عضو وارد کنید.", "danger");
 
-    // اعتبارسنجی تعداد اعضا بر اساس پلن
     let maxAllowed = (userPlan === 'free') ? 3 : 10;
     if (nameInputs.length > maxAllowed) {
         return showToast(`پلن شما: ${userPlan}. حداکثر اعضا برای این پلن ${maxAllowed} است.`, "danger");
     }
 
-    /* ===== نسخه رایگان ===== */
     if (userPlan === 'free') {
         if (currentGroupId) return showToast("نسخه رایگان فقط یک گروه فعال دارد.", "danger");
         let userData = await dbFetch(`users?id=eq.${userId}`);
@@ -370,7 +366,6 @@ async function setupGroup() {
         if (nameInputs.length > 3) return showToast("نسخه رایگان فقط ۳ عضو دارد.", "danger");
     }
 
-    /* ===== نسخه پریمیوم ===== */
     if (userPlan === 'premium') {
         let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
         if (activeGroups && activeGroups.length >= 3) return showToast("شما ۳ گروه فعال دارید. ابتدا یکی را قفل کنید.", "danger");
@@ -391,11 +386,9 @@ async function setupGroup() {
         if (nameInputs.length > 10) return showToast("نسخه پریمیوم حداکثر ۱۰ عضو دارد.", "danger");
     }
 
-    /* ===== ظرفیت حجمی ===== */
     let size = JSON.stringify(nameInputs).length;
     if (size > 1024*1024) return showToast("ظرفیت ۱MB شما پر شده است.", "danger");
 
-    /* ===== ساخت گروه ===== */
     let tre = null;
     let checkboxes = Array.from(document.querySelectorAll(".is-treasurer"));
     for (let i=0;i<checkboxes.length;i++){
@@ -429,7 +422,6 @@ async function setupGroup() {
     settlementStatus = {};
     members.forEach(m => settlementStatus[m] = false);
 
-    // ذخیره خودکار در saved_groups تا بعداً قابل بازیابی باشد
     let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     saved = saved.filter(x => String(x.id) !== String(currentGroupId));
     saved.push({ id: currentGroupId, group_name: groupName, treasurer: treasurer, members: members, expenses: expenses, is_locked: false });
@@ -482,7 +474,6 @@ async function endTrip() {
         if (!currentGroupId) return;
         isLocked = true;
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
-        // به‌روزرسانی saved_groups اگر وجود دارد
         let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
         saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { is_locked: true }) : g));
         localStorage.setItem('saved_groups', JSON.stringify(saved));
@@ -531,9 +522,7 @@ async function addExpense() {
     let ok = await dbFetch('expenses', 'POST', exp);
     if (!ok) return showToast("خطا در ثبت هزینه.", "danger");
 
-    // ذخیره محلی در آرایه و local db
     expenses.push(exp);
-    // اگر از saved_groups استفاده می‌کنیم، به‌روزرسانی کن
     let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { expenses: expenses }) : g));
     localStorage.setItem('saved_groups', JSON.stringify(saved));
@@ -554,7 +543,6 @@ async function deleteExpense(expId) {
     let ok = await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
     if (!ok) return showToast('خطا در حذف هزینه.', 'danger');
     expenses = expenses.filter(e => e.id !== expId);
-    // به‌روزرسانی saved_groups
     let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { expenses: expenses }) : g));
     localStorage.setItem('saved_groups', JSON.stringify(saved));
@@ -600,7 +588,7 @@ async function renderList() {
     });
 }
 
-/* ====== مشاهده هزینه (جزئیات) ====== */
+/* ====== مشاهده هزینه ====== */
 function viewExpense(id) {
     const e = expenses.find(x => x.id === id);
     if (!e) return showToast('هزینه یافت نشد.', 'danger');
@@ -641,7 +629,7 @@ function calculate() {
     prepareReportText(balances);
 }
 
-/* ====== آماده‌سازی متن گزارش برای کپی ====== */
+/* ====== آماده‌سازی متن گزارش ====== */
 let lastReportText = '';
 function prepareReportText(balances) {
     let lines = [];
@@ -655,7 +643,7 @@ function prepareReportText(balances) {
     lastReportText = lines.join('\n');
 }
 
-/* ====== کپی گزارش (برای ارسال در تلگرام یا چت) ====== */
+/* ====== کپی گزارش ====== */
 function copyReportToTelegram() {
     if (!lastReportText) return showToast('گزارشی برای کپی وجود ندارد.', 'danger');
     navigator.clipboard?.writeText(lastReportText).then(()=>{
@@ -720,7 +708,7 @@ function saveGroup() {
     showToast('گروه ذخیره شد.', 'success');
 }
 
-/* ====== بارگذاری گروه ذخیره‌شده (محلی) ====== */
+/* ====== بارگذاری گروه ذخیره‌شده ====== */
 function loadSavedGroup() {
     let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     if (!groups || groups.length === 0) return showToast('گروهی ذخیره نشده.', 'danger');
@@ -728,15 +716,17 @@ function loadSavedGroup() {
         loadGroupObject(groups[0]);
         return;
     }
-    let names = groups.map((g,i)=>`${i+1}. ${g.group_name}`).join('\n');
-    let idx = prompt('کدام گروه را بارگذاری کنم؟\n' + names + '\nشماره را وارد کنید:');
-    if (!idx) return;
-    idx = Number(idx) - 1;
-    if (idx < 0 || idx >= groups.length) return showToast('شماره نامعتبر.', 'danger');
-    loadGroupObject(groups[idx]);
+    let promptText = "شماره گروه مورد نظر را جهت بارگذاری وارد کنید:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
+    let choice = prompt(promptText);
+    let index = parseInt(choice) - 1;
+    if (!isNaN(index) && groups[index]) {
+        loadGroupObject(groups[index]);
+    } else if (choice !== null) {
+        showToast('انتخاب نامعتبر است.', 'danger');
+    }
 }
 
-/* ====== بارگذاری شی گروه ====== */
+/* ====== لود کردن شیء گروه در حافظه و UI ====== */
 function loadGroupObject(g) {
     currentGroupId = g.id;
     groupName = g.group_name;
@@ -744,73 +734,53 @@ function loadGroupObject(g) {
     members = g.members || [];
     expenses = g.expenses || [];
     isLocked = g.is_locked || false;
+
+    localStorage.setItem("current_group_id", currentGroupId);
+
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
     document.getElementById("display-group").innerText = "گروه: " + groupName;
     document.getElementById("display-treasurer").innerText = treasurer;
+
     updateDropdowns();
     renderParticipantCheckboxes();
     renderList();
     calculate();
     checkLockState();
+
+    showToast(`گروه "${groupName}" بارگذاری شد.`, "success");
 }
 
-/* ====== پاکسازی اپ (حذف گروه جاری) ====== */
+/* ====== پاکسازی / حذف گروه جاری ====== */
 async function resetApp() {
-    if (!confirm('آیا گروه جاری پاک شود؟')) return;
+    if (!confirm('آیا از پاک کردن این گروه اطمینان دارید؟')) return;
     if (currentGroupId) {
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
-        let allExps = JSON.parse(localStorage.getItem('db_expenses') || '[]');
-        allExps = allExps.filter(e => String(e.group_id) !== String(currentGroupId));
-        localStorage.setItem('db_expenses', JSON.stringify(allExps));
-        // حذف از saved_groups
         let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-        saved = saved.filter(g => String(g.id) !== String(currentGroupId));
+        saved = saved.filter(x => String(x.id) !== String(currentGroupId));
         localStorage.setItem('saved_groups', JSON.stringify(saved));
     }
     currentGroupId = null;
-    groupName = '';
-    treasurer = '';
-    members = [];
-    expenses = [];
-    isLocked = false;
-    settlementStatus = {};
-    document.getElementById("step1").style.display = "block";
+    localStorage.removeItem("current_group_id");
     document.getElementById("step2").style.display = "none";
-    document.getElementById("display-group").innerText = "گروه: —";
-    document.getElementById("display-treasurer").innerText = "—";
-    document.getElementById('members-inputs').innerHTML = '';
-    document.getElementById('result').innerHTML = '';
-    document.getElementById('expense-list').innerHTML = '';
-    document.getElementById('personal-result').innerHTML = '';
-    showToast('گروه پاک شد.', 'success');
+    document.getElementById("step1").style.display = "block";
+    showToast("گروه پاک شد.", "info");
 }
 
-/* ====== بارگذاری اولیه ====== */
-window.onload = async function() {
-    document.getElementById('display-treasurer').innerText = telegramFullName || 'کاربر محلی';
+/* ====== راه‌اندازی اولیه برنامه ====== */
+window.addEventListener('DOMContentLoaded', async () => {
     await loadUserPlan();
+    await autoLockOldGroups();
 
-    // اگر گروه جاری در localStorage باشد، بارگذاری کن (saved_groups یا db_groups)
     let savedId = localStorage.getItem('current_group_id');
     if (savedId) {
         let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-        let g = groups.find(x => String(x.id) === String(savedId));
-        if (g) {
-            loadGroupObject(g);
-        } else {
-            let all = JSON.parse(localStorage.getItem('db_groups') || '[]');
-            let gg = all.find(x => String(x.id) === String(savedId));
-            if (gg) {
-                let exps = JSON.parse(localStorage.getItem('db_expenses') || '[]').filter(e=>String(e.group_id)===String(gg.id));
-                loadGroupObject({ id: gg.id, group_name: gg.group_name, treasurer: gg.treasurer, members: gg.members || [], expenses: exps, is_locked: gg.is_locked || false });
-            }
+        let found = groups.find(g => String(g.id) === String(savedId));
+        if (found) {
+            loadGroupObject(found);
         }
     }
-
-    await renderList();
-    calculate();
-};
+});
 </script>
 </body>
 </html>
