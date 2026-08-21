@@ -2,7 +2,6 @@
 <!--
   Project: DongiMongi Telegram Mini App
   Developer: Alireza.M / TEYHOO SOFT
-  All rights reserved.
 -->
 <html lang="fa">
 <head>
@@ -17,8 +16,6 @@
   --card-border:rgba(255, 255, 255, 0.08);
   --accent-cyan:#00f2fe;
   --accent-blue:#4facfe;
-  --accent-purple:#7f00ff;
-  --accent-pink:#ff007f;
   --accent-gold:#f6d365;
   --success:#10b981;
   --danger:#f43f5e;
@@ -27,47 +24,33 @@
 html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;background:radial-gradient(circle at top, #141e30, #0a0d18);color:#f1f5f9;direction:rtl;-webkit-tap-highlight-color:transparent}
 .container{max-width:850px;margin:15px auto;padding:16px;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
 
-/* HEADER */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;gap:10px}
-.brand{display:flex;align-items:center;gap:8px}
 .brand-logo{font-size:24px;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
 .user-badge-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:6px 12px;border-radius:12px;font-size:12px;display:flex;align-items:center;gap:8px}
 .id-tag{color:var(--accent-cyan);font-weight:700}
 .btn-copy-id{background:linear-gradient(90deg,var(--accent-cyan),var(--accent-blue));border:none;color:#000;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11px}
 
-#premium-banner{display:none;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;margin-top:6px;text-align:center;line-height:1.5}
+#premium-banner{display:none;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700;margin-top:8px;text-align:center;line-height:1.6}
 .premium-active{background:rgba(16, 185, 129, 0.15);border:1px solid var(--success);color:#6ee7b7}
 .premium-free{background:rgba(246, 211, 101, 0.12);border:1px solid var(--accent-gold);color:var(--accent-gold)}
 
-/* INPUTS & BUTTONS */
-.input, select, textarea{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:11px 14px;border-radius:12px;color:#fff;font-size:14px;width:100%;box-sizing:border-box;transition:all .2s}
+.input, select{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:11px 14px;border-radius:12px;color:#fff;font-size:14px;width:100%;box-sizing:border-box}
 .input:focus, select:focus{outline:none;border-color:var(--accent-cyan);box-shadow:0 0 12px rgba(0,242,254,0.25)}
-.btn{background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));color:#000;padding:11px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:transform .1s, opacity .2s}
-.btn:active{transform:scale(0.97)}
+.btn{background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));color:#000;padding:11px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
 .btn-danger{background:linear-gradient(135deg,#ff4b2b,#ff416c);color:#fff}
 .btn-secondary{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.1)}
 
-/* PRESET CHIPS */
-.presets-wrapper{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px;scrollbar-width:none}
-.preset-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:6px 12px;border-radius:20px;font-size:12px;white-space:nowrap;cursor:pointer;transition:background .2s}
-.preset-chip:hover{background:rgba(0,242,254,0.15);border-color:var(--accent-cyan)}
+.presets-wrapper{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
+.preset-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:6px 12px;border-radius:20px;font-size:12px;white-space:nowrap;cursor:pointer}
 
-/* CARDS & SECTIONS */
 .card-section{background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);padding:14px;border-radius:16px;margin-bottom:14px}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-weight:700;font-size:15px;color:var(--accent-cyan)}
 
-/* EXPENSE ITEM CARD */
 .expense-card{display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;margin-bottom:8px}
-.expense-title{font-weight:700;font-size:14px;color:#fff}
-.expense-meta{font-size:12px;color:var(--muted);margin-top:3px}
-.expense-amount{font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left}
-
-/* BALANCE STATUS */
 .balance-card{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:6px}
 .badge-creditor{background:rgba(16,185,129,0.2);color:#6ee7b7;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
 .badge-debtor{background:rgba(244,63,94,0.2);color:#fda4af;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
-
 .member-card{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:6px}
 
 #copy-msg{font-size:12px;text-align:center;margin-top:6px;min-height:18px}
@@ -78,11 +61,8 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 <body>
 
 <div class="container">
-  <!-- HEADER BAR -->
   <div class="header">
-    <div class="brand">
-      <span class="brand-logo">🪙 دنگیمنگی</span>
-    </div>
+    <div class="brand"><span class="brand-logo">🪙 دنگیمنگی</span></div>
     <div style="display:flex;flex-direction:column;align-items:flex-end">
       <div class="user-badge-box">
         <span>کاربر: <strong id="display-user-name" style="color:#fff">—</strong></span>
@@ -98,7 +78,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
     <div class="section-header">✨ ساخت گروه دنگ جدید</div>
     
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-      <input id="group-name" class="input" placeholder="📝 نام سفر یا گروه (مثال: تور کویر)" style="flex:2;min-width:180px" />
+      <input id="group-name" class="input" placeholder="📝 نام سفر یا گروه" style="flex:2;min-width:180px" />
       <input id="member-count" class="input" type="number" min="2" max="10" placeholder="👥 تعداد اعضا" style="flex:1;min-width:110px" />
       <button class="btn" onclick="generateInputs()">🚀 ساخت فرم</button>
     </div>
@@ -112,10 +92,8 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
     <div id="plan-hints" class="hint" style="margin-top:8px"></div>
   </div>
 
-  <!-- STEP 2: داشبورد مدیریت گروه -->
+  <!-- STEP 2: مدیریت گروه -->
   <div id="step2" style="display:none">
-    
-    <!-- باکس اطلاعات گروه -->
     <div class="card-section" style="background:linear-gradient(135deg, rgba(0,242,254,0.08), rgba(79,172,254,0.08));border-color:rgba(0,242,254,0.2)">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div>
@@ -129,26 +107,22 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
       </div>
     </div>
 
-    <!-- ثبت هزینه جدید -->
     <div id="active-forms" class="card-section">
       <div class="section-header">
         <span>💸 ثبت خرج جدید</span>
         <span id="expense-counter" style="font-size:11px;color:var(--muted)"></span>
       </div>
 
-      <!-- تگ‌های انتخاب سریع -->
       <div class="presets-wrapper">
         <div class="preset-chip" onclick="setQuickTitle('🍔 ناهار/شام')">🍔 ناهار/شام</div>
         <div class="preset-chip" onclick="setQuickTitle('⛽ بنزین/سوخت')">⛽ بنزین</div>
         <div class="preset-chip" onclick="setQuickTitle('🏨 اقامت/هتل')">🏨 اقامت</div>
         <div class="preset-chip" onclick="setQuickTitle('☕ کافه/بستنی')">☕ کافه</div>
         <div class="preset-chip" onclick="setQuickTitle('🚕 تاکسی/اسنپ')">🚕 تاکسی</div>
-        <div class="preset-chip" onclick="setQuickTitle('🎟️ تفریحات')">🎟️ تفریحات</div>
-        <div class="preset-chip" onclick="setQuickTitle('🛒 خرید کلی')">🛒 خرید</div>
       </div>
 
       <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:10px">
-        <input id="expense-title" class="input" placeholder="عنوان (مثال: ناهار)" />
+        <input id="expense-title" class="input" placeholder="عنوان" />
         <input id="expense-amount" class="input" type="number" placeholder="مبلغ (تومان)" />
         <select id="type-select" class="input" onchange="toggleParticipantBox()">
           <option value="shared">🌐 اشتراکی</option>
@@ -157,7 +131,6 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
         <select id="payer-select" class="input" title="پرداخت کننده"></select>
       </div>
 
-      <!-- انتخاب شرکا -->
       <div id="participants-container" style="margin-bottom:10px;background:rgba(0,0,0,0.2);padding:8px 12px;border-radius:10px">
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px">⚠️ تقسیم بین چه کسانی؟</div>
         <div id="participant-checkboxes"></div>
@@ -169,14 +142,12 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
       </div>
     </div>
 
-    <!-- لیست هزینه‌ها -->
     <div class="card-section">
       <div class="section-header">📜 لیست فاکتورها</div>
       <div id="expense-list"></div>
       <div id="no-expenses" class="empty">هنوز هیچ خرجی ثبت نشده!</div>
     </div>
 
-    <!-- گزارش تسویه -->
     <div class="card-section">
       <div class="section-header">📊 حساب کتاب و تسویه نهایی</div>
       <div id="result"></div>
@@ -186,30 +157,24 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
       </div>
     </div>
 
-    <!-- گزارش شخصی -->
-    <div class="card-section">
+    <div id="personal-report-section" class="card-section">
       <div class="section-header">👤 استعلام وضعیت فردی</div>
       <select id="personal-report-select" class="input" onchange="showPersonalReport()"></select>
       <div id="personal-result" style="margin-top:8px"></div>
     </div>
-
   </div>
 
   <div id="copy-msg"></div>
 
-  <!-- FOOTER COPYRIGHT -->
   <div style="text-align:center; font-size:11px; color:var(--muted); margin-top:20px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);">
     © 2026 DongiMongi — طراحی و توسعه توسط Alireza.M / TEYHOO SOFT
   </div>
-
 </div>
 
 <script>
-/* ====== تنظیمات سوپابیس ====== */
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
 
-/* ====== وضعیت محلی ====== */
 let tg = window.Telegram?.WebApp || {};
 try { tg.expand(); } catch(e) {}
 let tgUser = tg.initDataUnsafe?.user;
@@ -220,6 +185,7 @@ if (!localStorage.getItem('local_user_id')) localStorage.setItem('local_user_id'
 let userPlan = "free";
 let premiumExpire = null;
 let lastGroupCreatedAt = null;
+let referralCount = 0;
 
 let currentGroupId = null;
 let groupName = "";
@@ -229,13 +195,12 @@ let expenses = [];
 let isLocked = false;
 let lastReportText = '';
 
-/* ====== ثابت‌های محدودیت (CONFIG) ====== */
+/* ====== تنظیمات دقیق پلن رایگان و پریمیوم ====== */
 const PLAN_CONFIG = {
-    free: { maxActiveGroups: 3, maxMembers: 3, maxSharedExp: 50, maxPersonalExp: 20, cooldownHours: 24 },
-    premium: { maxActiveGroups: 10, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, cooldownHours: 12 }
+    free: { maxActiveGroups: 1, cooldownHours: 168, maxMembers: 3, maxSharedExp: 5, maxPersonalExp: 4, allowPersonalReport: false, showUpgradeBanner: true, autoLockHours: 24 },
+    premium: { maxActiveGroups: 10, cooldownHours: 12, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, allowPersonalReport: true, showUpgradeBanner: false, autoLockHours: null, maxStorageMB: 1.0 }
 };
 
-/* ====== API Helper ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
     try {
         let options = {
@@ -268,40 +233,51 @@ function showToast(msg, type = "info", timeout = 3000) {
 
 function copyUserId() {
     if (!userId) return;
-    navigator.clipboard?.writeText(userId).then(() => {
-        showToast("کپی شد: " + userId, "success");
-    }).catch(() => showToast("آیدی شما: " + userId, "info"));
+    navigator.clipboard?.writeText(userId).then(() => showToast("کپی شد: " + userId, "success"))
+    .catch(() => showToast("آیدی شما: " + userId, "info"));
 }
 
 function setQuickTitle(title) {
     document.getElementById('expense-title').value = title;
 }
 
-/* ====== بارگذاری وضعیت کاربر ====== */
+/* ====== مدیریت پلن کاربر و پاکسازی اتوماتیک ====== */
 async function loadUserPlan() {
     document.getElementById("display-user-name").innerText = telegramFullName;
     document.getElementById("user-id-display").innerText = userId;
 
     let users = await dbFetch(`users?id=eq.${userId}`);
     if (!users || users.length === 0) {
-        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', last_group_created_at: null });
+        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', last_group_created_at: null, referral_count: 0 });
         userPlan = 'free';
     } else {
         let u = users[0];
         userPlan = u.plan || 'free';
+        referralCount = u.referral_count || 0;
         lastGroupCreatedAt = u.last_group_created_at ? new Date(u.last_group_created_at) : null;
         let expStr = u.expire_at || u.premium_expire_at;
         premiumExpire = expStr ? new Date(expStr) : null;
 
-        // بررسی انقضای اشتراک
+        // بررسی ارتقای اتوماتیک با دعوت ۱۵ نفر
+        if (referralCount >= 15 && userPlan === 'free') {
+            let next30Days = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+            await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'premium', expire_at: next30Days });
+            userPlan = 'premium';
+            premiumExpire = new Date(next30Days);
+            showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
+        }
+
+        // بررسی انقضای پریمیوم
         if (userPlan === 'premium' && premiumExpire && premiumExpire < new Date()) {
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free' });
             userPlan = 'free';
-            // قفل خودکار گروه‌های فعال هنگام پایان اشتراک
             await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
-            showToast("اشتراک پریمیوم شما به پایان رسیده است. گروه‌های فعال قفل شدند.", "danger", 5000);
+            showToast("اشتراک پریمیوم شما منقضی شد. گروه‌های فعال قفل شدند.", "danger", 5000);
         }
     }
+
+    // پاکسازی و قفل خودکار گروه‌های رایگان بالای ۲۴ ساعت و حذف گروه‌های قفل‌شده
+    await runAutoGroupCleanup();
 
     const cfg = PLAN_CONFIG[userPlan];
     const banner = document.getElementById("premium-banner");
@@ -312,19 +288,56 @@ async function loadUserPlan() {
         if (userPlan === 'premium') {
             banner.className = "premium-active";
             let expFormatted = premiumExpire ? premiumExpire.toLocaleDateString('fa-IR') : 'نامشخص';
-            banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400;opacity:0.9">⏳ اعتبار تا: ${expFormatted}</span>`;
+            banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400">⏳ اعتبار تا: ${expFormatted}</span>`;
         } else {
             banner.className = "premium-free";
-            banner.innerHTML = "🔓 پلن رایگان (برای امکانات کامل ارتقا دهید)";
+            banner.innerHTML = `🔓 **پلن رایگان** (۱ گروه فعال | قفل ۲4 ساعته)<br>
+            👥 **دعوت از دوستان:** ${referralCount}/15 نفر (ارتقای ۳۰ روزه رایگان)<br>
+            🔗 لینک دعوت شما: <code style="color:#fff">https://t.me/Dongi_MongiBot?start=${userId}</code>`;
         }
     }
 
     if (hints) {
-        hints.innerHTML = `💡 سقف گروه‌های فعال همزمان: <strong>${cfg.maxActiveGroups}</strong> | فاصله ساخت: <strong>هر ${cfg.cooldownHours} ساعت ۱ گروه</strong> | حداکثر اعضا: <strong>${cfg.maxMembers} نفر</strong>`;
+        hints.innerHTML = userPlan === 'free' 
+            ? `⚠️ پلن رایگان: <strong>۱ گروه فعال</strong> | هر <strong>۷ روز ۱ گروه</strong> | <strong>۳ عضو</strong> | قفل اتوماتیک سر <strong>۲۴ ساعت</strong>`
+            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong>`;
+    }
+
+    // غیرفعال کردن گزارش شخصی برای کاربران رایگان
+    const personalSec = document.getElementById("personal-report-section");
+    if (personalSec) {
+        personalSec.style.display = cfg.allowPersonalReport ? "block" : "none";
     }
 }
 
-/* ====== ساخت فرم اعضا ====== */
+/* ====== پاکسازی و قفل/حذف خودکار گروه‌ها ====== */
+async function runAutoGroupCleanup() {
+    let groups = await dbFetch(`groups?user_id=eq.${userId}`);
+    if (!groups) return;
+
+    let now = Date.now();
+    for (let g of groups) {
+        let createdTime = new Date(g.created_at).getTime();
+        let ageHours = (now - createdTime) / (1000 * 3600);
+
+        // ۱. قفل خودکار گروه رایگان بعد از ۲۴ ساعت
+        if (userPlan === 'free' && !g.is_locked && ageHours >= 24) {
+            await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
+            g.is_locked = true;
+        }
+
+        // ۲. حذف خودکار گروه‌های قفل شده
+        if (g.is_locked) {
+            await dbFetch(`expenses?group_id=eq.${g.id}`, 'DELETE');
+            await dbFetch(`groups?id=eq.${g.id}`, 'DELETE');
+            // پاکسازی محلی
+            let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+            saved = saved.filter(x => String(x.id) !== String(g.id));
+            localStorage.setItem('saved_groups', JSON.stringify(saved));
+        }
+    }
+}
+
 function generateInputs() {
     let cnt = parseInt(document.getElementById("member-count").value) || 0;
     if (cnt < 2) return showToast("حداقل ۲ عضو وارد کنید.", "danger");
@@ -349,7 +362,6 @@ function generateInputs() {
     }
 }
 
-/* ====== ساخت گروه جدید با اعمال تمام محدودیت‌ها ====== */
 async function setupGroup() {
     let name = document.getElementById("group-name").value.trim();
     if (!name) return showToast("نام سفر/گروه را وارد کنید.", "danger");
@@ -362,19 +374,19 @@ async function setupGroup() {
         return showToast(`پلن شما محدود به ${cfg.maxMembers} نفر است.`, "danger");
     }
 
-    /* ۱. بررسی تعداد گروه‌های فعال همزمان در دیتابیس */
+    // ۱. بررسی سقف گروه‌های فعال همزمان
     let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
     if (activeGroups && activeGroups.length >= cfg.maxActiveGroups) {
-        return showToast(`⚠️ شما ${activeGroups.length} گروه فعال دارید. سقف پلن شما ${cfg.maxActiveGroups} گروه است. لطفا یک گروه را قفل یا حذف کنید.`, "danger", 6000);
+        return showToast(`⚠️ شما ${activeGroups.length} گروه فعال دارید. سقف پلن شما ${cfg.maxActiveGroups} گروه است.`, "danger", 5000);
     }
 
-    /* ۲. بررسی محدودیتی ۱۲ ساعت یکبار برای پریمیوم (یا ۲۴ ساعت رایگان) */
+    // ۲. بررسی فاصله زمانی بین ساخت گروه‌ها (۷ روز برای رایگان / ۱۲ ساعت برای پریمیوم)
     if (lastGroupCreatedAt) {
-        let diffMs = Date.now() - new Date(lastGroupCreatedAt).getTime();
-        let diffHours = diffMs / (1000 * 60 * 60);
+        let diffHours = (Date.now() - new Date(lastGroupCreatedAt).getTime()) / (1000 * 3600);
         if (diffHours < cfg.cooldownHours) {
             let remain = Math.ceil(cfg.cooldownHours - diffHours);
-            return showToast(`⏳ شما هر ${cfg.cooldownHours} ساعت مجاز به ساخت ۱ گروه هستید. ${remain} ساعت دیگر دوباره تلاش کنید.`, "danger", 5000);
+            let msg = userPlan === 'free' ? `⏳ پلن رایگان: هر ۷ روز ۱ گروه. ${Math.ceil(remain/24)} روز دیگر مجاز می‌شوید.` : `⏳ پریمیوم: هر ۱۲ ساعت ۱ گروه. ${remain} ساعت دیگر مجاز می‌شوید.`;
+            return showToast(msg, "danger", 5000);
         }
     }
 
@@ -438,20 +450,17 @@ function toggleParticipantBox() {
     document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
 }
 
-/* ====== قفل و آزاد کردن سهمیه ====== */
 async function endTrip() {
-    if(confirm("با قفل کردن این گروه، سهمیه ۱ گروه فعال شما آزاد می‌شود و امکان ثبت خرج جدید در این گروه بسته می‌شود. ادامه می‌دهید؟")) {
+    if(confirm("با قفل کردن، امکان ثبت خرج جدید بسته شده و این گروه حذف خواهد شد. ادامه می‌دهید؟")) {
         if (!currentGroupId) return;
         isLocked = true;
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
-        saveGroup();
-        document.getElementById("active-forms").style.display = "none";
-        document.getElementById("end-trip-btn").style.display = "none";
-        showToast("گروه قفل شد و سهمیه شما آزاد گردید. 🔓", "success");
+        await runAutoGroupCleanup();
+        resetAppUI();
+        showToast("گروه قفل و پاکسازی شد. 🔓", "success");
     }
 }
 
-/* ====== ثبت هزینه با بررسی سقف فاکتورها ====== */
 async function addExpense() {
     if (isLocked) return showToast("این سفر قفل شده است.", "danger");
 
@@ -470,10 +479,10 @@ async function addExpense() {
     let personalCount = expenses.filter(e => e.type === 'personal').length;
 
     if (type === 'shared' && sharedCount >= cfg.maxSharedExp) {
-        return showToast(`⚠️ سقف فاکتورهای اشتراکی این گروه (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
+        return showToast(`⚠️ سقف هزینه اشتراکی در پلن شما (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
     }
     if (type === 'personal' && personalCount >= cfg.maxPersonalExp) {
-        return showToast(`⚠️ سقف فاکتورهای شخصی این گروه (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
+        return showToast(`⚠️ سقف هزینه شخصی در پلن شما (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
     }
 
     let participants = [];
@@ -497,7 +506,6 @@ async function addExpense() {
     };
 
     await dbFetch('expenses', 'POST', exp);
-
     expenses.push(exp);
     saveGroup();
 
@@ -546,13 +554,13 @@ function renderList() {
         div.className = 'expense-card';
         div.innerHTML = `
           <div>
-            <div class="expense-title">${e.title} <span style="font-size:11px;color:var(--accent-cyan);background:rgba(0,242,254,0.1);padding:2px 6px;border-radius:4px">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
-            <div class="expense-meta" style="margin-top:4px">👤 <strong>ثبت‌کننده / پرداخت‌کننده:</strong> <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
-            <div class="expense-meta">👥 <strong>شرکا:</strong> ${e.participants.join(', ')}</div>
-            ${e.note ? `<div class="expense-meta">💬 ${e.note}</div>` : ''}
+            <div style="font-weight:700;color:#fff">${e.title} <span style="font-size:11px;color:var(--accent-cyan)">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px">👤 <strong>پرداخت‌کننده:</strong> <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
+            <div style="font-size:12px;color:var(--muted)">👥 <strong>شرکا:</strong> ${e.participants.join(', ')}</div>
+            ${e.note ? `<div style="font-size:12px;color:var(--muted)">💬 ${e.note}</div>` : ''}
           </div>
           <div>
-            <div class="expense-amount">${(e.amount||0).toLocaleString()} <span style="font-size:10px">تومان</span></div>
+            <div style="font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left">${(e.amount||0).toLocaleString()} <span style="font-size:10px">تومان</span></div>
             <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="deleteExpense(${e.id})">حذف</button>
           </div>
         `;
@@ -573,9 +581,7 @@ function calculate() {
     expenses.forEach(e => {
         if (e.type === 'shared') {
             let share = e.amount / e.participants.length;
-            e.participants.forEach(p => {
-                balances[p] = (balances[p] || 0) - share;
-            });
+            e.participants.forEach(p => balances[p] = (balances[p] || 0) - share);
             balances[e.payer] = (balances[e.payer] || 0) + e.amount;
         } else {
             balances[e.payer] = (balances[e.payer] || 0) + e.amount;
@@ -596,34 +602,28 @@ function calculate() {
         `;
     });
     resultEl.innerHTML = html;
-
     prepareReportText(balances);
 }
 
 function prepareReportText(balances) {
-    let lines = [];
-    lines.push(`🪙 **گزارش تسویه دنگیمنگی** 💸`);
-    lines.push(`📌 **سفر:** ${groupName}`);
-    lines.push(`👑 **مادرخرج:** ${treasurer}`);
-    lines.push(`-----------------------------------`);
+    let lines = [`🪙 **گزارش تسویه دنگیمنگی** 💸`, `📌 **سفر:** ${groupName}`, `👑 **مادرخرج:** ${treasurer}`, `-----------------------------------`];
     members.forEach(m => {
         let v = balances[m] || 0;
-        let icon = v >= 0 ? '🟢' : '🔴';
-        lines.push(`${icon} ${m}: ${v >= 0 ? '+' : ''}${Math.round(v).toLocaleString()} تومان`);
+        lines.push(`${v >= 0 ? '🟢' : '🔴'} ${m}: ${v >= 0 ? '+' : ''}${Math.round(v).toLocaleString()} تومان`);
     });
-    lines.push(`-----------------------------------`);
-    lines.push(`📱 محاسبه شده با مینی‌اپ دنگیمنگی`);
+    lines.push(`-----------------------------------`, `📱 محاسبه شده با مینی‌اپ دنگیمنگی`);
     lastReportText = lines.join('\n');
 }
 
 function copyReportToTelegram() {
     if (!lastReportText) return;
-    navigator.clipboard?.writeText(lastReportText).then(()=>{
-        showToast('گزارش تسویه جهت ارسال در گروه کپی شد! 📋', 'success');
-    }).catch(()=>showToast('کپی ناموفق بود.', 'danger'));
+    navigator.clipboard?.writeText(lastReportText).then(()=>showToast('گزارش تسویه کپی شد! 📋', 'success'));
 }
 
 function showPersonalReport() {
+    if (!PLAN_CONFIG[userPlan].allowPersonalReport) {
+        return showToast("⚠️ این ویژگی مخصوص کاربران پریمیوم است.", "danger");
+    }
     const name = document.getElementById('personal-report-select').value;
     const el = document.getElementById('personal-result');
     if (!name) { el.innerHTML = ''; return; }
@@ -654,12 +654,10 @@ function updateDropdowns() {
     
     payer.innerHTML = '';
     personal.innerHTML = '<option value="">👤 انتخاب فرد جهت گزارش شخصی</option>';
-
     members.forEach(m => {
         payer.innerHTML += `<option value="${m}">${m}</option>`;
         personal.innerHTML += `<option value="${m}">${m}</option>`;
     });
-
     if (members.length > 0) payer.value = members[0];
 }
 
@@ -675,16 +673,10 @@ function saveGroup() {
 function loadSavedGroup() {
     let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     if (!groups || groups.length === 0) return showToast('هیچ گروه ذخیره‌شده‌ای یافت نشد.', 'danger');
-    if (groups.length === 1) {
-        loadGroupObject(groups[0]);
-        return;
-    }
-    let promptText = "شماره گروه مورد نظر را جهت بارگذاری وارد کنید:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
+    let promptText = "شماره گروه مورد نظر را وارد کنید:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
     let choice = prompt(promptText);
     let index = parseInt(choice) - 1;
-    if (!isNaN(index) && groups[index]) {
-        loadGroupObject(groups[index]);
-    }
+    if (!isNaN(index) && groups[index]) loadGroupObject(groups[index]);
 }
 
 function loadGroupObject(g) {
@@ -696,49 +688,40 @@ function loadGroupObject(g) {
     isLocked = g.is_locked || false;
 
     localStorage.setItem("current_group_id", currentGroupId);
-
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
     document.getElementById("display-group-title").innerText = "گروه: " + groupName;
     document.getElementById("display-treasurer-name").innerText = treasurer;
-    
-    if (isLocked) {
-        document.getElementById("active-forms").style.display = "none";
-        document.getElementById("end-trip-btn").style.display = "none";
-    } else {
-        document.getElementById("active-forms").style.display = "block";
-        document.getElementById("end-trip-btn").style.display = "inline-flex";
-    }
 
     updateDropdowns();
     renderParticipantCheckboxes();
     renderList();
     calculate();
-    showToast("گروه بارگذاری شد.", "success");
 }
 
 function resetApp() {
     if (confirm("آیا از پاک کردن کامل این گروه مطمئن هستید؟")) {
         if (currentGroupId) {
-            let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-            saved = saved.filter(x => String(x.id) !== String(currentGroupId));
-            localStorage.setItem('saved_groups', JSON.stringify(saved));
             dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
+            dbFetch(`expenses?group_id=eq.${currentGroupId}`, 'DELETE');
         }
-        currentGroupId = null;
-        localStorage.removeItem("current_group_id");
-        document.getElementById("step2").style.display = "none";
-        document.getElementById("step1").style.display = "block";
-        document.getElementById("group-name").value = "";
-        document.getElementById("member-count").value = "";
-        document.getElementById("members-inputs").innerHTML = "";
-        showToast("اطلاعات گروه پاک شد.", "info");
+        resetAppUI();
+        showToast("گروه پاک شد.", "info");
     }
+}
+
+function resetAppUI() {
+    currentGroupId = null;
+    localStorage.removeItem("current_group_id");
+    document.getElementById("step2").style.display = "none";
+    document.getElementById("step1").style.display = "block";
+    document.getElementById("group-name").value = "";
+    document.getElementById("member-count").value = "";
+    document.getElementById("members-inputs").innerHTML = "";
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
     await loadUserPlan();
-    
     let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     let lastId = localStorage.getItem("current_group_id");
     if (lastId && saved.length > 0) {
