@@ -27,6 +27,7 @@
     .container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
     .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 12px; }
     .header h1 { font-size: 1.25rem; color: var(--accent-color); }
+    .header-actions { display: flex; align-items: center; gap: 15px; }
     
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     .card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
@@ -82,7 +83,10 @@
     <!-- Header -->
     <header class="header">
       <h1>پنل مدیریت و تحلیل داده‌ها</h1>
-      <div class="small">زمان کنونی: <span id="now-time">—</span></div>
+      <div class="header-actions">
+        <div class="small">زمان کنونی: <span id="now-time">—</span></div>
+        <button class="btn btn-sm btn-danger" onclick="logout()">خروج از پنل</button>
+      </div>
     </header>
 
     <!-- Charts Section -->
@@ -223,6 +227,17 @@
       SUPABASE_KEY = key;
       localStorage.setItem('sb_url', SUPABASE_URL);
       localStorage.setItem('sb_key', SUPABASE_KEY);
+      checkAuth();
+    }
+
+    function logout() {
+      if (!confirm('آیا قصد خروج از پنل را دارید؟')) return;
+      localStorage.removeItem('sb_url');
+      localStorage.removeItem('sb_key');
+      SUPABASE_URL = '';
+      SUPABASE_KEY = '';
+      document.getElementById('cfg-url').value = '';
+      document.getElementById('cfg-key').value = '';
       checkAuth();
     }
 
