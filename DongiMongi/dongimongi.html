@@ -35,7 +35,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 .id-tag{color:var(--accent-cyan);font-weight:700}
 .btn-copy-id{background:linear-gradient(90deg,var(--accent-cyan),var(--accent-blue));border:none;color:#000;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11px}
 
-#premium-banner{display:none;padding:6px 12px;border-radius:10px;font-size:12px;font-weight:700;margin-top:6px;text-align:center}
+#premium-banner{display:none;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;margin-top:6px;text-align:center;line-height:1.5}
 .premium-active{background:rgba(16, 185, 129, 0.15);border:1px solid var(--success);color:#6ee7b7}
 .premium-free{background:rgba(246, 211, 101, 0.12);border:1px solid var(--accent-gold);color:var(--accent-gold)}
 
@@ -60,7 +60,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 /* EXPENSE ITEM CARD */
 .expense-card{display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;margin-bottom:8px}
 .expense-title{font-weight:700;font-size:14px;color:#fff}
-.expense-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.expense-meta{font-size:12px;color:var(--muted);margin-top:3px}
 .expense-amount{font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left}
 
 /* BALANCE STATUS */
@@ -109,12 +109,12 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 
     <div style="display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap">
       <button class="btn" onclick="setupGroup()">🎉 ایجاد گروه و ورود</button>
-      <button class="btn btn-secondary btn-sm" onclick="loadSavedGroup()">📂 گروه قبلی</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadSavedGroup()">📂 انتخاب گروه‌های من</button>
     </div>
     <div class="hint" style="margin-top:8px">💡 حداقل ۲ نفر. (پلن رایگان: ۳ نفر | پلن پریمیوم: ۱۰ نفر)</div>
   </div>
 
-  <!-- STEP 2: داشبورد مدیریت گروه (طراحی Gen-Z) -->
+  <!-- STEP 2: داشبورد مدیریت گروه -->
   <div id="step2" style="display:none">
     
     <!-- باکس اطلاعات گروه -->
@@ -135,7 +135,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
     <div id="active-forms" class="card-section">
       <div class="section-header">💸 ثبت خرج جدید</div>
 
-      <!-- تگ‌های انتخاب سریع (Quick Presets) -->
+      <!-- تگ‌های انتخاب سریع -->
       <div class="presets-wrapper">
         <div class="preset-chip" onclick="setQuickTitle('🍔 ناهار/شام')">🍔 ناهار/شام</div>
         <div class="preset-chip" onclick="setQuickTitle('⛽ بنزین/سوخت')">⛽ بنزین</div>
@@ -312,7 +312,8 @@ async function loadUserPlan() {
         banner.style.display = "block";
         if (userPlan === 'premium') {
             banner.className = "premium-active";
-            banner.innerHTML = "🌟 اشتراک پریمیوم فعال است (بدون محدودیت)";
+            let expFormatted = premiumExpire ? premiumExpire.toLocaleDateString('fa-IR') : 'نامشخص';
+            banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400;opacity:0.9">⏳ اعتبار تا: ${expFormatted}</span>`;
         } else {
             banner.className = "premium-free";
             banner.innerHTML = "🔓 پلن رایگان (حداکثر ۳ عضو)";
@@ -512,13 +513,14 @@ function renderList() {
         div.className = 'expense-card';
         div.innerHTML = `
           <div>
-            <div class="expense-title">${e.title} <span style="font-size:11px;color:var(--muted)">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
-            <div class="expense-meta">💳 پرداخت‌کننده: <strong>${e.payer}</strong> | شرکا: ${e.participants.join(', ')}</div>
+            <div class="expense-title">${e.title} <span style="font-size:11px;color:var(--accent-cyan);background:rgba(0,242,254,0.1);padding:2px 6px;border-radius:4px">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
+            <div class="expense-meta" style="margin-top:4px">👤 <strong>ثبت‌کننده / پرداخت‌کننده:</strong> <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
+            <div class="expense-meta">👥 <strong>شرکا:</strong> ${e.participants.join(', ')}</div>
             ${e.note ? `<div class="expense-meta">💬 ${e.note}</div>` : ''}
           </div>
           <div>
             <div class="expense-amount">${(e.amount||0).toLocaleString()} <span style="font-size:10px">تومان</span></div>
-            <button class="btn btn-danger btn-sm" style="margin-top:4px;width:100%" onclick="deleteExpense(${e.id})">حذف</button>
+            <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="deleteExpense(${e.id})">حذف</button>
           </div>
         `;
         el.appendChild(div);
