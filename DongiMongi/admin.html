@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت و آنالیز سیستم</title>
+  <title>پنل مدیریت و مینی‌اپ سیستم</title>
   
   <!-- Chart.js & Telegram WebApp SDK -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -32,6 +32,10 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     .card { background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
     .card h3, .card h4 { color: var(--accent-color); font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+
+    /* User ID Card for Mini App */
+    .user-info-card { background: rgba(56, 189, 248, 0.1); border: 1px solid var(--accent-color); padding: 15px; border-radius: 12px; text-align: center; font-size: 1rem; }
+    .user-info-card strong { color: var(--accent-color); font-size: 1.2rem; cursor: pointer; }
 
     /* Inputs & Buttons */
     input, select, button { background: rgba(15, 23, 42, 0.6); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; outline: none; }
@@ -80,6 +84,13 @@
   </div>
 
   <div class="container">
+    <!-- Telegram User Info Banner -->
+    <div id="tg-user-banner" class="user-info-card" style="display: none;">
+      👤 کاربر فعال تلگرام: <span id="tg-user-name">—</span> | 
+      آیدی شما: <strong id="tg-user-id" onclick="copyUserId()" title="برای کپی کلیک کنید">—</strong> 
+      <span class="small">(برای کپی روی آیدی بزنید)</span>
+    </div>
+
     <!-- Header -->
     <header class="header">
       <h1>پنل مدیریت و تحلیل داده‌ها</h1>
@@ -258,7 +269,8 @@
         if (body) options.body = JSON.stringify(body);
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
         if (!res.ok) {
-          throw new Error(`HTTP Error: ${res.status}`);
+          const errBody = await res.text();
+          throw new Error(`HTTP ${res.status}: ${errBody}`);
         }
         return await res.json();
       } catch (e) {
@@ -364,17 +376,15 @@
       if (!input) return null;
       let cleanInput = String(input).trim().replace(/^@/, '');
       
-      // اگر ورودی کاملا عددی باشد فرض می‌شود id است
       if (/^\d+$/.test(cleanInput)) {
         return cleanInput;
       }
       
-      // در غیر این صورت بر اساس یوزرنیم در دیتابیس جستجو می‌شود
       const res = await dbFetch(`users?username=ilike.${encodeURIComponent(cleanInput)}&select=id`);
       if (res && res.length > 0) {
         return String(res[0].id);
       }
-      return cleanInput; // بازگرداندن ورودی اولیه در صورت عدم یافتن
+      return cleanInput;
     }
 
     /* ====== USER MANAGEMENT ====== */
@@ -389,7 +399,7 @@
       let conditions = [];
 
       if (q) {
-        conditions.push(`or=(id.ilike.*${encodeURIComponent(q)}*,full_name.ilike.*${encodeURIComponent(q)}*,username.ilike.*${encodeURIComponent(q)}*)`);
+        conditions.push(`or=(id.eq.${encodeURIComponent(q)},full_name.ilike.*${encodeURIComponent(q)}*,username.ilike.*${encodeURIComponent(q)}*)`);
       }
       if (plan) {
         conditions.push(`plan=eq.${plan}`);
@@ -589,7 +599,7 @@
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
 
       const payload = {
-        id: String(userId),
+        id: isNaN(userId) ? userId : Number(userId),
         plan: 'premium',
         premium_expire_at: expire
       };
@@ -680,12 +690,18 @@
       container.innerHTML = html;
     }
 
-    /* ====== TELEGRAM AUTOMATIC REGISTRATION & SYNC ====== */
+    /* ====== TELEGRAM MINI APP AUTOMATIC REGISTRATION ====== */
     async function tryLinkTelegramUser(tg) {
       try {
         const tgUser = tg?.initDataUnsafe?.user;
         if (!tgUser) return;
-        const telegramId = String(tgUser.id);
+
+        // نمایش کارت کاربر در مینی‌اپ
+        document.getElementById('tg-user-banner').style.display = 'block';
+        document.getElementById('tg-user-name').innerText = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
+        document.getElementById('tg-user-id').innerText = tgUser.id;
+
+        const telegramId = Number(tgUser.id);
         const username = tgUser.username || null;
         const fullName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
 
@@ -706,12 +722,22 @@
       }
     }
 
+    function copyUserId() {
+      const uid = document.getElementById('tg-user-id').innerText;
+      if (uid && uid !== '—') {
+        navigator.clipboard.writeText(uid);
+        alert('آیدی تلگرام شما کپی شد: ' + uid);
+      }
+    }
+
     /* ====== ONLOAD INITIALIZATION ====== */
     window.onload = function() {
       document.getElementById('now-time').innerText = new Date().toLocaleString('fa-IR');
       pushLog('panel_load', '', 'راه‌اندازی اولیه پنل ادمین');
 
       if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
         tryLinkTelegramUser(window.Telegram.WebApp);
       }
 
