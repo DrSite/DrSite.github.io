@@ -64,16 +64,12 @@
 </head>
 <body>
 
-  <!-- Auth Modal (Email / Password Login) -->
+  <!-- Auth Modal (Custom Password Login via admin_settings table) -->
   <div id="auth-overlay" style="display: none;">
     <div class="auth-box">
       <h3>ورود به پنل مدیریت ادمین</h3>
       <div class="form-group">
-        <label class="small">ایمیل ادمین</label>
-        <input type="email" id="login-email" placeholder="admin@example.com">
-      </div>
-      <div class="form-group">
-        <label class="small">رمز عبور</label>
+        <label class="small">رمز عبور پنل</label>
         <input type="password" id="login-password" placeholder="••••••••">
       </div>
       <button class="btn" onclick="handleLogin()">ورود به پنل</button>
@@ -202,7 +198,7 @@
   </div>
 
   <script>
-    /* ====== CONFIG (سخت‌کد شده در فرانت‌اند - امن با RLS) ====== */
+    /* ====== CONFIG (سخت‌کد شده در فرانت‌اند) ====== */
     const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; // <--- آدرس سوپابیس خود را اینجا بگذارید
     const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // <--- کلید Anon خود را اینجا بگذارید
 
@@ -214,53 +210,74 @@
     let logs = [];
     let lastUsersResult = [];
 
-    /* ====== AUTHENTICATION ====== */
-    async function checkAuth() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) {
-        document.getElementById('auth-overlay').style.display = 'flex';
-      } else {
+    /* ====== SHA-256 HASH FUNCTION ====== */
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    /* ====== CUSTOM PASSWORD AUTHENTICATION ====== */
+    function checkAuth() {
+      const isLogged = localStorage.getItem('is_admin_logged');
+      if (isLogged === 'true') {
         document.getElementById('auth-overlay').style.display = 'none';
         initCharts();
         loadChartData();
         searchUser();
+      } else {
+        document.getElementById('auth-overlay').style.display = 'flex';
       }
     }
 
     async function handleLogin() {
-      const email = document.getElementById('login-email').value.trim();
       const password = document.getElementById('login-password').value.trim();
       const errEl = document.getElementById('login-error');
       errEl.innerText = '';
 
-      if (!email || !password) {
-        errEl.innerText = 'لطفا ایمیل و رمز عبور را وارد کنید.';
+      if (!password) {
+        errEl.innerText = 'لطفا رمز عبور را وارد کنید.';
         return;
       }
 
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-      if (error) {
-        errEl.innerText = 'خطا در ورود: ' + error.message;
-      } else {
-        checkAuth();
+      try {
+        const passHash = await sha256(password);
+        const { data, error } = await supabaseClient
+          .from('admin_settings')
+          .select('value')
+          .eq('key', 'admin_password');
+
+        if (error) throw error;
+
+        if (data && data.length > 0 && data[0].value === passHash) {
+          localStorage.setItem('is_admin_logged', 'true');
+          document.getElementById('auth-overlay').style.display = 'none';
+          initCharts();
+          loadChartData();
+          searchUser();
+        } else {
+          errEl.innerText = 'رمز عبور اشتباه است.';
+        }
+      } catch (e) {
+        console.error('Login error:', e);
+        errEl.innerText = 'خطا در ارتباط با دیتابیس.';
       }
     }
 
-    async function logout() {
+    function logout() {
       if (!confirm('آیا قصد خروج از پنل را دارید؟')) return;
-      await supabaseClient.auth.signOut();
+      localStorage.removeItem('is_admin_logged');
       checkAuth();
     }
 
     /* ====== DB FETCH HELPER (Using Supabase SDK) ====== */
     async function dbFetch(tableQuery, method = 'GET', body = null, extraHeaders = {}) {
       try {
-        // جدا کردن نام جدول و کوئری پارامترها
         const [table, queryString] = tableQuery.split('?');
         let query = supabaseClient.from(table);
 
         if (method === 'GET') {
-          // اجرای ساده‌ی سلکت (در صورت نیاز می‌توانید فیلترها را دستی هندل کنید یا از قابلیت‌های SDK استفاده کنید)
           const { data, error } = await supabaseClient.from(table).select('*');
           if (error) throw error;
           return data;
@@ -269,7 +286,6 @@
           if (error) throw error;
           return data;
         } else if (method === 'PATCH') {
-          // استخراج شرط ساده ایدیش
           const matchId = queryString ? queryString.split('=')[1] : null;
           const { data, error } = await supabaseClient.from(table).update(body).eq('id', matchId);
           if (error) throw error;
@@ -318,6 +334,9 @@
 
     /* ====== CHARTS ====== */
     function initCharts() {
+      if (chartRevenue) chartRevenue.destroy();
+      if (chartActive) chartActive.destroy();
+
       const ctxRev = document.getElementById('chart-revenue').getContext('2d');
       chartRevenue = new Chart(ctxRev, {
         type: 'line',
@@ -338,7 +357,6 @@
         const { data: payments } = await supabaseClient.from('payments').select('*');
         const { data: users } = await supabaseClient.from('users').select('*');
         
-        // نمونه داده‌های نمایشی برای نمودارها
         if (chartRevenue && payments) {
           chartRevenue.data.labels = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور'];
           chartRevenue.data.datasets[0].data = [0, 0, 0, 0, 0, payments.reduce((acc, p) => acc + (p.amount || 0), 0)];
