@@ -64,7 +64,7 @@
 </head>
 <body>
 
-  <!-- Auth Modal (Custom Password Login via admin_settings table) -->
+  <!-- Auth Modal -->
   <div id="auth-overlay" style="display: none;">
     <div class="auth-box">
       <h3>ورود به پنل مدیریت ادمین</h3>
@@ -198,11 +198,10 @@
   </div>
 
   <script>
-    /* ====== CONFIG (سخت‌کد شده در فرانت‌اند) ====== */
-    const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co'; // <--- آدرس سوپابیس خود را اینجا بگذارید
-    const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // <--- کلید Anon خود را اینجا بگذارید
+    /* ====== CONFIG ====== */
+    const SUPABASE_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
 
-    // مقداردهی کلاینت رسمی Supabase
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let chartRevenue = null;
@@ -210,7 +209,6 @@
     let logs = [];
     let lastUsersResult = [];
 
-    /* ====== SHA-256 HASH FUNCTION ====== */
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -218,7 +216,6 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    /* ====== CUSTOM PASSWORD AUTHENTICATION ====== */
     function checkAuth() {
       const isLogged = localStorage.getItem('is_admin_logged');
       if (isLogged === 'true') {
@@ -271,39 +268,6 @@
       checkAuth();
     }
 
-    /* ====== DB FETCH HELPER (Using Supabase SDK) ====== */
-    async function dbFetch(tableQuery, method = 'GET', body = null, extraHeaders = {}) {
-      try {
-        const [table, queryString] = tableQuery.split('?');
-        let query = supabaseClient.from(table);
-
-        if (method === 'GET') {
-          const { data, error } = await supabaseClient.from(table).select('*');
-          if (error) throw error;
-          return data;
-        } else if (method === 'POST') {
-          const { data, error } = await supabaseClient.from(table).upsert(body);
-          if (error) throw error;
-          return data;
-        } else if (method === 'PATCH') {
-          const matchId = queryString ? queryString.split('=')[1] : null;
-          const { data, error } = await supabaseClient.from(table).update(body).eq('id', matchId);
-          if (error) throw error;
-          return data;
-        } else if (method === 'DELETE') {
-          const matchId = queryString ? queryString.split('=')[1] : null;
-          const { data, error } = await supabaseClient.from(table).delete().eq('id', matchId);
-          if (error) throw error;
-          return data;
-        }
-      } catch (e) {
-        console.error('dbFetch error:', e);
-        pushLog('db_error', '', e.message);
-        return null;
-      }
-    }
-
-    /* ====== LOGGING SYSTEM ====== */
     function pushLog(type, userId, message) {
       const ts = new Date().toLocaleTimeString('fa-IR');
       logs.unshift({ ts, type, userId: userId || '—', message });
@@ -332,7 +296,6 @@
       renderLogs();
     }
 
-    /* ====== CHARTS ====== */
     function initCharts() {
       if (chartRevenue) chartRevenue.destroy();
       if (chartActive) chartActive.destroy();
