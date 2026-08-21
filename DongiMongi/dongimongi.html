@@ -198,7 +198,7 @@ let lastReportText = '';
 /* ====== تنظیمات دقیق پلن رایگان و پریمیوم ====== */
 const PLAN_CONFIG = {
     free: { maxActiveGroups: 1, cooldownHours: 168, maxMembers: 3, maxSharedExp: 5, maxPersonalExp: 4, allowPersonalReport: false, showUpgradeBanner: true, autoLockHours: 24 },
-    premium: { maxActiveGroups: 10, cooldownHours: 12, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, allowPersonalReport: true, showUpgradeBanner: false, autoLockHours: null, maxStorageMB: 1.0 }
+    premium: { maxActiveGroups: 10, cooldownHours: 12, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, allowPersonalReport: true, showUpgradeBanner: false, autoLockHours: 168, maxStorageMB: 1.0 }
 };
 
 async function dbFetch(endpoint, method = 'GET', data = null) {
@@ -241,7 +241,7 @@ function setQuickTitle(title) {
     document.getElementById('expense-title').value = title;
 }
 
-/* ====== مدیریت پلن کاربر و پاکسازی اتوماتیک ====== */
+/* ====== مدیریت پلن کاربر و بررسی شروط انقضا ====== */
 async function loadUserPlan() {
     document.getElementById("display-user-name").innerText = telegramFullName;
     document.getElementById("user-id-display").innerText = userId;
@@ -258,7 +258,7 @@ async function loadUserPlan() {
         let expStr = u.expire_at || u.premium_expire_at;
         premiumExpire = expStr ? new Date(expStr) : null;
 
-        // بررسی ارتقای اتوماتیک با دعوت ۱۵ نفر
+        // ارتقای اتوماتیک با دعوت ۱۵ نفر
         if (referralCount >= 15 && userPlan === 'free') {
             let next30Days = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'premium', expire_at: next30Days });
@@ -267,16 +267,16 @@ async function loadUserPlan() {
             showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
         }
 
-        // بررسی انقضای پریمیوم
+        // شرط اتمام اشتراک پریمیوم -> قفل همزمان تمام گروه‌های فعال
         if (userPlan === 'premium' && premiumExpire && premiumExpire < new Date()) {
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free' });
             userPlan = 'free';
             await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
-            showToast("اشتراک پریمیوم شما منقضی شد. گروه‌های فعال قفل شدند.", "danger", 5000);
+            showToast("⏳ اشتراک پریمیوم شما به پایان رسید. تمامی گروه‌ها قفل و پاک‌سازی شدند.", "danger", 6000);
         }
     }
 
-    // پاکسازی و قفل خودکار گروه‌های رایگان بالای ۲۴ ساعت و حذف گروه‌های قفل‌شده
+    // پاکسازی و قفل خودکار بر اساس شروط زمانی
     await runAutoGroupCleanup();
 
     const cfg = PLAN_CONFIG[userPlan];
@@ -291,8 +291,8 @@ async function loadUserPlan() {
             banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400">⏳ اعتبار تا: ${expFormatted}</span>`;
         } else {
             banner.className = "premium-free";
-            banner.innerHTML = `🔓 **پلن رایگان** (۱ گروه فعال | قفل ۲4 ساعته)<br>
-            👥 **دعوت از دوستان:** ${referralCount}/15 نفر (ارتقای ۳۰ روزه رایگان)<br>
+            banner.innerHTML = `🔓 <strong>پلن رایگان</strong> (۱ گروه فعال | قفل ۲۴ ساعته)<br>
+            👥 <strong>دعوت از دوستان:</strong> ${referralCount}/15 نفر (ارتقای ۳۰ روزه رایگان)<br>
             🔗 لینک دعوت شما: <code style="color:#fff">https://t.me/Dongi_MongiBot?start=${userId}</code>`;
         }
     }
@@ -300,37 +300,47 @@ async function loadUserPlan() {
     if (hints) {
         hints.innerHTML = userPlan === 'free' 
             ? `⚠️ پلن رایگان: <strong>۱ گروه فعال</strong> | هر <strong>۷ روز ۱ گروه</strong> | <strong>۳ عضو</strong> | قفل اتوماتیک سر <strong>۲۴ ساعت</strong>`
-            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong>`;
+            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong> | قفل در صورت <strong>۱ هفته عدم ثبت خرج</strong>`;
     }
 
-    // غیرفعال کردن گزارش شخصی برای کاربران رایگان
     const personalSec = document.getElementById("personal-report-section");
     if (personalSec) {
         personalSec.style.display = cfg.allowPersonalReport ? "block" : "none";
     }
 }
 
-/* ====== پاکسازی و قفل/حذف خودکار گروه‌ها ====== */
+/* ====== پاکسازی، قفل و حذف خودکار گروه‌ها ====== */
 async function runAutoGroupCleanup() {
     let groups = await dbFetch(`groups?user_id=eq.${userId}`);
-    if (!groups) return;
+    if (!groups || !Array.isArray(groups)) return;
 
     let now = Date.now();
     for (let g of groups) {
         let createdTime = new Date(g.created_at).getTime();
-        let ageHours = (now - createdTime) / (1000 * 3600);
+        let lastActivityTime = g.last_activity_at ? new Date(g.last_activity_at).getTime() : createdTime;
 
-        // ۱. قفل خودکار گروه رایگان بعد از ۲۴ ساعت
-        if (userPlan === 'free' && !g.is_locked && ageHours >= 24) {
-            await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
-            g.is_locked = true;
+        let ageHoursFromCreation = (now - createdTime) / (1000 * 3600);
+        let inactiveHours = (now - lastActivityTime) / (1000 * 3600);
+
+        // ۱. قفل شدن بر اساس نوع پلن
+        if (!g.is_locked) {
+            // رایگان: ۲۴ ساعت پس از ساخت
+            if (userPlan === 'free' && ageHoursFromCreation >= 24) {
+                await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
+                g.is_locked = true;
+            } 
+            // پریمیوم: ۱ هفته (۱۶۸ ساعت) عدم ثبت هزینه جدید
+            else if (userPlan === 'premium' && inactiveHours >= 168) {
+                await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
+                g.is_locked = true;
+            }
         }
 
-        // ۲. حذف خودکار گروه‌های قفل شده
+        // ۲. حذف فوری گروه‌های قفل‌شده و پاک‌سازی کامل حافظه
         if (g.is_locked) {
             await dbFetch(`expenses?group_id=eq.${g.id}`, 'DELETE');
             await dbFetch(`groups?id=eq.${g.id}`, 'DELETE');
-            // پاکسازی محلی
+            
             let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
             saved = saved.filter(x => String(x.id) !== String(g.id));
             localStorage.setItem('saved_groups', JSON.stringify(saved));
@@ -374,13 +384,11 @@ async function setupGroup() {
         return showToast(`پلن شما محدود به ${cfg.maxMembers} نفر است.`, "danger");
     }
 
-    // ۱. بررسی سقف گروه‌های فعال همزمان
     let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
     if (activeGroups && activeGroups.length >= cfg.maxActiveGroups) {
         return showToast(`⚠️ شما ${activeGroups.length} گروه فعال دارید. سقف پلن شما ${cfg.maxActiveGroups} گروه است.`, "danger", 5000);
     }
 
-    // ۲. بررسی فاصله زمانی بین ساخت گروه‌ها (۷ روز برای رایگان / ۱۲ ساعت برای پریمیوم)
     if (lastGroupCreatedAt) {
         let diffHours = (Date.now() - new Date(lastGroupCreatedAt).getTime()) / (1000 * 3600);
         if (diffHours < cfg.cooldownHours) {
@@ -405,7 +413,8 @@ async function setupGroup() {
         treasurer: tre,
         members: nameInputs,
         is_locked: false,
-        created_at: nowIso
+        created_at: nowIso,
+        last_activity_at: nowIso
     };
 
     await dbFetch('groups', 'POST', newGroup);
@@ -507,6 +516,11 @@ async function addExpense() {
 
     await dbFetch('expenses', 'POST', exp);
     expenses.push(exp);
+
+    // بروزرسانی زمان آخرین فعالیت برای صفر شدن تایمر ۱ هفته‌ای پریمیوم
+    let nowIso = new Date().toISOString();
+    await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { last_activity_at: nowIso });
+
     saveGroup();
 
     renderList();
@@ -720,14 +734,8 @@ function resetAppUI() {
     document.getElementById("members-inputs").innerHTML = "";
 }
 
-window.addEventListener('DOMContentLoaded', async () => {
-    await loadUserPlan();
-    let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-    let lastId = localStorage.getItem("current_group_id");
-    if (lastId && saved.length > 0) {
-        let g = saved.find(x => String(x.id) === String(lastId));
-        if (g) loadGroupObject(g);
-    }
+window.addEventListener('DOMContentLoaded', () => {
+    loadUserPlan();
 });
 </script>
 </body>
