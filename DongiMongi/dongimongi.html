@@ -19,7 +19,7 @@
 }
 html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:linear-gradient(180deg,var(--bg),#071a2a);color:#e6eef8;direction:rtl}
 .container{max-width:980px;margin:20px auto;padding:20px;background:var(--card);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
 .h-title{font-weight:700;font-size:20px}
 .small{font-size:13px;color:var(--muted)}
 .row{display:flex;gap:8px;flex-wrap:wrap}
@@ -30,7 +30,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 .btn-danger{background:linear-gradient(90deg,#ff6b6b,#ef4444)}
 .list{margin-top:12px;padding:12px;background:rgba(255,255,255,0.02);border-radius:10px}
 .checkbox-item{display:inline-block;margin:6px 8px}
-#premium-banner{display:none;color:#fde68a}
+#premium-banner{display:none;color:#fde68a;font-weight:bold;margin-top:4px}
 .lock-badge{background:#fde68a;color:#92400e;padding:6px 10px;border-radius:8px}
 #expense-list li{display:flex;justify-content:space-between;align-items:center;padding:10px;border-bottom:1px dashed rgba(255,255,255,0.02)}
 .member-card{display:flex;gap:10px;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));margin-bottom:8px}
@@ -47,6 +47,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 .copy-success{color:var(--success);font-weight:700}
 .toast-danger{color:#ffb4b4}
 .toast-success{color:#86efac}
+.id-box{background:rgba(0,198,255,0.1);border:1px solid rgba(0,198,255,0.3);padding:4px 8px;border-radius:6px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
@@ -58,8 +59,12 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
       <div class="h-title">Dongimongi — مدیریت گروهی</div>
       <div class="small" id="display-group">گروه: —</div>
     </div>
-    <div style="text-align:right">
+    <div style="text-align:left">
       <div class="small">کاربر: <span id="display-treasurer">—</span></div>
+      <div class="id-box" style="margin-top:4px">
+        آیدی شما: <span id="user-id-display" style="font-weight:bold;color:var(--accent1)">—</span>
+        <button onclick="copyUserId()" class="btn btn-sm" style="padding:2px 6px;font-size:11px">📋 کپی</button>
+      </div>
       <div id="premium-banner">🔓 برای امکانات کامل، اشتراک پریمیوم تهیه کنید</div>
     </div>
   </div>
@@ -79,7 +84,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
     <div style="display:flex;gap:10px;margin-top:12px;align-items:center;flex-wrap:wrap">
       <button class="btn" onclick="setupGroup()">🎉 ساخت گروه</button>
       <button class="btn btn-sm" onclick="loadSavedGroup()">📂 بارگذاری گروه ذخیره‌شده</button>
-      <div class="hint">حداقل ۲ عضو؛ برای مادرخرج تیک بزنید. (رایگان: حداکثر ۳ عضو)</div>
+      <div class="hint">حداقل ۲ عضو؛ برای مادرخرج تیک بزنید. (رایگان: حداکثر ۳ عضو | پریمیوم: ۱۰ عضو)</div>
     </div>
   </div>
 
@@ -98,7 +103,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
         <input id="expense-title" class="input" placeholder="عنوان هزینه (مثال: بنزین)" style="flex:1" />
-        <input id="expense-amount" class="input" placeholder="مبلغ (تومان)" style="width:160px" />
+        <input id="expense-amount" class="input" type="number" placeholder="مبلغ (تومان)" style="width:160px" />
         <select id="type-select" class="input" onchange="toggleParticipantBox()" style="width:160px">
           <option value="shared">اشتراکی</option>
           <option value="personal">شخصی</option>
@@ -146,15 +151,16 @@ html,body{height:100%;margin:0;font-family:Tahoma, Arial, sans-serif;background:
 <script>
 /* ====== تنظیمات سوپابیس ====== */
 const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
-const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw ';
+const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
 
 /* ====== وضعیت محلی ====== */
 let tg = window.Telegram?.WebApp || {};
 try { tg.expand(); } catch(e) {}
 let tgUser = tg.initDataUnsafe?.user;
-let telegramFullName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : '';
-let userId = tgUser?.id || ('local_' + (localStorage.getItem('local_user_id') || (Date.now())));
+let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
+let userId = tgUser?.id ? String(tgUser.id) : (localStorage.getItem('local_user_id') || ('local_' + Date.now()));
 if (!localStorage.getItem('local_user_id')) localStorage.setItem('local_user_id', userId);
+
 let userPlan = "free";
 let premiumExpire = null;
 let currentGroupId = null;
@@ -164,95 +170,15 @@ let members = [];
 let expenses = [];
 let isLocked = false;
 let settlementStatus = {};
-let referralParam = new URLSearchParams(location.search).get('ref');
 
 /* ====== توابع کمکی ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
-    if (!SUP_URL || !SUP_KEY || SUP_URL.includes('YOUR-PROJECT')) {
-        try {
-            if (method === 'GET') {
-                if (endpoint.startsWith('groups')) {
-                    let all = JSON.parse(localStorage.getItem('db_groups') || '[]');
-                    return all;
-                }
-                if (endpoint.startsWith('users')) {
-                    let all = JSON.parse(localStorage.getItem('db_users') || '[]');
-                    let m = endpoint.match(/id=eq\.([^\&]+)/);
-                    if (m) {
-                        return all.filter(u => String(u.id) === String(m[1]));
-                    }
-                    return all;
-                }
-                if (endpoint.startsWith('expenses')) {
-                    let all = JSON.parse(localStorage.getItem('db_expenses') || '[]');
-                    return all;
-                }
-                if (endpoint.startsWith('payments')) {
-                    let all = JSON.parse(localStorage.getItem('db_payments') || '[]');
-                    return all;
-                }
-                return null;
-            } else {
-                if (endpoint === 'groups' && method === 'POST') {
-                    let arr = JSON.parse(localStorage.getItem('db_groups') || '[]');
-                    arr.push(data);
-                    localStorage.setItem('db_groups', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint === 'users' && method === 'POST') {
-                    let arr = JSON.parse(localStorage.getItem('db_users') || '[]');
-                    arr.push(data);
-                    localStorage.setItem('db_users', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint.startsWith('users?id=eq.') && method === 'PATCH') {
-                    let id = endpoint.split('=eq.')[1];
-                    let arr = JSON.parse(localStorage.getItem('db_users') || '[]');
-                    arr = arr.map(u => (String(u.id) === String(id) ? Object.assign({}, u, data) : u));
-                    localStorage.setItem('db_users', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint === 'expenses' && method === 'POST') {
-                    let arr = JSON.parse(localStorage.getItem('db_expenses') || '[]');
-                    arr.push(data);
-                    localStorage.setItem('db_expenses', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint.startsWith('expenses?id=eq.') && method === 'DELETE') {
-                    let id = endpoint.split('=eq.')[1];
-                    let arr = JSON.parse(localStorage.getItem('db_expenses') || '[]');
-                    arr = arr.filter(e => String(e.id) !== String(id));
-                    localStorage.setItem('db_expenses', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint.startsWith('groups?id=eq.') && method === 'PATCH') {
-                    let id = endpoint.split('=eq.')[1];
-                    let arr = JSON.parse(localStorage.getItem('db_groups') || '[]');
-                    arr = arr.map(g => (String(g.id) === String(id) ? Object.assign({}, g, data) : g));
-                    localStorage.setItem('db_groups', JSON.stringify(arr));
-                    return true;
-                }
-                if (endpoint.startsWith('groups?id=eq.') && method === 'DELETE') {
-                    let id = endpoint.split('=eq.')[1];
-                    let arr = JSON.parse(localStorage.getItem('db_groups') || '[]');
-                    arr = arr.filter(g => String(g.id) !== String(id));
-                    localStorage.setItem('db_groups', JSON.stringify(arr));
-                    return true;
-                }
-                return true;
-            }
-        } catch (e) {
-            console.error('local db error', e);
-            return null;
-        }
-    }
-
     try {
         let options = {
             method,
             headers: {
-                'apikey': SUP_KEY,
-                'Authorization': `Bearer ${SUP_KEY}`,
+                'apikey': SUP_KEY.trim(),
+                'Authorization': `Bearer ${SUP_KEY.trim()}`,
                 'Content-Type': 'application/json',
                 'Prefer': 'resolution=merge-duplicates'
             }
@@ -279,38 +205,82 @@ function showToast(msg, type = "info", timeout = 3500) {
     }
     container.innerText = msg;
     container.className = 'hint';
-    if (type === 'danger') { container.classList.add('toast-danger'); container.style.color = '#ffb4b4'; }
-    else if (type === 'success') { container.classList.add('toast-success'); container.style.color = '#86efac'; }
+    if (type === 'danger') { container.style.color = '#ffb4b4'; }
+    else if (type === 'success') { container.style.color = '#86efac'; }
     else { container.style.color = ''; }
-    setTimeout(()=>{ container.innerText = ''; container.className = 'hint'; container.style.color = ''; }, timeout);
+    setTimeout(()=>{ if(container) { container.innerText = ''; container.style.color = ''; } }, timeout);
+}
+
+/* ====== کپی آیدی عددی کاربر ====== */
+function copyUserId() {
+    if (!userId) return;
+    navigator.clipboard?.writeText(userId).then(() => {
+        showToast("آیدی عددی شما کپی شد: " + userId, "success");
+    }).catch(() => {
+        showToast("آیدی شما: " + userId, "info");
+    });
 }
 
 /* ====== بارگذاری پلن کاربر و بررسی اشتراک ====== */
 async function loadUserPlan() {
+    // نمایش آیدی و نام کاربر در هدر
+    document.getElementById("display-treasurer").innerText = telegramFullName || 'کاربر';
+    document.getElementById("user-id-display").innerText = userId;
+
     let users = await dbFetch(`users?id=eq.${userId}`);
-    let isNew = false;
+    
+    // اگر بر اساس آیدی عددی پیدا نشد و کاربر یوزرنیم دارد، بر اساس یوزرنیم بگرد
+    if ((!users || users.length === 0) && tgUser?.username) {
+        users = await dbFetch(`users?username=eq.${tgUser.username}`);
+    }
+
     if (!users || users.length === 0) {
-        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName || 'کاربر محلی', plan: 'free', last_group_created_at: null });
+        // ثبت کاربر جدید در سوپابیس
+        await dbFetch('users', 'POST', { 
+            id: userId, 
+            username: tgUser?.username || null,
+            full_name: telegramFullName, 
+            plan: 'free', 
+            last_group_created_at: null 
+        });
         userPlan = 'free';
-        isNew = true;
     } else {
         let u = users[0];
+        
+        // همگام‌سازی یوزرنیم در صورت لزوم
+        if (tgUser?.username && u.username !== tgUser.username) {
+            await dbFetch(`users?id=eq.${u.id}`, 'PATCH', { username: tgUser.username });
+        }
+
         userPlan = u.plan || 'free';
-        premiumExpire = u.premium_expire_at ? new Date(u.premium_expire_at) : null;
+        let expStr = u.expire_at || u.premium_expire_at;
+        premiumExpire = expStr ? new Date(expStr) : null;
+
+        // بررسی منقضی شدن اشتراک
         if (premiumExpire && premiumExpire < new Date()) {
-            await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
-            await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free', premium_expire_at: null });
+            await dbFetch(`users?id=eq.${u.id}`, 'PATCH', { plan: 'free' });
             userPlan = 'free';
         }
     }
-    if (userPlan === 'free') document.getElementById("premium-banner").style.display = "block";
+
+    const banner = document.getElementById("premium-banner");
+    if (banner) {
+        if (userPlan === 'premium') {
+            banner.style.display = "block";
+            banner.innerHTML = "🌟 حساب پریمیوم (بدون محدودیت)";
+            banner.style.color = "#86efac";
+        } else {
+            banner.style.display = "block";
+            banner.innerHTML = "🔓 برای امکانات کامل، اشتراک پریمیوم تهیه کنید";
+            banner.style.color = "#fde68a";
+        }
+    }
 }
 
 /* ====== قفل خودکار گروه‌های قدیمی ====== */
 async function autoLockOldGroups() {
     let ts = new Date(Date.now() - 24*3600*1000).toISOString();
     await dbFetch(`groups?is_locked=eq.false&created_at=lt.${ts}`, 'PATCH', { is_locked: true });
-    await dbFetch(`groups?is_locked=eq.true&created_at=lt.${ts}`, 'DELETE');
 }
 
 /* ====== تولید فرم اعضا ====== */
@@ -318,16 +288,16 @@ function generateInputs() {
     let cnt = parseInt(document.getElementById("member-count").value) || 0;
     if (cnt < 2) return showToast("حداقل ۲ عضو لازم است.", "danger");
 
-    let maxAllowed = (userPlan === 'free') ? 3 : 10;
+    let maxAllowed = (userPlan === 'premium') ? 10 : 3;
     if (cnt > maxAllowed) {
-        showToast(`پلن شما: ${userPlan}. حداکثر اعضا برای این پلن ${maxAllowed} است. تعداد به ${maxAllowed} کاهش یافت.`, "danger");
+        showToast(`پلن شما ${userPlan === 'premium' ? 'پریمیوم' : 'رایگان'} است. حداکثر اعضا ${maxAllowed} نفر می‌باشد.`, "danger");
         cnt = maxAllowed;
         document.getElementById("member-count").value = cnt;
     }
 
     let container = document.getElementById("members-inputs");
     container.innerHTML = "";
-    for (let i=0;i<cnt;i++){
+    for (let i=0; i<cnt; i++){
         container.innerHTML += `
             <div class="member-card">
               <div class="left">
@@ -350,48 +320,14 @@ async function setupGroup() {
     let nameInputs = Array.from(document.querySelectorAll(".m-name")).map(i => i.value.trim()).filter(x=>x);
     if (nameInputs.length === 0) return showToast("حداقل یک عضو وارد کنید.", "danger");
 
-    let maxAllowed = (userPlan === 'free') ? 3 : 10;
+    let maxAllowed = (userPlan === 'premium') ? 10 : 3;
     if (nameInputs.length > maxAllowed) {
-        return showToast(`پلن شما: ${userPlan}. حداکثر اعضا برای این پلن ${maxAllowed} است.`, "danger");
+        return showToast(`پلن شما ${userPlan === 'premium' ? 'پریمیوم' : 'رایگان'} است. حداکثر اعضا ${maxAllowed} نفر می‌باشد.`, "danger");
     }
-
-    if (userPlan === 'free') {
-        if (currentGroupId) return showToast("نسخه رایگان فقط یک گروه فعال دارد.", "danger");
-        let userData = await dbFetch(`users?id=eq.${userId}`);
-        let lastCreated = (userData && userData[0]) ? userData[0].last_group_created_at : null;
-        if (lastCreated) {
-            let diffHours = (Date.now() - new Date(lastCreated)) / 3600000;
-            if (diffHours < 168) return showToast("نسخه رایگان هفته‌ای فقط یک گروه می‌تواند بسازد.", "danger");
-        }
-        if (nameInputs.length > 3) return showToast("نسخه رایگان فقط ۳ عضو دارد.", "danger");
-    }
-
-    if (userPlan === 'premium') {
-        let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
-        if (activeGroups && activeGroups.length >= 3) return showToast("شما ۳ گروه فعال دارید. ابتدا یکی را قفل کنید.", "danger");
-
-        let monthStart = new Date();
-        monthStart.setDate(1);
-        monthStart.setHours(0,0,0,0);
-        let monthlyGroups = await dbFetch(`groups?user_id=eq.${userId}&created_at=gte.${monthStart.toISOString()}`);
-        if (monthlyGroups && monthlyGroups.length >= 10) return showToast("نسخه پریمیوم ماهانه حداکثر ۱۰ گروه دارد.", "danger");
-
-        let userData = await dbFetch(`users?id=eq.${userId}`);
-        let lastCreated = (userData && userData[0]) ? userData[0].last_group_created_at : null;
-        if (lastCreated) {
-            let diffHours = (Date.now() - new Date(lastCreated)) / 3600000;
-            if (diffHours < 12) return showToast("نسخه پریمیوم هر ۱۲ ساعت فقط یک گروه می‌تواند بسازد.", "danger");
-        }
-
-        if (nameInputs.length > 10) return showToast("نسخه پریمیوم حداکثر ۱۰ عضو دارد.", "danger");
-    }
-
-    let size = JSON.stringify(nameInputs).length;
-    if (size > 1024*1024) return showToast("ظرفیت ۱MB شما پر شده است.", "danger");
 
     let tre = null;
     let checkboxes = Array.from(document.querySelectorAll(".is-treasurer"));
-    for (let i=0;i<checkboxes.length;i++){
+    for (let i=0; i<checkboxes.length; i++){
         if (checkboxes[i].checked) { tre = nameInputs[i]; break; }
     }
     if (!tre) tre = nameInputs[0];
@@ -406,10 +342,7 @@ async function setupGroup() {
         created_at: new Date().toISOString()
     };
 
-    let ok = await dbFetch('groups', 'POST', newGroup);
-    if (!ok) return showToast("خطا در ایجاد گروه.", "danger");
-
-    await dbFetch(`users?id=eq.${userId}`, 'PATCH', { last_group_created_at: new Date().toISOString() });
+    await dbFetch('groups', 'POST', newGroup);
 
     currentGroupId = newGroup.id;
     localStorage.setItem("current_group_id", currentGroupId);
@@ -419,25 +352,21 @@ async function setupGroup() {
     members = nameInputs;
     expenses = [];
     isLocked = false;
-    settlementStatus = {};
-    members.forEach(m => settlementStatus[m] = false);
 
-    let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-    saved = saved.filter(x => String(x.id) !== String(currentGroupId));
-    saved.push({ id: currentGroupId, group_name: groupName, treasurer: treasurer, members: members, expenses: expenses, is_locked: false });
-    localStorage.setItem('saved_groups', JSON.stringify(saved));
+    saveGroup();
 
     document.getElementById("step1").style.display = "none";
     document.getElementById("step2").style.display = "block";
     document.getElementById("display-group").innerText = "گروه: " + groupName;
     document.getElementById("display-treasurer").innerText = treasurer;
+    
     updateDropdowns();
     renderParticipantCheckboxes();
     renderList();
     calculate();
     checkLockState();
 
-    showToast("گروه با موفقیت ساخته و ذخیره شد.", "success");
+    showToast("گروه با موفقیت ساخته شد.", "success");
 }
 
 /* ====== چک‌باکس اعضا ====== */
@@ -470,21 +399,19 @@ function checkLockState() {
 
 /* ====== قفل گروه ====== */
 async function endTrip() {
-    if(confirm("آیا از پایان سفر مطمئن هستید؟")) {
+    if(confirm("آیا از پایان سفر و قفل گروه مطمئن هستید؟")) {
         if (!currentGroupId) return;
         isLocked = true;
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
-        let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-        saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { is_locked: true }) : g));
-        localStorage.setItem('saved_groups', JSON.stringify(saved));
+        saveGroup();
         checkLockState();
-        showToast("سفر قفل شد!", "success");
+        showToast("گروه قفل شد!", "success");
     }
 }
 
 /* ====== افزودن هزینه ====== */
 async function addExpense() {
-    if (isLocked) return showToast("سفر قفل شده است.", "danger");
+    if (isLocked) return showToast("گروه قفل شده است.", "danger");
     if (!currentGroupId) return showToast("ابتدا گروه را بسازید.", "danger");
 
     let title = document.getElementById('expense-title').value.trim();
@@ -519,13 +446,10 @@ async function addExpense() {
         created_at: new Date().toISOString()
     };
 
-    let ok = await dbFetch('expenses', 'POST', exp);
-    if (!ok) return showToast("خطا در ثبت هزینه.", "danger");
+    await dbFetch('expenses', 'POST', exp);
 
     expenses.push(exp);
-    let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-    saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { expenses: expenses }) : g));
-    localStorage.setItem('saved_groups', JSON.stringify(saved));
+    saveGroup();
 
     renderList();
     calculate();
@@ -539,13 +463,10 @@ async function addExpense() {
 
 /* ====== حذف هزینه ====== */
 async function deleteExpense(expId) {
-    if (!confirm('آیا از حذف هزینه مطمئن هستید؟')) return;
-    let ok = await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
-    if (!ok) return showToast('خطا در حذف هزینه.', 'danger');
+    if (!confirm('آیا از حذف این هزینه مطمئن هستید؟')) return;
+    await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
     expenses = expenses.filter(e => e.id !== expId);
-    let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-    saved = saved.map(g => (String(g.id) === String(currentGroupId) ? Object.assign({}, g, { expenses: expenses }) : g));
-    localStorage.setItem('saved_groups', JSON.stringify(saved));
+    saveGroup();
     renderList();
     calculate();
     showToast('هزینه حذف شد.', 'success');
@@ -553,11 +474,6 @@ async function deleteExpense(expId) {
 
 /* ====== رندر لیست هزینه‌ها ====== */
 async function renderList() {
-    let allExps = await dbFetch('expenses');
-    if (allExps && Array.isArray(allExps)) {
-        expenses = allExps.filter(e => String(e.group_id) === String(currentGroupId));
-    }
-
     const ul = document.getElementById('expense-list');
     ul.innerHTML = '';
     if (!expenses || expenses.length === 0) {
@@ -610,18 +526,18 @@ function calculate() {
         if (e.type === 'shared') {
             let share = e.amount / e.participants.length;
             e.participants.forEach(p => {
-                balances[p] -= share;
+                balances[p] = (balances[p] || 0) - share;
             });
-            balances[e.payer] += e.amount;
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
         } else {
-            balances[e.payer] += e.amount;
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
         }
     });
 
     let html = '<h4 style="margin:6px 0">نتیجه تسویه</h4><table style="width:100%"><tbody>';
     members.forEach(m => {
         let v = balances[m] || 0;
-        html += `<tr><td style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)">${m}</td><td style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02);text-align:left">${v>0?'<span style="color:#86efac">+'+v.toLocaleString()+'</span>':'<span style="color:#fca5a5">'+v.toLocaleString()+'</span>'} تومان</td></tr>`;
+        html += `<tr><td style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02)">${m}</td><td style="padding:6px;border-bottom:1px solid rgba(255,255,255,0.02);text-align:left">${v>0?'<span style="color:#86efac">+'+Math.round(v).toLocaleString()+'</span>':'<span style="color:#fca5a5">'+Math.round(v).toLocaleString()+'</span>'} تومان</td></tr>`;
     });
     html += '</tbody></table>';
     resultEl.innerHTML = html;
@@ -638,7 +554,7 @@ function prepareReportText(balances) {
     lines.push('');
     members.forEach(m => {
         let v = balances[m] || 0;
-        lines.push(`${m}: ${v>0?'+':''}${v.toLocaleString()} تومان`);
+        lines.push(`${m}: ${v>0?'+':''}${Math.round(v).toLocaleString()} تومان`);
     });
     lastReportText = lines.join('\n');
 }
@@ -647,10 +563,7 @@ function prepareReportText(balances) {
 function copyReportToTelegram() {
     if (!lastReportText) return showToast('گزارشی برای کپی وجود ندارد.', 'danger');
     navigator.clipboard?.writeText(lastReportText).then(()=>{
-        const msg = document.getElementById('copy-msg');
-        msg.innerText = 'گزارش کپی شد — اکنون در کلیپ‌بورد شماست.';
-        msg.className = 'copy-success';
-        setTimeout(()=>{ msg.innerText=''; msg.className='hint'; }, 3500);
+        showToast('گزارش تسویه کپی شد.', 'success');
     }).catch(()=>showToast('کپی ناموفق بود.', 'danger'));
 }
 
@@ -666,14 +579,14 @@ function showPersonalReport() {
     expenses.forEach(e => {
         if (e.type === 'shared') {
             let share = e.amount / e.participants.length;
-            e.participants.forEach(p => balances[p] -= share);
-            balances[e.payer] += e.amount;
+            e.participants.forEach(p => balances[p] = (balances[p] || 0) - share);
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
         } else {
-            balances[e.payer] += e.amount;
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
         }
     });
     let v = balances[name] || 0;
-    el.innerHTML = `<div style="font-weight:700">${name}</div><div class="small">مانده: ${v>0?'+':''}${v.toLocaleString()} تومان</div>`;
+    el.innerHTML = `<div style="font-weight:700">${name}</div><div class="small">مانده: ${v>0?'+':''}${Math.round(v).toLocaleString()} تومان</div>`;
 }
 
 /* ====== بروزرسانی dropdown ها ====== */
@@ -681,6 +594,8 @@ function updateDropdowns() {
     const creator = document.getElementById('creator-select');
     const payer = document.getElementById('payer-select');
     const personal = document.getElementById('personal-report-select');
+    if(!creator || !payer || !personal) return;
+    
     creator.innerHTML = '';
     payer.innerHTML = '';
     personal.innerHTML = '<option value="">انتخاب عضو</option>';
@@ -699,13 +614,12 @@ function updateDropdowns() {
 
 /* ====== ذخیره گروه محلی ====== */
 function saveGroup() {
-    if (!currentGroupId) return showToast('گروهی برای ذخیره وجود ندارد.', 'danger');
+    if (!currentGroupId) return;
     let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     let g = { id: currentGroupId, group_name: groupName, treasurer, members, expenses, is_locked: isLocked };
     groups = groups.filter(x => String(x.id) !== String(currentGroupId));
     groups.push(g);
     localStorage.setItem('saved_groups', JSON.stringify(groups));
-    showToast('گروه ذخیره شد.', 'success');
 }
 
 /* ====== بارگذاری گروه ذخیره‌شده ====== */
@@ -741,44 +655,45 @@ function loadGroupObject(g) {
     document.getElementById("step2").style.display = "block";
     document.getElementById("display-group").innerText = "گروه: " + groupName;
     document.getElementById("display-treasurer").innerText = treasurer;
-
+    
     updateDropdowns();
     renderParticipantCheckboxes();
     renderList();
     calculate();
     checkLockState();
-
-    showToast(`گروه "${groupName}" بارگذاری شد.`, "success");
+    showToast("گروه با موفقیت بارگذاری شد.", "success");
 }
 
-/* ====== پاکسازی / حذف گروه جاری ====== */
-async function resetApp() {
-    if (!confirm('آیا از پاک کردن این گروه اطمینان دارید؟')) return;
-    if (currentGroupId) {
-        await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
-        let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-        saved = saved.filter(x => String(x.id) !== String(currentGroupId));
-        localStorage.setItem('saved_groups', JSON.stringify(saved));
+/* ====== پاک کردن گروه ====== */
+function resetApp() {
+    if (confirm("آیا از پاک کردن این گروه مطمئن هستید؟")) {
+        if (currentGroupId) {
+            let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+            saved = saved.filter(x => String(x.id) !== String(currentGroupId));
+            localStorage.setItem('saved_groups', JSON.stringify(saved));
+            dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
+        }
+        currentGroupId = null;
+        localStorage.removeItem("current_group_id");
+        document.getElementById("step2").style.display = "none";
+        document.getElementById("step1").style.display = "block";
+        document.getElementById("group-name").value = "";
+        document.getElementById("member-count").value = "";
+        document.getElementById("members-inputs").innerHTML = "";
+        showToast("گروه پاک شد.", "info");
     }
-    currentGroupId = null;
-    localStorage.removeItem("current_group_id");
-    document.getElementById("step2").style.display = "none";
-    document.getElementById("step1").style.display = "block";
-    showToast("گروه پاک شد.", "info");
 }
 
-/* ====== راه‌اندازی اولیه برنامه ====== */
+/* ====== بارگذاری اولیه سیستم ====== */
 window.addEventListener('DOMContentLoaded', async () => {
     await loadUserPlan();
     await autoLockOldGroups();
-
-    let savedId = localStorage.getItem('current_group_id');
-    if (savedId) {
-        let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-        let found = groups.find(g => String(g.id) === String(savedId));
-        if (found) {
-            loadGroupObject(found);
-        }
+    
+    let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+    let lastId = localStorage.getItem("current_group_id");
+    if (lastId && saved.length > 0) {
+        let g = saved.find(x => String(x.id) === String(lastId));
+        if (g) loadGroupObject(g);
     }
 });
 </script>
