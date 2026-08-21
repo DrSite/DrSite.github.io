@@ -68,10 +68,8 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 .badge-creditor{background:rgba(16,185,129,0.2);color:#6ee7b7;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
 .badge-debtor{background:rgba(244,63,94,0.2);color:#fda4af;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
 
-/* MEMBER INPUT CARDS (STEP 1) */
 .member-card{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:6px}
 
-/* TOAST / MESSAGES */
 #copy-msg{font-size:12px;text-align:center;margin-top:6px;min-height:18px}
 .hint{font-size:12px;color:var(--muted)}
 .empty{text-align:center;color:var(--muted);padding:16px;font-size:13px}
@@ -111,7 +109,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
       <button class="btn" onclick="setupGroup()">🎉 ایجاد گروه و ورود</button>
       <button class="btn btn-secondary btn-sm" onclick="loadSavedGroup()">📂 انتخاب گروه‌های من</button>
     </div>
-    <div class="hint" style="margin-top:8px">💡 حداقل ۲ نفر. (پلن رایگان: ۳ نفر | پلن پریمیوم: ۱۰ نفر)</div>
+    <div id="plan-hints" class="hint" style="margin-top:8px"></div>
   </div>
 
   <!-- STEP 2: داشبورد مدیریت گروه -->
@@ -125,7 +123,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
           <div style="font-size:12px;color:var(--muted);margin-top:4px">👑 مادرخرج: <span id="display-treasurer-name" style="color:var(--accent-gold);font-weight:700">—</span></div>
         </div>
         <div style="display:flex;gap:6px">
-          <button id="end-trip-btn" class="btn btn-secondary btn-sm" onclick="endTrip()">🔐 قفل سفر</button>
+          <button id="end-trip-btn" class="btn btn-secondary btn-sm" onclick="endTrip()">🔐 قفل و آزادسازی سهمیه</button>
           <button class="btn btn-danger btn-sm" onclick="resetApp()">🗑️ حذف</button>
         </div>
       </div>
@@ -133,7 +131,10 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 
     <!-- ثبت هزینه جدید -->
     <div id="active-forms" class="card-section">
-      <div class="section-header">💸 ثبت خرج جدید</div>
+      <div class="section-header">
+        <span>💸 ثبت خرج جدید</span>
+        <span id="expense-counter" style="font-size:11px;color:var(--muted)"></span>
+      </div>
 
       <!-- تگ‌های انتخاب سریع -->
       <div class="presets-wrapper">
@@ -218,6 +219,8 @@ if (!localStorage.getItem('local_user_id')) localStorage.setItem('local_user_id'
 
 let userPlan = "free";
 let premiumExpire = null;
+let lastGroupCreatedAt = null;
+
 let currentGroupId = null;
 let groupName = "";
 let treasurer = "";
@@ -225,6 +228,12 @@ let members = [];
 let expenses = [];
 let isLocked = false;
 let lastReportText = '';
+
+/* ====== ثابت‌های محدودیت (CONFIG) ====== */
+const PLAN_CONFIG = {
+    free: { maxActiveGroups: 3, maxMembers: 3, maxSharedExp: 50, maxPersonalExp: 20, cooldownHours: 24 },
+    premium: { maxActiveGroups: 10, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, cooldownHours: 12 }
+};
 
 /* ====== API Helper ====== */
 async function dbFetch(endpoint, method = 'GET', data = null) {
@@ -249,7 +258,6 @@ async function dbFetch(endpoint, method = 'GET', data = null) {
     }
 }
 
-/* ====== نمایش پیام Toast ====== */
 function showToast(msg, type = "info", timeout = 3000) {
     let container = document.getElementById('copy-msg');
     if (!container) return;
@@ -258,56 +266,47 @@ function showToast(msg, type = "info", timeout = 3000) {
     setTimeout(() => { if(container) container.innerText = ''; }, timeout);
 }
 
-/* ====== کپی آیدی کاربر ====== */
 function copyUserId() {
     if (!userId) return;
     navigator.clipboard?.writeText(userId).then(() => {
         showToast("کپی شد: " + userId, "success");
-    }).catch(() => {
-        showToast("آیدی شما: " + userId, "info");
-    });
+    }).catch(() => showToast("آیدی شما: " + userId, "info"));
 }
 
-/* ====== پر کردن عنوان سریع ====== */
 function setQuickTitle(title) {
     document.getElementById('expense-title').value = title;
 }
 
-/* ====== بارگذاری پلن کاربر ====== */
+/* ====== بارگذاری وضعیت کاربر ====== */
 async function loadUserPlan() {
     document.getElementById("display-user-name").innerText = telegramFullName;
     document.getElementById("user-id-display").innerText = userId;
 
     let users = await dbFetch(`users?id=eq.${userId}`);
-    if ((!users || users.length === 0) && tgUser?.username) {
-        users = await dbFetch(`users?username=eq.${tgUser.username}`);
-    }
-
     if (!users || users.length === 0) {
-        await dbFetch('users', 'POST', { 
-            id: userId, 
-            username: tgUser?.username || null,
-            full_name: telegramFullName, 
-            plan: 'free', 
-            last_group_created_at: null 
-        });
+        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', last_group_created_at: null });
         userPlan = 'free';
     } else {
         let u = users[0];
-        if (tgUser?.username && u.username !== tgUser.username) {
-            await dbFetch(`users?id=eq.${u.id}`, 'PATCH', { username: tgUser.username });
-        }
         userPlan = u.plan || 'free';
+        lastGroupCreatedAt = u.last_group_created_at ? new Date(u.last_group_created_at) : null;
         let expStr = u.expire_at || u.premium_expire_at;
         premiumExpire = expStr ? new Date(expStr) : null;
 
-        if (premiumExpire && premiumExpire < new Date()) {
-            await dbFetch(`users?id=eq.${u.id}`, 'PATCH', { plan: 'free' });
+        // بررسی انقضای اشتراک
+        if (userPlan === 'premium' && premiumExpire && premiumExpire < new Date()) {
+            await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free' });
             userPlan = 'free';
+            // قفل خودکار گروه‌های فعال هنگام پایان اشتراک
+            await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
+            showToast("اشتراک پریمیوم شما به پایان رسیده است. گروه‌های فعال قفل شدند.", "danger", 5000);
         }
     }
 
+    const cfg = PLAN_CONFIG[userPlan];
     const banner = document.getElementById("premium-banner");
+    const hints = document.getElementById("plan-hints");
+
     if (banner) {
         banner.style.display = "block";
         if (userPlan === 'premium') {
@@ -316,15 +315,13 @@ async function loadUserPlan() {
             banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400;opacity:0.9">⏳ اعتبار تا: ${expFormatted}</span>`;
         } else {
             banner.className = "premium-free";
-            banner.innerHTML = "🔓 پلن رایگان (حداکثر ۳ عضو)";
+            banner.innerHTML = "🔓 پلن رایگان (برای امکانات کامل ارتقا دهید)";
         }
     }
-}
 
-/* ====== قفل خودکار گروه‌های قدیمی ====== */
-async function autoLockOldGroups() {
-    let ts = new Date(Date.now() - 24*3600*1000).toISOString();
-    await dbFetch(`groups?is_locked=eq.false&created_at=lt.${ts}`, 'PATCH', { is_locked: true });
+    if (hints) {
+        hints.innerHTML = `💡 سقف گروه‌های فعال همزمان: <strong>${cfg.maxActiveGroups}</strong> | فاصله ساخت: <strong>هر ${cfg.cooldownHours} ساعت ۱ گروه</strong> | حداکثر اعضا: <strong>${cfg.maxMembers} نفر</strong>`;
+    }
 }
 
 /* ====== ساخت فرم اعضا ====== */
@@ -332,10 +329,10 @@ function generateInputs() {
     let cnt = parseInt(document.getElementById("member-count").value) || 0;
     if (cnt < 2) return showToast("حداقل ۲ عضو وارد کنید.", "danger");
 
-    let maxAllowed = (userPlan === 'premium') ? 10 : 3;
-    if (cnt > maxAllowed) {
-        showToast(`سقف اعضا برای شما ${maxAllowed} نفر است.`, "danger");
-        cnt = maxAllowed;
+    let cfg = PLAN_CONFIG[userPlan];
+    if (cnt > cfg.maxMembers) {
+        showToast(`سقف اعضا در پلن شما ${cfg.maxMembers} نفر است.`, "danger");
+        cnt = cfg.maxMembers;
         document.getElementById("member-count").value = cnt;
     }
 
@@ -352,7 +349,7 @@ function generateInputs() {
     }
 }
 
-/* ====== ساخت گروه ====== */
+/* ====== ساخت گروه جدید با اعمال تمام محدودیت‌ها ====== */
 async function setupGroup() {
     let name = document.getElementById("group-name").value.trim();
     if (!name) return showToast("نام سفر/گروه را وارد کنید.", "danger");
@@ -360,9 +357,25 @@ async function setupGroup() {
     let nameInputs = Array.from(document.querySelectorAll(".m-name")).map(i => i.value.trim()).filter(x=>x);
     if (nameInputs.length < 2) return showToast("نام حداقل ۲ عضو را وارد کنید.", "danger");
 
-    let maxAllowed = (userPlan === 'premium') ? 10 : 3;
-    if (nameInputs.length > maxAllowed) {
-        return showToast(`پلن شما محدود به ${maxAllowed} نفر است.`, "danger");
+    let cfg = PLAN_CONFIG[userPlan];
+    if (nameInputs.length > cfg.maxMembers) {
+        return showToast(`پلن شما محدود به ${cfg.maxMembers} نفر است.`, "danger");
+    }
+
+    /* ۱. بررسی تعداد گروه‌های فعال همزمان در دیتابیس */
+    let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
+    if (activeGroups && activeGroups.length >= cfg.maxActiveGroups) {
+        return showToast(`⚠️ شما ${activeGroups.length} گروه فعال دارید. سقف پلن شما ${cfg.maxActiveGroups} گروه است. لطفا یک گروه را قفل یا حذف کنید.`, "danger", 6000);
+    }
+
+    /* ۲. بررسی محدودیتی ۱۲ ساعت یکبار برای پریمیوم (یا ۲۴ ساعت رایگان) */
+    if (lastGroupCreatedAt) {
+        let diffMs = Date.now() - new Date(lastGroupCreatedAt).getTime();
+        let diffHours = diffMs / (1000 * 60 * 60);
+        if (diffHours < cfg.cooldownHours) {
+            let remain = Math.ceil(cfg.cooldownHours - diffHours);
+            return showToast(`⏳ شما هر ${cfg.cooldownHours} ساعت مجاز به ساخت ۱ گروه هستید. ${remain} ساعت دیگر دوباره تلاش کنید.`, "danger", 5000);
+        }
     }
 
     let tre = null;
@@ -372,6 +385,7 @@ async function setupGroup() {
     }
     if (!tre) tre = nameInputs[0];
 
+    let nowIso = new Date().toISOString();
     let newGroup = {
         id: Date.now(),
         user_id: userId,
@@ -379,10 +393,12 @@ async function setupGroup() {
         treasurer: tre,
         members: nameInputs,
         is_locked: false,
-        created_at: new Date().toISOString()
+        created_at: nowIso
     };
 
     await dbFetch('groups', 'POST', newGroup);
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', { last_group_created_at: nowIso });
+    lastGroupCreatedAt = new Date(nowIso);
 
     currentGroupId = newGroup.id;
     localStorage.setItem("current_group_id", currentGroupId);
@@ -407,7 +423,6 @@ async function setupGroup() {
     showToast("گروه با موفقیت ساخته شد!", "success");
 }
 
-/* ====== چک‌باکس شرکا ====== */
 function renderParticipantCheckboxes() {
     let container = document.getElementById("participant-checkboxes");
     if (!container) return;
@@ -423,20 +438,20 @@ function toggleParticipantBox() {
     document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
 }
 
-/* ====== قفل کردن گروه ====== */
+/* ====== قفل و آزاد کردن سهمیه ====== */
 async function endTrip() {
-    if(confirm("آیا از پایان سفر و قفل کردن حساب‌ها مطمئن هستید؟")) {
+    if(confirm("با قفل کردن این گروه، سهمیه ۱ گروه فعال شما آزاد می‌شود و امکان ثبت خرج جدید در این گروه بسته می‌شود. ادامه می‌دهید؟")) {
         if (!currentGroupId) return;
         isLocked = true;
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
         saveGroup();
         document.getElementById("active-forms").style.display = "none";
         document.getElementById("end-trip-btn").style.display = "none";
-        showToast("سفر با موفقیت قفل شد.", "success");
+        showToast("گروه قفل شد و سهمیه شما آزاد گردید. 🔓", "success");
     }
 }
 
-/* ====== ثبت هزینه ====== */
+/* ====== ثبت هزینه با بررسی سقف فاکتورها ====== */
 async function addExpense() {
     if (isLocked) return showToast("این سفر قفل شده است.", "danger");
 
@@ -449,6 +464,17 @@ async function addExpense() {
     if (!title) return showToast("عنوان هزینه را مشخص کنید.", "danger");
     if (!amountRaw || isNaN(Number(amountRaw))) return showToast("مبلغ را به تومان وارد کنید.", "danger");
     let amount = Number(amountRaw);
+
+    let cfg = PLAN_CONFIG[userPlan];
+    let sharedCount = expenses.filter(e => e.type === 'shared').length;
+    let personalCount = expenses.filter(e => e.type === 'personal').length;
+
+    if (type === 'shared' && sharedCount >= cfg.maxSharedExp) {
+        return showToast(`⚠️ سقف فاکتورهای اشتراکی این گروه (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
+    }
+    if (type === 'personal' && personalCount >= cfg.maxPersonalExp) {
+        return showToast(`⚠️ سقف فاکتورهای شخصی این گروه (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
+    }
 
     let participants = [];
     if (type === 'shared') {
@@ -485,7 +511,6 @@ async function addExpense() {
     showToast("فاکتور ثبت شد 👌", "success");
 }
 
-/* ====== حذف هزینه ====== */
 async function deleteExpense(expId) {
     if (!confirm('آیا از حذف این فاکتور مطمئن هستید؟')) return;
     await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
@@ -496,10 +521,18 @@ async function deleteExpense(expId) {
     showToast('فاکتور حذف شد.', 'success');
 }
 
-/* ====== رندر لیست هزینه‌ها ====== */
 function renderList() {
     const el = document.getElementById('expense-list');
+    const counterEl = document.getElementById('expense-counter');
     el.innerHTML = '';
+
+    let cfg = PLAN_CONFIG[userPlan];
+    let sharedCount = expenses.filter(e => e.type === 'shared').length;
+    let personalCount = expenses.filter(e => e.type === 'personal').length;
+    if (counterEl) {
+        counterEl.innerText = `اشتراکی: ${sharedCount}/${cfg.maxSharedExp} | شخصی: ${personalCount}/${cfg.maxPersonalExp}`;
+    }
+
     if (!expenses || expenses.length === 0) {
         document.getElementById('no-expenses').style.display = 'block';
         document.getElementById('copy-btn').style.display = 'none';
@@ -527,7 +560,6 @@ function renderList() {
     });
 }
 
-/* ====== محاسبه نهایی ====== */
 function calculate() {
     const resultEl = document.getElementById('result');
     if (!expenses || expenses.length === 0) {
@@ -568,7 +600,6 @@ function calculate() {
     prepareReportText(balances);
 }
 
-/* ====== آماده‌سازی خروجی تلگرام ====== */
 function prepareReportText(balances) {
     let lines = [];
     lines.push(`🪙 **گزارش تسویه دنگیمنگی** 💸`);
@@ -592,7 +623,6 @@ function copyReportToTelegram() {
     }).catch(()=>showToast('کپی ناموفق بود.', 'danger'));
 }
 
-/* ====== گزارش شخصی ====== */
 function showPersonalReport() {
     const name = document.getElementById('personal-report-select').value;
     const el = document.getElementById('personal-result');
@@ -617,7 +647,6 @@ function showPersonalReport() {
       </div>`;
 }
 
-/* ====== بروزرسانی Dropdown‌ها ====== */
 function updateDropdowns() {
     const payer = document.getElementById('payer-select');
     const personal = document.getElementById('personal-report-select');
@@ -634,7 +663,6 @@ function updateDropdowns() {
     if (members.length > 0) payer.value = members[0];
 }
 
-/* ====== ذخیره محلی ====== */
 function saveGroup() {
     if (!currentGroupId) return;
     let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
@@ -677,6 +705,9 @@ function loadGroupObject(g) {
     if (isLocked) {
         document.getElementById("active-forms").style.display = "none";
         document.getElementById("end-trip-btn").style.display = "none";
+    } else {
+        document.getElementById("active-forms").style.display = "block";
+        document.getElementById("end-trip-btn").style.display = "inline-flex";
     }
 
     updateDropdowns();
@@ -705,10 +736,8 @@ function resetApp() {
     }
 }
 
-/* ====== راه‌اندازی اولیه ====== */
 window.addEventListener('DOMContentLoaded', async () => {
     await loadUserPlan();
-    await autoLockOldGroups();
     
     let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     let lastId = localStorage.getItem("current_group_id");
