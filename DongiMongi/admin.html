@@ -328,27 +328,32 @@
 
     async function loadChartData() {
       try {
-        const revData = [];
-        const activeData = [];
-        const labels = [];
-        
-        for (let i = 5; i >= 0; i--) {
+        const months = Array.from({ length: 6 }, (_, i) => 5 - i);
+        const monthsData = months.map(i => {
           const d = new Date();
           d.setMonth(d.getMonth() - i);
           const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
           const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
+          const label = d.toLocaleString('fa-IR', { month: 'short', year: 'numeric' });
+          return { from, to, label };
+        });
 
-          const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
-          const monthRev = payments && Array.isArray(payments) ? payments.reduce((acc, p) => acc + (p.amount || 0), 0) : 0;
-          revData.push(monthRev);
+        const requests = monthsData.flatMap(m => [
+          dbFetch(`payments?created_at=gte.${m.from}&created_at=lte.${m.to}`),
+          dbFetch(`users?created_at=gte.${m.from}&created_at=lte.${m.to}`)
+        ]);
 
-          const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
-          activeData.push(users && Array.isArray(users) ? users.length : 0);
+        const results = await Promise.all(requests);
+        const revData = [];
+        const activeData = [];
+        const labels = monthsData.map(m => m.label);
 
-          labels.push(d.toLocaleString('fa-IR', { month: 'short', year: 'numeric' }));
+        for (let i = 0; i < results.length; i += 2) {
+          const payments = results[i] || [];
+          const users = results[i + 1] || [];
+          revData.push(payments.reduce((acc, p) => acc + (p.amount || 0), 0));
+          activeData.push(users.length);
         }
-
-        const hasAnyData = revData.some(v => v > 0) || activeData.some(v => v > 0);
 
         if (chartRevenue) {
           chartRevenue.data.labels = labels;
@@ -361,6 +366,7 @@
           chartActive.update();
         }
 
+        const hasAnyData = revData.some(v => v > 0) || activeData.some(v => v > 0);
         document.getElementById('chart-revenue-empty').style.display = hasAnyData ? 'none' : 'flex';
         document.getElementById('chart-active-empty').style.display = hasAnyData ? 'none' : 'flex';
 
@@ -399,7 +405,12 @@
       let conditions = [];
 
       if (q) {
-        conditions.push(`or=(id.eq.${encodeURIComponent(q)},full_name.ilike.*${encodeURIComponent(q)}*,username.ilike.*${encodeURIComponent(q)}*)`);
+        const isNumeric = /^\d+$/.test(q);
+        if (isNumeric) {
+          conditions.push(`or=(id.eq.${encodeURIComponent(q)},full_name.ilike.*${encodeURIComponent(q)}*,username.ilike.*${encodeURIComponent(q)}*)`);
+        } else {
+          conditions.push(`or=(full_name.ilike.*${encodeURIComponent(q)}*,username.ilike.*${encodeURIComponent(q)}*)`);
+        }
       }
       if (plan) {
         conditions.push(`plan=eq.${plan}`);
@@ -674,7 +685,10 @@
       const container = document.getElementById('financial-report');
       let html = '<h4>نتایج گزارش</h4>';
 
-      const payments = await dbFetch(`payments?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
+      const toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+
+      const payments = await dbFetch(`payments?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${toDate.toISOString()}`);
       
       if (payments && Array.isArray(payments) && payments.length > 0) {
         const total = payments.reduce((s, p) => s + (p.amount || 0), 0);
