@@ -109,7 +109,7 @@
       <div class="card" style="grid-column: span 2;">
         <h3>مدیریت کاربران</h3>
         <div class="form-row">
-          <input type="text" id="search" placeholder="جستجو بر اساس نام یا آیدی..." style="flex: 1;">
+          <input type="text" id="search" placeholder="جستجو بر اساس نام یا آیدی تلگرام/داخلی..." style="flex: 1;">
           <select id="filter-plan">
             <option value="">همه پلن‌ها</option>
             <option value="free">رایگان (Free)</option>
@@ -123,7 +123,8 @@
             <thead>
               <tr>
                 <th>نام کامل</th>
-                <th>آیدی</th>
+                <th>آیدی دیتابیس</th>
+                <th>آیدی تلگرام</th>
                 <th>پلن</th>
                 <th>انقضای اشتراک</th>
                 <th>عملیات</th>
@@ -138,7 +139,7 @@
       <div class="card">
         <h3>عملیات سریع کاربر</h3>
         <div class="form-group">
-          <input type="text" id="quick-uid" placeholder="آیدی کاربر (User ID)">
+          <input type="text" id="quick-uid" placeholder="آیدی کاربر یا آیدی تلگرام">
           <div class="form-row" style="flex-wrap: wrap; gap: 8px;">
             <button class="btn btn-sm" onclick="activatePremiumQuick()">فعالسازی ۳۰ روزه</button>
             <button class="btn btn-sm" onclick="extendPremiumQuick()">تمدید ۳۰ روزه</button>
@@ -240,13 +241,25 @@
         };
         if (body) options.body = JSON.stringify(body);
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-        if (!res.ok) throw new Error(`HTTP Error: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`HTTP Error: ${res.status}`);
+        }
         return await res.json();
       } catch (e) {
         console.error('dbFetch error:', e);
         pushLog('db_error', '', e.message);
         return null;
       }
+    }
+
+    /* ====== HELPER FOR SMART ID SEARCHING ====== */
+    function getSmartFilter(userId) {
+      const cleanId = String(userId).trim();
+      if (/^\d+$/.test(cleanId) && cleanId.length > 5) {
+        // اگر عددی طولانی باشد، هم روی telegram_id و هم روی id فیلتر می‌زند
+        return `or=(telegram_id.eq.${cleanId},id.eq.${cleanId})`;
+      }
+      return `id=eq.${encodeURIComponent(cleanId)}`;
     }
 
     /* ====== LOGGING SYSTEM ====== */
@@ -301,21 +314,20 @@
         const activeData = [];
         const labels = [];
         
-        // محاسبات ۶ ماه اخیر
         for (let i = 5; i >= 0; i--) {
           const d = new Date();
           d.setMonth(d.getMonth() - i);
           const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
           const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-          // بارگذاری پرداخت‌ها
+          // بارگذاری درآمد
           const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
-          const monthRev = payments ? payments.reduce((acc, p) => acc + (p.amount || 0), 0) : 0;
+          const monthRev = payments && Array.isArray(payments) ? payments.reduce((acc, p) => acc + (p.amount || 0), 0) : 0;
           revData.push(monthRev);
 
-          // بارگذاری کاربران جدید
+          // بارگذاری کاربران
           const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
-          activeData.push(users ? users.length : 0);
+          activeData.push(users && Array.isArray(users) ? users.length : 0);
 
           labels.push(d.toLocaleString('fa-IR', { month: 'short', year: 'numeric' }));
         }
@@ -351,16 +363,23 @@
     async function searchUser() {
       const q = document.getElementById('search').value.trim();
       const plan = document.getElementById('filter-plan').value;
-      let endpoint = 'users?select=id,full_name,plan,premium_expire_at';
-      let filters = [];
+      let endpoint = 'users?select=id,full_name,plan,premium_expire_at,telegram_id';
+      let conditions = [];
 
       if (q) {
-        if (/^\d+$/.test(q)) filters.push(`id.eq.${q}`);
-        filters.push(`full_name.ilike.*${q}*`);
+        if (/^\d+$/.test(q)) {
+          conditions.push(`or=(id.eq.${q},telegram_id.eq.${q},full_name.ilike.*${encodeURIComponent(q)}*)`);
+        } else {
+          conditions.push(`full_name.ilike.*${encodeURIComponent(q)}*`);
+        }
       }
-      if (plan) filters.push(`plan.eq.${plan}`);
+      if (plan) {
+        conditions.push(`plan=eq.${plan}`);
+      }
       
-      if (filters.length) endpoint += '&or=(' + filters.join(',') + ')';
+      if (conditions.length) {
+        endpoint += '&' + conditions.join('&');
+      }
 
       const users = await dbFetch(endpoint);
       lastUsersResult = users || [];
@@ -379,7 +398,8 @@
 
         tr.innerHTML = `
           <td>${escapeHtml(u.full_name || '—')}</td>
-          <td>${escapeHtml(String(u.id))}</td>
+          <td>${escapeHtml(String(u.id || '—'))}</td>
+          <td>${escapeHtml(String(u.telegram_id || '—'))}</td>
           <td>${escapeHtml(u.plan || '—')}</td>
           <td>${escapeHtml(expireStr)}</td>
           <td>
@@ -391,7 +411,6 @@
         
         tbody.appendChild(tr);
 
-        // Event Listeners امن برای دکمه‌ها
         tr.querySelectorAll('button[data-action]').forEach(btn => {
           btn.addEventListener('click', () => {
             const uid = decodeURIComponent(btn.dataset.uid);
@@ -420,7 +439,7 @@
       const container = document.getElementById('groups-list');
       
       if (!groups) {
-        container.innerHTML = '<div class="small">خطا در اتصال به دیتابیس.</div>';
+        container.innerHTML = '<div class="small">خطا در اتصال یا عدم وجود جدول گروه‌ها.</div>';
         return;
       }
       if (groups.length === 0) {
@@ -439,7 +458,6 @@
         }
 
         const item = document.createElement('div');
-        item.className = 'user-item';
         item.style.cssText = 'margin-top:8px; padding:10px; background:rgba(255,255,255,0.02); border-radius:8px; display:flex; justify-content:space-between; align-items:center;';
         
         item.innerHTML = `
@@ -545,50 +563,61 @@
       } else alert('خطا در حذف هزینه');
     }
 
-    /* ====== SUBSCRIPTIONS ====== */
+    /* ====== SUBSCRIPTIONS (REVISED & FIXED) ====== */
     async function activatePremium(userId) {
+      if (!userId) return alert('آیدی را وارد کنید.');
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan: 'premium', premium_expire_at: expire });
-      
-      if (ok) {
-        pushLog('activate_premium', userId, 'فعال‌سازی ۳۰ روزه');
-        alert('اشتراک فعال شد.');
+      const filter = getSmartFilter(userId);
+
+      const ok = await dbFetch(`users?${filter}`, 'PATCH', { 
+        plan: 'premium', 
+        premium_expire_at: expire 
+      });
+
+      if (ok && Array.isArray(ok) && ok.length > 0) {
+        pushLog('activate_premium', userId, 'فعال‌سازی ۳۰ روزه انجام شد');
+        alert('اشتراک ۳۰ روزه با موفقیت فعال شد.');
         searchUser();
 
-        // اطلاع‌رسانی تلگرام (در صورت وجود سرور جانبی)
-        const rows = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}&select=telegram_id`);
-        const u = rows && rows[0];
-        if (u && u.telegram_id) {
-          try {
+        // اطلاع‌رسانی تلگرام
+        try {
+          const u = ok[0];
+          if (u && u.telegram_id) {
             await fetch('/api/notify-telegram', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ telegram_id: u.telegram_id, text: `اشتراک شما تا ${new Date(expire).toLocaleDateString('fa-IR')} فعال شد.` })
-            });
-          } catch (e) {
-            console.warn('پیکربندی ارسال پیام تلگرام یافت نشد:', e);
+            }).catch(() => {});
           }
-        }
-      } else alert('خطا در فعال‌سازی اشتراک');
+        } catch(e) {}
+      } else {
+        alert('خطا در فعال‌سازی! مطمئن شوید کاربر در دیتابیس وجود دارد و ستون‌های plan و premium_expire_at در جدول users ساخته شده‌اند.');
+      }
     }
 
     async function extendPremium(userId) {
+      if (!userId) return alert('آیدی را وارد کنید.');
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { premium_expire_at: expire });
-      if (ok) {
+      const filter = getSmartFilter(userId);
+
+      const ok = await dbFetch(`users?${filter}`, 'PATCH', { premium_expire_at: expire });
+      if (ok && Array.isArray(ok) && ok.length > 0) {
         pushLog('extend_premium', userId, 'تمدید ۳۰ روزه');
-        alert('اشتراک تمدید شد.');
+        alert('اشتراک با موفقیت تمدید شد.');
         searchUser();
-      } else alert('خطا در تمدید اشتراک');
+      } else alert('خطا در تمدید اشتراک.');
     }
 
     async function removePremium(userId) {
-      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan: 'free', premium_expire_at: null });
-      if (ok) {
+      if (!userId) return alert('آیدی را وارد کنید.');
+      const filter = getSmartFilter(userId);
+
+      const ok = await dbFetch(`users?${filter}`, 'PATCH', { plan: 'free', premium_expire_at: null });
+      if (ok && Array.isArray(ok) && ok.length > 0) {
         pushLog('remove_premium', userId, 'حذف اشتراک');
-        alert('اشتراک حذف شد.');
+        alert('اشتراک کاربر حذف شد.');
         searchUser();
-      } else alert('خطا در حذف اشتراک');
+      } else alert('خطا در حذف اشتراک.');
     }
 
     /* Quick Actions */
@@ -601,6 +630,7 @@
     }
 
     async function lockAllGroups(userId) {
+      const filter = getSmartFilter(userId);
       const ok = await dbFetch(`groups?user_id=eq.${encodeURIComponent(userId)}&is_locked=eq.false`, 'PATCH', { is_locked: true });
       if (ok) {
         pushLog('lock_all_groups', userId, 'قفل کردن تمام گروه‌ها');
@@ -620,7 +650,7 @@
 
       const payments = await dbFetch(`payments?created_at=gte.${new Date(from).toISOString()}&created_at=lte.${new Date(to).toISOString()}`);
       
-      if (payments && payments.length) {
+      if (payments && Array.isArray(payments) && payments.length > 0) {
         const total = payments.reduce((s, p) => s + (p.amount || 0), 0);
         html += `<div class="small" style="margin-bottom:8px;">جمع پرداختی‌ها: <b>${total.toLocaleString('fa-IR')} تومان</b></div>`;
         html += '<table class="table"><thead><tr><th>تاریخ</th><th>کاربر</th><th>مبلغ</th></tr></thead><tbody>';
