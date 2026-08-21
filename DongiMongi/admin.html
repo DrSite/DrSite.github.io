@@ -109,7 +109,7 @@
       <div class="card" style="grid-column: span 2;">
         <h3>مدیریت کاربران</h3>
         <div class="form-row">
-          <input type="text" id="search" placeholder="جستجو بر اساس نام یا آیدی تلگرام/داخلی..." style="flex: 1;">
+          <input type="text" id="search" placeholder="جستجو بر اساس نام یا آیدی (id)..." style="flex: 1;">
           <select id="filter-plan">
             <option value="">همه پلن‌ها</option>
             <option value="free">رایگان (Free)</option>
@@ -123,10 +123,10 @@
             <thead>
               <tr>
                 <th>نام کامل</th>
-                <th>آیدی دیتابیس</th>
-                <th>آیدی تلگرام</th>
+                <th>آیدی (ID)</th>
                 <th>پلن</th>
-                <th>انقضای اشتراک</th>
+                <th>انقضای اشتراک ویژه</th>
+                <th>تعداد زیرمجموعه</th>
                 <th>عملیات</th>
               </tr>
             </thead>
@@ -139,7 +139,7 @@
       <div class="card">
         <h3>عملیات سریع کاربر</h3>
         <div class="form-group">
-          <input type="text" id="quick-uid" placeholder="آیدی کاربر یا آیدی تلگرام">
+          <input type="text" id="quick-uid" placeholder="آیدی کاربر (id)">
           <div class="form-row" style="flex-wrap: wrap; gap: 8px;">
             <button class="btn btn-sm" onclick="activatePremiumQuick()">فعالسازی ۳۰ روزه</button>
             <button class="btn btn-sm" onclick="extendPremiumQuick()">تمدید ۳۰ روزه</button>
@@ -155,7 +155,7 @@
       <div class="card">
         <h3>بازرسی گروه‌های کاربر</h3>
         <div class="form-row">
-          <input type="text" id="g-user-id" placeholder="آیدی کاربر">
+          <input type="text" id="g-user-id" placeholder="آیدی کاربر (user_id)">
           <button class="btn" onclick="loadUserGroups()">بارگذاری گروه‌ها</button>
         </div>
         <div id="groups-list" style="margin-top: 10px;"></div>
@@ -252,16 +252,6 @@
       }
     }
 
-    /* ====== HELPER FOR SMART ID SEARCHING ====== */
-    function getSmartFilter(userId) {
-      const cleanId = String(userId).trim();
-      if (/^\d+$/.test(cleanId) && cleanId.length > 5) {
-        // اگر عددی طولانی باشد، هم روی telegram_id و هم روی id فیلتر می‌زند
-        return `or=(telegram_id.eq.${cleanId},id.eq.${cleanId})`;
-      }
-      return `id=eq.${encodeURIComponent(cleanId)}`;
-    }
-
     /* ====== LOGGING SYSTEM ====== */
     function pushLog(type, userId, message) {
       const ts = new Date().toLocaleTimeString('fa-IR');
@@ -320,12 +310,12 @@
           const from = new Date(d.getFullYear(), d.getMonth(), 1).toISOString();
           const to = new Date(d.getFullYear(), d.getMonth() + 1, 0, 23, 59, 59).toISOString();
 
-          // بارگذاری درآمد
+          // درآمد
           const payments = await dbFetch(`payments?created_at=gte.${from}&created_at=lte.${to}`);
           const monthRev = payments && Array.isArray(payments) ? payments.reduce((acc, p) => acc + (p.amount || 0), 0) : 0;
           revData.push(monthRev);
 
-          // بارگذاری کاربران
+          // کاربران جدید
           const users = await dbFetch(`users?created_at=gte.${from}&created_at=lte.${to}`);
           activeData.push(users && Array.isArray(users) ? users.length : 0);
 
@@ -363,15 +353,11 @@
     async function searchUser() {
       const q = document.getElementById('search').value.trim();
       const plan = document.getElementById('filter-plan').value;
-      let endpoint = 'users?select=id,full_name,plan,premium_expire_at,telegram_id';
+      let endpoint = 'users?select=id,full_name,plan,premium_expire_at,referral_count,created_at';
       let conditions = [];
 
       if (q) {
-        if (/^\d+$/.test(q)) {
-          conditions.push(`or=(id.eq.${q},telegram_id.eq.${q},full_name.ilike.*${encodeURIComponent(q)}*)`);
-        } else {
-          conditions.push(`full_name.ilike.*${encodeURIComponent(q)}*`);
-        }
+        conditions.push(`or=(id.ilike.*${encodeURIComponent(q)}*,full_name.ilike.*${encodeURIComponent(q)}*)`);
       }
       if (plan) {
         conditions.push(`plan=eq.${plan}`);
@@ -399,9 +385,9 @@
         tr.innerHTML = `
           <td>${escapeHtml(u.full_name || '—')}</td>
           <td>${escapeHtml(String(u.id || '—'))}</td>
-          <td>${escapeHtml(String(u.telegram_id || '—'))}</td>
-          <td>${escapeHtml(u.plan || '—')}</td>
+          <td>${escapeHtml(u.plan || 'free')}</td>
           <td>${escapeHtml(expireStr)}</td>
+          <td>${escapeHtml(String(u.referral_count || 0))}</td>
           <td>
             <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="open">باز کردن</button>
             <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="activate">فعال</button>
@@ -439,7 +425,7 @@
       const container = document.getElementById('groups-list');
       
       if (!groups) {
-        container.innerHTML = '<div class="small">خطا در اتصال یا عدم وجود جدول گروه‌ها.</div>';
+        container.innerHTML = '<div class="small">خطا در اتصال یا عدم وجود جدول groups.</div>';
         return;
       }
       if (groups.length === 0) {
@@ -563,13 +549,12 @@
       } else alert('خطا در حذف هزینه');
     }
 
-    /* ====== SUBSCRIPTIONS (REVISED & FIXED) ====== */
+    /* ====== SUBSCRIPTIONS (FIXED FOR EXACT SCHEMA) ====== */
     async function activatePremium(userId) {
-      if (!userId) return alert('آیدی را وارد کنید.');
+      if (!userId) return alert('آیدی کاربر را وارد کنید.');
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-      const filter = getSmartFilter(userId);
 
-      const ok = await dbFetch(`users?${filter}`, 'PATCH', { 
+      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { 
         plan: 'premium', 
         premium_expire_at: expire 
       });
@@ -578,46 +563,36 @@
         pushLog('activate_premium', userId, 'فعال‌سازی ۳۰ روزه انجام شد');
         alert('اشتراک ۳۰ روزه با موفقیت فعال شد.');
         searchUser();
-
-        // اطلاع‌رسانی تلگرام
-        try {
-          const u = ok[0];
-          if (u && u.telegram_id) {
-            await fetch('/api/notify-telegram', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ telegram_id: u.telegram_id, text: `اشتراک شما تا ${new Date(expire).toLocaleDateString('fa-IR')} فعال شد.` })
-            }).catch(() => {});
-          }
-        } catch(e) {}
       } else {
-        alert('خطا در فعال‌سازی! مطمئن شوید کاربر در دیتابیس وجود دارد و ستون‌های plan و premium_expire_at در جدول users ساخته شده‌اند.');
+        alert('خطا در فعال‌سازی! مطمئن شوید کاربر با این آیدی در دیتابیس ثبت شده است.');
       }
     }
 
     async function extendPremium(userId) {
-      if (!userId) return alert('آیدی را وارد کنید.');
+      if (!userId) return alert('آیدی کاربر را وارد کنید.');
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-      const filter = getSmartFilter(userId);
 
-      const ok = await dbFetch(`users?${filter}`, 'PATCH', { premium_expire_at: expire });
+      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { premium_expire_at: expire });
       if (ok && Array.isArray(ok) && ok.length > 0) {
-        pushLog('extend_premium', userId, 'تمدید ۳۰ روزه');
+        pushLog('extend_premium', userId, 'تمدید ۳۰ روزه انجام شد');
         alert('اشتراک با موفقیت تمدید شد.');
         searchUser();
-      } else alert('خطا در تمدید اشتراک.');
+      } else {
+        alert('خطا در تمدید اشتراک.');
+      }
     }
 
     async function removePremium(userId) {
-      if (!userId) return alert('آیدی را وارد کنید.');
-      const filter = getSmartFilter(userId);
+      if (!userId) return alert('آیدی کاربر را وارد کنید.');
 
-      const ok = await dbFetch(`users?${filter}`, 'PATCH', { plan: 'free', premium_expire_at: null });
+      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan: 'free', premium_expire_at: null });
       if (ok && Array.isArray(ok) && ok.length > 0) {
-        pushLog('remove_premium', userId, 'حذف اشتراک');
-        alert('اشتراک کاربر حذف شد.');
+        pushLog('remove_premium', userId, 'حذف اشتراک انجام شد');
+        alert('اشتراک کاربر حذف و به رایگان تغییر کرد.');
         searchUser();
-      } else alert('خطا در حذف اشتراک.');
+      } else {
+        alert('خطا در حذف اشتراک.');
+      }
     }
 
     /* Quick Actions */
@@ -630,7 +605,6 @@
     }
 
     async function lockAllGroups(userId) {
-      const filter = getSmartFilter(userId);
       const ok = await dbFetch(`groups?user_id=eq.${encodeURIComponent(userId)}&is_locked=eq.false`, 'PATCH', { is_locked: true });
       if (ok) {
         pushLog('lock_all_groups', userId, 'قفل کردن تمام گروه‌ها');
@@ -664,54 +638,24 @@
       container.innerHTML = html;
     }
 
-    /* ====== TELEGRAM INTEGRATION & MANUAL REGISTRATION ====== */
-    async function registerManualUser(name) {
-      const nm = (name || '').trim();
-      if (!nm) return { ok: false, msg: 'نام وارد نشده است.' };
-
-      const payload = { full_name: nm, manual_name: nm, plan: 'free', created_at: new Date().toISOString() };
-      const postOk = await dbFetch('users', 'POST', payload);
-      if (!postOk) return { ok: false, msg: 'خطا در ثبت نام.' };
-
-      const rows = await dbFetch(`users?manual_name=eq.${encodeURIComponent(nm)}&select=*`);
-      const me = rows && rows[0];
-      if (me) {
-        localStorage.setItem('manual_user_id', String(me.id));
-        localStorage.setItem('manual_user_name', nm);
-        pushLog('manual_register', me.id, `کاربر دستی ثبت شد: ${nm}`);
-        return { ok: true, user: me };
-      }
-      return { ok: false, msg: 'خطا در بازخوانی اطلاعات.' };
-    }
-
+    /* ====== TELEGRAM AUTOMATIC REGISTRATION ====== */
     async function tryLinkTelegramUser(tg) {
       try {
         const tgUser = tg?.initDataUnsafe?.user;
         if (!tgUser) return;
         const telegramId = String(tgUser.id);
 
-        const localManual = localStorage.getItem('manual_user_name');
-        if (localManual) {
-          const rows = await dbFetch(`users?manual_name=eq.${encodeURIComponent(localManual)}&select=*`);
-          if (rows && rows.length) {
-            const user = rows[0];
-            await dbFetch(`users?id=eq.${encodeURIComponent(user.id)}`, 'PATCH', { telegram_id: telegramId });
-            pushLog('link_telegram', user.id, `اکانت تلگرام ${telegramId} متصل شد.`);
-            return;
-          }
-        }
-
-        const existing = await dbFetch(`users?telegram_id=eq.${encodeURIComponent(telegramId)}&select=*`);
+        const existing = await dbFetch(`users?id=eq.${encodeURIComponent(telegramId)}&select=id`);
         if (existing && existing.length) return;
 
         const payload = {
+          id: telegramId,
           full_name: tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : ''),
-          telegram_id: telegramId,
           plan: 'free',
           created_at: new Date().toISOString()
         };
         await dbFetch('users', 'POST', payload);
-        pushLog('create_user_from_telegram', '', `ساخت کاربر تلگرام: ${telegramId}`);
+        pushLog('create_user_from_telegram', telegramId, `ثبت کاربر جدید از تلگرام`);
       } catch (e) {
         console.error('tryLinkTelegramUser Error:', e);
       }
