@@ -395,7 +395,7 @@
     async function searchUser() {
       const q = document.getElementById('search').value.trim().replace(/^@/, '');
       const plan = document.getElementById('filter-plan').value;
-      let endpoint = 'users?select=id,full_name,username,plan,premium_expire_at,referral_count,created_at';
+      let endpoint = 'users?select=id,full_name,username,plan,expire_at,created_at';
       let conditions = [];
 
       if (q) {
@@ -420,8 +420,8 @@
       
       lastUsersResult.forEach(u => {
         const tr = document.createElement('tr');
-        const expireStr = u.premium_expire_at && !isNaN(new Date(u.premium_expire_at)) 
-          ? new Date(u.premium_expire_at).toLocaleString('fa-IR') 
+        const expireStr = u.expire_at && !isNaN(new Date(u.expire_at)) 
+          ? new Date(u.expire_at).toLocaleString('fa-IR') 
           : '—';
 
         tr.innerHTML = `
@@ -595,13 +595,13 @@
     /* ====== SUBSCRIPTIONS ====== */
     async function activatePremium(rawInput) {
       if (!rawInput) return alert('آیدی یا یوزرنیم کاربر را وارد کنید.');
-      const userId = await resolveUserId(rawInput);
+      const userId = String(await resolveUserId(rawInput));
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
 
       const payload = {
-        id: isNaN(userId) ? userId : Number(userId),
+        id: userId,
         plan: 'premium',
-        premium_expire_at: expire
+        expire_at: expire
       };
 
       const res = await dbFetch('users', 'POST', payload, {
@@ -619,10 +619,10 @@
 
     async function extendPremium(rawInput) {
       if (!rawInput) return alert('آیدی یا یوزرنیم کاربر را وارد کنید.');
-      const userId = await resolveUserId(rawInput);
+      const userId = String(await resolveUserId(rawInput));
       const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
 
-      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { premium_expire_at: expire, plan: 'premium' });
+      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { expire_at: expire, plan: 'premium' });
       if (ok) {
         pushLog('extend_premium', userId, 'تمدید ۳۰ روزه انجام شد');
         alert('اشتراک با موفقیت تمدید شد.');
@@ -634,9 +634,9 @@
 
     async function removePremium(rawInput) {
       if (!rawInput) return alert('آیدی یا یوزرنیم کاربر را وارد کنید.');
-      const userId = await resolveUserId(rawInput);
+      const userId = String(await resolveUserId(rawInput));
 
-      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan: 'free', premium_expire_at: null });
+      const ok = await dbFetch(`users?id=eq.${encodeURIComponent(userId)}`, 'PATCH', { plan: 'free', expire_at: null });
       if (ok) {
         pushLog('remove_premium', userId, 'حذف اشتراک انجام شد');
         alert('اشتراک کاربر حذف و به رایگان تغییر کرد.');
@@ -656,7 +656,7 @@
     }
 
     async function lockAllGroups(rawInput) {
-      const userId = await resolveUserId(rawInput);
+      const userId = String(await resolveUserId(rawInput));
       const ok = await dbFetch(`groups?user_id=eq.${encodeURIComponent(userId)}&is_locked=eq.false`, 'PATCH', { is_locked: true });
       if (ok) {
         pushLog('lock_all_groups', userId, 'قفل کردن تمام گروه‌ها');
@@ -701,7 +701,7 @@
         document.getElementById('tg-user-name').innerText = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
         document.getElementById('tg-user-id').innerText = tgUser.id;
 
-        const telegramId = Number(tgUser.id);
+        const telegramId = String(tgUser.id);
         const username = tgUser.username || null;
         const fullName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
 
