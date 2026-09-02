@@ -169,6 +169,72 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("⚠️ ادمینی برای دریافت رسید تنظیم نشده است.")
 
+# --- دستور فعال‌سازی خودکار اشتراک توسط ادمین (با ریپلای روی رسید کاربر) ---
+async def activate_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    
+    # بررسی اینکه آیا درخواست‌دهنده خودِ ادمین است یا خیر
+    if str(user.id) != str(ADMIN_CHAT_ID):
+        await update.message.reply_text("⛔ شما اجازه استفاده از این دستور را ندارید.")
+        return
+
+    replied_message = update.message.reply_to_message
+    if not replied_message:
+        await update.message.reply_text("⚠️ لطفاً روی پیامِ عکسِ رسیدِ کاربر ریپلای کنید و سپس دستور `/activate` را بفرستید.")
+        return
+
+    # استخراج آیدی کاربر از پیام فرستاده شده (پشتیبانی از حالت فوروارد شده یا پیام مستقیم کاربر به ربات)
+    target_user_id = None
+    if replied_message.forward_from:
+        target_user_id = str(replied_message.forward_from.id)
+    elif replied_message.caption:
+        # جستجوی آیدی داخل کپشن اگر فرمت ربات شما ذخیره کرده باشد (مانند شناسه کاربر: `123456`)
+        import re
+        match = re.search(r'🆔 شناسه کاربر:\s*`(\d+)`', replied_message.caption)
+        if match:
+            target_user_id = match.group(1)
+            
+    # اگر از هیچ‌کدام پیدا نشد، فرستنده پیام اصلی چک شود
+    if not target_user_id and replied_message.from_user:
+        target_user_id = str(replied_message.from_user.id)
+
+    if not target_user_id:
+        await update.message.reply_text("❌ امکان تشخیص آیدی کاربر از این پیام وجود ندارد.")
+        return
+
+    # محاسبه انقضای ۳۰ روز آینده
+    next_30_days = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+    # محاسبه دقیق تاریخ ۳۰ روز بعد
+    from datetime import timedelta
+    expire_date_obj = datetime.now(timezone.utc) + timedelta(days=30)
+    expire_date_str = expire_date_obj.isoformat()
+
+    try:
+        # آپدیت رکورد کاربر در دیتابیس Supabase
+        response = supabase.table('users').update({
+            'plan': 'premium',
+            'expire_at': expire_date_str
+        }).eq('id', target_user_id).execute()
+
+        if response.data:
+            await update.message.reply_text(f"✅ اشتراک پریمیوم برای کاربر با شناسه `{target_user_id}` به مدت ۳۰ روز با موفقیت فعال شد.", parse_mode="Markdown")
+            
+            # ارسال پیام تایید به خود کاربر در تلگرام
+            try:
+                await context.bot.send_message(
+                    chat_id=target_user_id,
+                    text="🎉 **رسید شما تایید شد!**\nاشتراک پریمیوم ۳۰ روزه شما با موفقیت فعال شد. اکنون می‌توانید از امکانات کامل دنگیمنگی لذت ببرید.",
+                    parse_mode="Markdown"
+                )
+            except Exception as e:
+                logger.error(f"Could not message user directly: {e}")
+        else:
+            await update.message.reply_text("⚠️ کاربری با این مشخصات در جدول کاربران سوپابیس یافت نشد.")
+            
+    except Exception as e:
+        logger.error(f"Error updating user plan in DB: {e}")
+        await update.message.reply_text(f"❌ خطا در ارتباط با دیتابیس: {e}")
+
 # --- مدیریت پیام‌های متنی در گروه (ثبت هزینه‌ها) ---
 async def handle_expense(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat = update.effective_chat
@@ -189,6 +255,7 @@ if __name__ == '__main__':
     application.add_handler(CommandHandler('start', start))
     application.add_handler(CommandHandler('help', help_command))
     application.add_handler(CommandHandler('support', support_command))
+    application.add_handler(CommandHandler('activate', activate_command))
     application.add_handler(CallbackQueryHandler(premium_callback))
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_expense))
