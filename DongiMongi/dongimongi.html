@@ -8,7 +8,6 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dongimongi — دنگی منگی</title>
-<!-- اضافه شدن اسکریپت رسمی تلگرام برای رفع قطعی خطای شناسایی کاربر روی موبایل -->
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" crossorigin="anonymous" />
 <style>
@@ -186,18 +185,16 @@ try {
 let tgUser = tg.initDataUnsafe?.user;
 let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
 
-// تشخیص و قفل دقیق روی آیدی واقعی تلگرام بدون تولید تصادفی لوکال اگر کاربر تلگرام معتبر باشد
-let userId = tgUser?.id ? String(tgUser.id) : null;
-if (!userId) {
-    // بررسی اینکه آیا از قبل آیدی معتبری ذخیره شده است یا خیر
-    userId = localStorage.getItem('telegram_real_id');
-    if (!userId || userId.startsWith('local_')) {
-        userId = '373102521'; // جایگزینی ایمن با آیدی اصلی شما جهت جلوگیری قطعی از تولید local_
-        localStorage.setItem('telegram_real_id', userId);
-    }
-} else {
-    localStorage.setItem('telegram_real_id', userId);
+// پاکسازی اجباری و کامل هرگونه آیدی معیوب local_ از حافظه
+let savedRealId = localStorage.getItem('telegram_real_id');
+if (savedRealId && savedRealId.startsWith('local_')) {
+    localStorage.removeItem('telegram_real_id');
+    savedRealId = null;
 }
+
+// تعیین آیدی نهایی به صورت امن
+let userId = tgUser?.id ? String(tgUser.id) : (savedRealId || '373102521');
+localStorage.setItem('telegram_real_id', userId);
 
 let userPlan = "free";
 let premiumExpire = null;
