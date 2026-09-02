@@ -1,0 +1,707 @@
+<!doctype html>
+<!--
+  Project: DongiMongi Telegram Mini App
+  Developer: Alireza.M / TEYHOO SOFT
+-->
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Dongimongi — دنگی منگی</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" crossorigin="anonymous" />
+<style>
+:root{
+  --bg:#090d16;
+  --card-bg:rgba(18, 26, 43, 0.75);
+  --card-border:rgba(255, 255, 255, 0.08);
+  --accent-cyan:#00f2fe;
+  --accent-blue:#4facfe;
+  --accent-gold:#f6d365;
+  --success:#10b981;
+  --danger:#f43f5e;
+  --muted:#94a3b8;
+}
+html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, sans-serif;background:radial-gradient(circle at top, #141e30, #0a0d18);color:#f1f5f9;direction:rtl;-webkit-tap-highlight-color:transparent}
+.container{max-width:850px;margin:15px auto;padding:16px;background:var(--card-bg);backdrop-filter:blur(16px);border:1px solid var(--card-border);border-radius:20px;box-shadow:0 20px 50px rgba(0,0,0,0.6)}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.06);flex-wrap:wrap;gap:10px}
+.brand-logo{font-size:24px;background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:900}
+.user-badge-box{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);padding:6px 12px;border-radius:12px;font-size:12px;display:flex;align-items:center;gap:8px}
+.id-tag{color:var(--accent-cyan);font-weight:700}
+.btn-copy-id{background:linear-gradient(90deg,var(--accent-cyan),var(--accent-blue));border:none;color:#000;font-weight:700;padding:3px 8px;border-radius:6px;cursor:pointer;font-size:11px}
+
+#premium-banner{display:none;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700;margin-top:8px;text-align:center;line-height:1.6}
+.premium-active{background:rgba(16, 185, 129, 0.15);border:1px solid var(--success);color:#6ee7b7}
+.premium-free{background:rgba(246, 211, 101, 0.12);border:1px solid var(--accent-gold);color:#f6d365}
+
+.input, select{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:11px 14px;border-radius:12px;color:#fff;font-size:14px;width:100%;box-sizing:border-box}
+.input:focus, select:focus{outline:none;border-color:var(--accent-cyan);box-shadow:0 0 12px rgba(0,242,254,0.25)}
+.btn{background:linear-gradient(135deg,var(--accent-cyan),var(--accent-blue));color:#000;padding:11px 18px;border-radius:12px;border:0;cursor:pointer;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:8px}
+.btn-danger{background:linear-gradient(135deg,#ff4b2b,#ff416c);color:#fff}
+.btn-secondary{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.1)}
+
+.presets-wrapper{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;margin-bottom:10px}
+.preset-chip{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);padding:6px 12px;border-radius:20px;font-size:12px;white-space:nowrap;cursor:pointer}
+
+.card-section{background:rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.05);padding:14px;border-radius:16px;margin-bottom:14px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;font-weight:700;font-size:15px;color:var(--accent-cyan)}
+
+.expense-card{display:flex;align-items:center;justify-content:space-between;padding:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;margin-bottom:8px}
+.balance-card{display:flex;justify-content:space-between;align-items:center;padding:10px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:6px}
+.badge-creditor{background:rgba(16,185,129,0.2);color:#6ee7b7;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
+.badge-debtor{background:rgba(244,63,94,0.2);color:#fda4af;padding:4px 8px;border-radius:6px;font-weight:700;font-size:13px}
+.member-card{display:flex;align-items:center;gap:10px;padding:8px;background:rgba(255,255,255,0.02);border-radius:10px;margin-bottom:6px}
+
+#copy-msg{font-size:12px;text-align:center;margin-top:6px;min-height:18px}
+.hint{font-size:12px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);padding:16px;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="brand"><span class="brand-logo">🪙 دنگیمنگی</span></div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end">
+      <div class="user-badge-box">
+        <span>کاربر: <strong id="display-user-name" style="color:#fff">—</strong></span>
+        <span>| کد: <span id="user-id-display" class="id-tag">—</span></span>
+        <button onclick="copyUserId()" class="btn-copy-id">📋 کپی</button>
+      </div>
+      <div id="premium-banner"></div>
+    </div>
+  </div>
+
+  <!-- STEP 1: ساخت گروه جدید -->
+  <div id="step1" class="card-section">
+    <div class="section-header">✨ ساخت گروه دنگ جدید</div>
+    
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+      <input id="group-name" class="input" placeholder="📝 نام سفر یا گروه" style="flex:2;min-width:180px" />
+      <input id="member-count" class="input" type="number" min="2" max="10" placeholder="👥 تعداد اعضا" style="flex:1;min-width:110px" />
+      <button class="btn" onclick="generateInputs()">🚀 ساخت فرم</button>
+    </div>
+
+    <div id="members-inputs"></div>
+
+    <div style="display:flex;gap:8px;margin-top:14px;align-items:center;flex-wrap:wrap">
+      <button class="btn" onclick="setupGroup()">🎉 ایجاد گروه و ورود</button>
+      <button class="btn btn-secondary btn-sm" onclick="loadSavedGroup()">📂 انتخاب گروه‌های من</button>
+    </div>
+    <div id="plan-hints" class="hint" style="margin-top:8px"></div>
+  </div>
+
+  <!-- STEP 2: مدیریت گروه -->
+  <div id="step2" style="display:none">
+    <div class="card-section" style="background:linear-gradient(135deg, rgba(0,242,254,0.08), rgba(79,172,254,0.08));border-color:rgba(0,242,254,0.2)">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="font-size:18px;font-weight:900" id="display-group-title">گروه: —</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">👑 مادرخرج: <span id="display-treasurer-name" style="color:var(--accent-gold);font-weight:700">—</span></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button id="end-trip-btn" class="btn btn-secondary btn-sm" onclick="endTrip()">🔐 قفل و آزادسازی</button>
+          <button class="btn btn-danger btn-sm" onclick="resetApp()">🗑️ حذف گروه</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="active-forms" class="card-section">
+      <div class="section-header">
+        <span>💸 ثبت خرج جدید</span>
+        <span id="expense-counter" style="font-size:11px;color:var(--muted)"></span>
+      </div>
+
+      <div class="presets-wrapper">
+        <div class="preset-chip" onclick="setQuickTitle('🍔 ناهار/شام')">🍔 ناهار/شام</div>
+        <div class="preset-chip" onclick="setQuickTitle('⛽ بنزین/سوخت')">⛽ بنزین</div>
+        <div class="preset-chip" onclick="setQuickTitle('🏨 اقامت/هتل')">🏨 اقامت</div>
+        <div class="preset-chip" onclick="setQuickTitle('☕ کافه/بستنی')">☕ کافه</div>
+        <div class="preset-chip" onclick="setQuickTitle('🚕 تاکسی/اسنپ')">🚕 تاکسی</div>
+      </div>
+
+      <div style="display:grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap:8px;margin-bottom:10px">
+        <input id="expense-title" class="input" placeholder="عنوان" />
+        <input id="expense-amount" class="input" type="number" placeholder="مبلغ (تومان)" />
+        <select id="type-select" class="input" onchange="toggleParticipantBox()">
+          <option value="shared">🌐 اشتراکی</option>
+          <option value="personal">🔒 شخصی</option>
+        </select>
+        <select id="payer-select" class="input" title="پرداخت کننده"></select>
+      </div>
+
+      <div id="participants-container" style="margin-bottom:10px;background:rgba(0,0,0,0.2);padding:8px 12px;border-radius:10px">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">⚠️ تقسیم بین چه کسانی؟</div>
+        <div id="participant-checkboxes"></div>
+      </div>
+
+      <div style="display:flex;gap:8px">
+        <input id="expense-note" class="input" placeholder="یادداشت اختیاری..." style="flex:1" />
+        <button class="btn" onclick="addExpense()">➕ ثبت دنگ</button>
+      </div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-header">📜 لیست فاکتورها</div>
+      <div id="expense-list"></div>
+      <div id="no-expenses" class="empty">هنوز هیچ خرجی ثبت نشده!</div>
+    </div>
+
+    <div class="card-section">
+      <div class="section-header">📊 حساب کتاب و تسویه نهایی</div>
+      <div id="result"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+        <button id="copy-btn" class="btn btn-sm" style="display:none" onclick="copyReportToTelegram()">📋 کپی گزارش تلگرامی</button>
+        <button class="btn btn-secondary btn-sm" onclick="saveGroup()">💾 ذخیره وضعیت</button>
+      </div>
+    </div>
+
+    <div id="personal-report-section" class="card-section" style="display:none">
+      <div class="section-header">👤 استعلام وضعیت فردی</div>
+      <select id="personal-report-select" class="input" onchange="showPersonalReport()"></select>
+      <div id="personal-result" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div id="copy-msg"></div>
+
+  <div style="text-align:center; font-size:11px; color:var(--muted); margin-top:20px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.05);">
+    © 2026 DongiMongi — طراحی و توسعه توسط Alireza.M / TEYHOO SOFT
+  </div>
+</div>
+
+<script>
+const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
+const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
+
+let tg = window.Telegram?.WebApp || {};
+try { 
+    tg.expand(); 
+    tg.ready();
+} catch(e) {}
+
+let tgUser = tg.initDataUnsafe?.user;
+let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
+
+// پاکسازی اجباری و کامل هرگونه آیدی معیوب local_ از حافظه
+let savedRealId = localStorage.getItem('telegram_real_id');
+if (savedRealId && savedRealId.startsWith('local_')) {
+    localStorage.removeItem('telegram_real_id');
+    savedRealId = null;
+}
+
+// تعیین آیدی نهایی به صورت امن
+let userId = tgUser?.id ? String(tgUser.id) : (savedRealId || '373102521');
+localStorage.setItem('telegram_real_id', userId);
+
+let userPlan = "free";
+let premiumExpire = null;
+let lastGroupCreatedAt = null;
+let referralCount = 0;
+
+let currentGroupId = null;
+let groupName = "";
+let treasurer = "";
+let members = [];
+let expenses = [];
+let isLocked = false;
+let lastReportText = '';
+
+const PLAN_CONFIG = {
+    free: { maxActiveGroups: 1, cooldownHours: 168, maxMembers: 3, maxSharedExp: 5, maxPersonalExp: 4, allowPersonalReport: false, showUpgradeBanner: true, autoLockHours: 24 },
+    premium: { maxActiveGroups: 10, cooldownHours: 12, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, allowPersonalReport: true, showUpgradeBanner: false, autoLockHours: 168, maxStorageMB: 1.0 }
+};
+
+async function dbFetch(endpoint, method = 'GET', data = null) {
+    try {
+        let options = {
+            method,
+            headers: {
+                'apikey': SUP_KEY.trim(),
+                'Authorization': `Bearer ${SUP_KEY.trim()}`,
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates'
+            }
+        };
+        if (data) options.body = JSON.stringify(data);
+        const res = await fetch(`${SUP_URL}/rest/v1/${endpoint}`, options);
+        if (!res.ok) return null;
+        if (method === 'GET') return await res.json();
+        return true;
+    } catch (e) {
+        console.error('dbFetch error', e);
+        return null;
+    }
+}
+
+function showToast(msg, type = "info", timeout = 3000) {
+    let container = document.getElementById('copy-msg');
+    if (!container) return;
+    container.innerText = msg;
+    container.style.color = (type === 'danger') ? '#f43f5e' : ((type === 'success') ? '#10b981' : '#00f2fe');
+    setTimeout(() => { if(container) container.innerText = ''; }, timeout);
+}
+
+function copyUserId() {
+    if (!userId) return;
+    navigator.clipboard?.writeText(userId).then(() => showToast("کپی شد: " + userId, "success"))
+    .catch(() => showToast("آیدی شما: " + userId, "info"));
+}
+
+function setQuickTitle(title) {
+    document.getElementById('expense-title').value = title;
+}
+
+async function loadUserPlan() {
+    document.getElementById("display-user-name").innerText = telegramFullName;
+    document.getElementById("user-id-display").innerText = userId;
+
+    let users = await dbFetch(`users?id=eq.${userId}`);
+    if (!users || users.length === 0) {
+        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', referral_count: 0 });
+        userPlan = 'free';
+    } else {
+        let u = users[0];
+        userPlan = u.plan || 'free';
+        referralCount = u.referral_count || 0;
+        lastGroupCreatedAt = u.last_group_created_at ? new Date(u.last_group_created_at) : null;
+        let expStr = u.expire_at || u.premium_expire_at;
+        premiumExpire = expStr ? new Date(expStr) : null;
+
+        if (referralCount >= 15 && userPlan === 'free') {
+            let next30Days = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+            await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'premium', expire_at: next30Days });
+            userPlan = 'premium';
+            premiumExpire = new Date(next30Days);
+            showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
+        }
+    }
+
+    const cfg = PLAN_CONFIG[userPlan];
+    const banner = document.getElementById("premium-banner");
+    const hints = document.getElementById("plan-hints");
+
+    if (banner) {
+        banner.style.display = "block";
+        if (userPlan === 'premium') {
+            banner.className = "premium-active";
+            let expFormatted = premiumExpire ? premiumExpire.toLocaleDateString('fa-IR') : 'نامشخص';
+            banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400">⏳ اعتبار تا: ${expFormatted}</span>`;
+        } else {
+            banner.className = "premium-free";
+            banner.innerHTML = `🔓 <strong>پلن رایگان</strong> (۱ گروه فعال)<br>
+            👥 <strong>دعوت از دوستان:</strong> ${referralCount}/15 نفر<br>
+            🔗 لینک دعوت: <code style="color:#fff">https://t.me/Dongi_MongiBot?start=${userId}</code>`;
+        }
+    }
+
+    if (hints) {
+        hints.innerHTML = userPlan === 'free' 
+            ? `⚠️ پلن رایگان: <strong>۱ گروه فعال</strong> | هر <strong>۷ روز ۱ گروه</strong> | <strong>۳ عضو</strong>`
+            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong>`;
+    }
+
+    const personalSec = document.getElementById("personal-report-section");
+    if (personalSec) {
+        personalSec.style.display = cfg.allowPersonalReport ? "block" : "none";
+    }
+}
+
+function generateInputs() {
+    let cnt = parseInt(document.getElementById("member-count").value) || 0;
+    if (cnt < 2) return showToast("حداقل ۲ عضو وارد کنید.", "danger");
+
+    let cfg = PLAN_CONFIG[userPlan];
+    if (cnt > cfg.maxMembers) {
+        showToast(`سقف اعضا در پلن شما ${cfg.maxMembers} نفر است.`, "danger");
+        cnt = cfg.maxMembers;
+        document.getElementById("member-count").value = cnt;
+    }
+
+    let container = document.getElementById("members-inputs");
+    container.innerHTML = "";
+    for (let i=0; i<cnt; i++){
+        container.innerHTML += `
+            <div class="member-card">
+              <input class="input m-name" placeholder="👤 نام عضو ${i+1}" style="flex:1" />
+              <label class="hint" style="white-space:nowrap;display:flex;align-items:center;gap:4px">
+                مادرخرج؟ <input type="checkbox" class="is-treasurer" />
+              </label>
+            </div>`;
+    }
+}
+
+async function setupGroup() {
+    let name = document.getElementById("group-name").value.trim();
+    if (!name) return showToast("نام سفر/گروه را وارد کنید.", "danger");
+
+    let nameInputs = Array.from(document.querySelectorAll(".m-name")).map(i => i.value.trim()).filter(x=>x);
+    if (nameInputs.length < 2) return showToast("نام حداقل ۲ عضو را وارد کنید.", "danger");
+
+    let cfg = PLAN_CONFIG[userPlan];
+    if (nameInputs.length > cfg.maxMembers) {
+        return showToast(`پلن شما محدود به ${cfg.maxMembers} نفر است.`, "danger");
+    }
+
+    let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
+    if (activeGroups && activeGroups.length >= cfg.maxActiveGroups) {
+        return showToast(`⚠️ سقف پلن شما ${cfg.maxActiveGroups} گروه فعال است.`, "danger", 5000);
+    }
+
+    if (lastGroupCreatedAt) {
+        let diffHours = (Date.now() - new Date(lastGroupCreatedAt).getTime()) / (1000 * 3600);
+        if (diffHours < cfg.cooldownHours) {
+            let remain = Math.ceil(cfg.cooldownHours - diffHours);
+            return showToast(`⏳ محدودیت زمانی ساخت گروه. ${remain} ساعت دیگر مجاز می‌شوید.`, "danger", 5000);
+        }
+    }
+
+    let tre = null;
+    let checkboxes = Array.from(document.querySelectorAll(".is-treasurer"));
+    for (let i=0; i<checkboxes.length; i++){
+        if (checkboxes[i].checked) { tre = nameInputs[i]; break; }
+    }
+    if (!tre) tre = nameInputs[0];
+
+    let nowIso = new Date().toISOString();
+    let newGroup = {
+        id: Date.now(),
+        user_id: userId,
+        group_name: name,
+        treasurer: tre,
+        members: nameInputs,
+        is_locked: false,
+        created_at: nowIso,
+        last_activity_at: nowIso
+    };
+
+    await dbFetch('groups', 'POST', newGroup);
+    await dbFetch(`users?id=eq.${userId}`, 'PATCH', { last_group_created_at: nowIso });
+    lastGroupCreatedAt = new Date(nowIso);
+
+    currentGroupId = newGroup.id;
+    localStorage.setItem("current_group_id", currentGroupId);
+
+    groupName = name;
+    treasurer = tre;
+    members = nameInputs;
+    expenses = [];
+    isLocked = false;
+
+    saveGroup();
+
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+    document.getElementById("display-group-title").innerText = "گروه: " + groupName;
+    document.getElementById("display-treasurer-name").innerText = treasurer;
+    
+    updateDropdowns();
+    renderParticipantCheckboxes();
+    renderList();
+    calculate();
+    showToast("گروه با موفقیت ساخته شد!", "success");
+}
+
+function renderParticipantCheckboxes() {
+    let container = document.getElementById("participant-checkboxes");
+    if (!container) return;
+    container.innerHTML = members.map(m => `
+        <label style="display:inline-flex;align-items:center;gap:4px;margin:4px 8px;font-size:13px">
+          <input type="checkbox" class="part-chk" value="${m}" checked> ${m}
+        </label>
+    `).join("");
+}
+
+function toggleParticipantBox() {
+    let type = document.getElementById("type-select").value;
+    document.getElementById("participants-container").style.display = (type === 'shared') ? 'block' : 'none';
+}
+
+async function endTrip() {
+    if(confirm("آیا از قفل کردن گروه مطمئن هستید؟")) {
+        if (!currentGroupId) return;
+        isLocked = true;
+        await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
+        resetAppUI();
+        showToast("گروه قفل شد.", "success");
+    }
+}
+
+async function addExpense() {
+    if (isLocked) return showToast("این گروه قفل شده است.", "danger");
+
+    let title = document.getElementById('expense-title').value.trim();
+    let amountRaw = document.getElementById('expense-amount').value.trim();
+    let type = document.getElementById('type-select').value;
+    let payer = document.getElementById('payer-select').value;
+    let note = document.getElementById('expense-note').value.trim();
+
+    if (!title) return showToast("عنوان هزینه را مشخص کنید.", "danger");
+    if (!amountRaw || isNaN(Number(amountRaw))) return showToast("مبلغ را به تومان وارد کنید.", "danger");
+    let amount = Number(amountRaw);
+
+    let cfg = PLAN_CONFIG[userPlan];
+    let sharedCount = expenses.filter(e => e.type === 'shared').length;
+    let personalCount = expenses.filter(e => e.type === 'personal').length;
+
+    if (type === 'shared' && sharedCount >= cfg.maxSharedExp) {
+        return showToast(`⚠️ سقف هزینه اشتراکی (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
+    }
+    if (type === 'personal' && personalCount >= cfg.maxPersonalExp) {
+        return showToast(`⚠️ سقف هزینه شخصی (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
+    }
+
+    let participants = [];
+    if (type === 'shared') {
+        participants = Array.from(document.querySelectorAll('.part-chk')).filter(c=>c.checked).map(c=>c.value);
+        if (participants.length === 0) return showToast("حداقل یک شریک انتخاب کنید.", "danger");
+    } else {
+        participants = [payer];
+    }
+
+    let exp = {
+        id: Date.now(),
+        group_id: currentGroupId,
+        title,
+        amount,
+        type,
+        payer,
+        participants,
+        note,
+        created_at: new Date().toISOString()
+    };
+
+    await dbFetch('expenses', 'POST', exp);
+    expenses.push(exp);
+    await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { last_activity_at: new Date().toISOString() });
+
+    saveGroup();
+    renderList();
+    calculate();
+
+    document.getElementById('expense-title').value = '';
+    document.getElementById('expense-amount').value = '';
+    document.getElementById('expense-note').value = '';
+    showToast("فاکتور ثبت شد 👌", "success");
+}
+
+async function deleteExpense(expId) {
+    if (!confirm('آیا از حذف این فاکتور مطمئن هستید؟')) return;
+    await dbFetch(`expenses?id=eq.${expId}`, 'DELETE');
+    expenses = expenses.filter(e => e.id !== expId);
+    saveGroup();
+    renderList();
+    calculate();
+    showToast('فاکتور حذف شد.', 'success');
+}
+
+function renderList() {
+    const el = document.getElementById('expense-list');
+    const counterEl = document.getElementById('expense-counter');
+    el.innerHTML = '';
+
+    let cfg = PLAN_CONFIG[userPlan];
+    let sharedCount = expenses.filter(e => e.type === 'shared').length;
+    let personalCount = expenses.filter(e => e.type === 'personal').length;
+    if (counterEl) {
+        counterEl.innerText = `اشتراکی: ${sharedCount}/${cfg.maxSharedExp} | شخصی: ${personalCount}/${cfg.maxPersonalExp}`;
+    }
+
+    if (!expenses || expenses.length === 0) {
+        document.getElementById('no-expenses').style.display = 'block';
+        document.getElementById('copy-btn').style.display = 'none';
+        return;
+    }
+    document.getElementById('no-expenses').style.display = 'none';
+    document.getElementById('copy-btn').style.display = 'inline-flex';
+
+    expenses.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'expense-card';
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:700;color:#fff">${e.title} <span style="font-size:11px;color:var(--accent-cyan)">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px">👤 پرداخت‌کننده: <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
+            <div style="font-size:12px;color:var(--muted)">👥 شرکا: ${e.participants.join(', ')}</div>
+          </div>
+          <div>
+            <div style="font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left">${(e.amount||0).toLocaleString()} ت</div>
+            <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="deleteExpense(${e.id})">حذف</button>
+          </div>
+        `;
+        el.appendChild(div);
+    });
+}
+
+function calculate() {
+    const resultEl = document.getElementById('result');
+    if (!expenses || expenses.length === 0) {
+        resultEl.innerHTML = '<div class="empty">هنوز دنگی ثبت نشده است.</div>';
+        return;
+    }
+
+    let balances = {};
+    members.forEach(m => balances[m] = 0);
+
+    expenses.forEach(e => {
+        if (e.type === 'shared') {
+            let share = e.amount / e.participants.length;
+            e.participants.forEach(p => balances[p] = (balances[p] || 0) - share);
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
+        } else {
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
+        }
+    });
+
+    let html = '';
+    members.forEach(m => {
+        let v = balances[m] || 0;
+        let isCreditor = v >= 0;
+        html += `
+          <div class="balance-card">
+            <div style="font-weight:700">${m}</div>
+            <div class="${isCreditor ? 'badge-creditor' : 'badge-debtor'}">
+              ${isCreditor ? 'طلبکار 😎' : 'بدهکار 😅'} : ${Math.abs(Math.round(v)).toLocaleString()} تومان
+            </div>
+          </div>
+        `;
+    });
+    resultEl.innerHTML = html;
+    prepareReportText(balances);
+}
+
+function prepareReportText(balances) {
+    let lines = [`🪙 **گزارش تسویه دنگیمنگی** 💸`, `📌 **گروه:** ${groupName}`, `👑 **مادرخرج:** ${treasurer}`, `-----------------------------------`];
+    members.forEach(m => {
+        let v = balances[m] || 0;
+        lines.push(`${v >= 0 ? '🟢' : '🔴'} ${m}: ${v >= 0 ? '+' : ''}${Math.round(v).toLocaleString()} تومان`);
+    });
+    lines.push(`-----------------------------------`, `📱 محاسبه شده با مینی‌اپ دنگیمنگی`);
+    lastReportText = lines.join('\n');
+}
+
+function copyReportToTelegram() {
+    if (!lastReportText) return;
+    navigator.clipboard?.writeText(lastReportText).then(()=>showToast('گزارش تسویه کپی شد! 📋', 'success'));
+}
+
+function showPersonalReport() {
+    if (!PLAN_CONFIG[userPlan].allowPersonalReport) return;
+    const name = document.getElementById('personal-report-select').value;
+    const el = document.getElementById('personal-result');
+    if (!name) { el.innerHTML = ''; return; }
+
+    let balances = {};
+    members.forEach(m => balances[m] = 0);
+    expenses.forEach(e => {
+        if (e.type === 'shared') {
+            let share = e.amount / e.participants.length;
+            e.participants.forEach(p => balances[p] = (balances[p] || 0) - share);
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
+        } else {
+            balances[e.payer] = (balances[e.payer] || 0) + e.amount;
+        }
+    });
+    let v = balances[name] || 0;
+    el.innerHTML = `
+      <div class="balance-card" style="background:rgba(0,242,254,0.1)">
+        <span>وضعیت حساب <strong>${name}</strong>:</span>
+        <strong style="color:${v>=0?'var(--success)':'var(--danger)'}">${v>=0?'+':''}${Math.round(v).toLocaleString()} تومان</strong>
+      </div>`;
+}
+
+function updateDropdowns() {
+    const payer = document.getElementById('payer-select');
+    const personal = document.getElementById('personal-report-select');
+    if(!payer || !personal) return;
+    
+    payer.innerHTML = '';
+    personal.innerHTML = '<option value="">👤 انتخاب فرد</option>';
+    members.forEach(m => {
+        payer.innerHTML += `<option value="${m}">${m}</option>`;
+        personal.innerHTML += `<option value="${m}">${m}</option>`;
+    });
+    if (members.length > 0) payer.value = members[0];
+}
+
+function saveGroup() {
+    if (!currentGroupId) return;
+    let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+    let g = { id: currentGroupId, group_name: groupName, treasurer, members, expenses, is_locked: isLocked };
+    groups = groups.filter(x => String(x.id) !== String(currentGroupId));
+    groups.push(g);
+    localStorage.setItem('saved_groups', JSON.stringify(groups));
+}
+
+function loadSavedGroup() {
+    let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+    if (!groups || groups.length === 0) return showToast('هیچ گروه ذخیره‌شده‌ای یافت نشد.', 'danger');
+    let promptText = "شماره گروه مورد نظر:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
+    let choice = prompt(promptText);
+    let index = parseInt(choice) - 1;
+    if (!isNaN(index) && groups[index]) loadGroupObject(groups[index]);
+}
+
+function loadGroupObject(g) {
+    currentGroupId = g.id;
+    groupName = g.group_name;
+    treasurer = g.treasurer;
+    members = g.members || [];
+    expenses = g.expenses || [];
+    isLocked = g.is_locked || false;
+
+    localStorage.setItem("current_group_id", currentGroupId);
+    document.getElementById("step1").style.display = "none";
+    document.getElementById("step2").style.display = "block";
+    document.getElementById("display-group-title").innerText = "گروه: " + groupName;
+    document.getElementById("display-treasurer-name").innerText = treasurer;
+    
+    updateDropdowns();
+    renderParticipantCheckboxes();
+    renderList();
+    calculate();
+    showToast("گروه بارگذاری شد.", "success");
+}
+
+function resetAppUI() {
+    currentGroupId = null;
+    groupName = "";
+    treasurer = "";
+    members = [];
+    expenses = [];
+    isLocked = false;
+    localStorage.removeItem("current_group_id");
+    document.getElementById("step1").style.display = "block";
+    document.getElementById("step2").style.display = "none";
+}
+
+async function resetApp() {
+    if (confirm("⚠️ آیا از حذف کامل و دائم این گروه مطمئن هستید؟")) {
+        if (currentGroupId) {
+            await dbFetch(`expenses?group_id=eq.${currentGroupId}`, 'DELETE');
+            await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
+            let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+            groups = groups.filter(x => String(x.id) !== String(currentGroupId));
+            localStorage.setItem('saved_groups', JSON.stringify(groups));
+        }
+        resetAppUI();
+        showToast("گروه کاملاً حذف شد.", "success");
+    }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadUserPlan();
+    let savedGrpId = localStorage.getItem("current_group_id");
+    if (savedGrpId) {
+        let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+        let found = groups.find(x => String(x.id) === String(savedGrpId));
+        if (found && !found.is_locked) {
+            loadGroupObject(found);
+        }
+    }
+});
+</script>
+</body>
+</html>
