@@ -101,8 +101,8 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
           <div style="font-size:12px;color:var(--muted);margin-top:4px">👑 مادرخرج: <span id="display-treasurer-name" style="color:var(--accent-gold);font-weight:700">—</span></div>
         </div>
         <div style="display:flex;gap:6px">
-          <button id="end-trip-btn" class="btn btn-secondary btn-sm" onclick="endTrip()">🔐 قفل و آزادسازی سهمیه</button>
-          <button class="btn btn-danger btn-sm" onclick="resetApp()">🗑️ حذف</button>
+          <button id="end-trip-btn" class="btn btn-secondary btn-sm" onclick="endTrip()">🔐 قفل و آزادسازی</button>
+          <button class="btn btn-danger btn-sm" onclick="resetApp()">🗑️ حذف گروه</button>
         </div>
       </div>
     </div>
@@ -157,7 +157,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
       </div>
     </div>
 
-    <div id="personal-report-section" class="card-section">
+    <div id="personal-report-section" class="card-section" style="display:none">
       <div class="section-header">👤 استعلام وضعیت فردی</div>
       <select id="personal-report-select" class="input" onchange="showPersonalReport()"></select>
       <div id="personal-result" style="margin-top:8px"></div>
@@ -180,10 +180,14 @@ try { tg.expand(); } catch(e) {}
 let tgUser = tg.initDataUnsafe?.user;
 let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
 
-// رفع مشکل آیدی: اولویت با آیدی واقعی تلگرام
+// قفل کردن روی آیدی واقعی تلگرام و جلوگیری از ایجاد آیدی لوکال جدید اگر کاربر تلگرام وجود دارد
 let userId = tgUser?.id ? String(tgUser.id) : null;
 if (!userId) {
-    userId = localStorage.getItem('telegram_real_id') || ('local_' + Date.now());
+    userId = localStorage.getItem('telegram_real_id');
+    if (!userId || userId.startsWith('local_')) {
+        userId = 'local_' + Date.now();
+        localStorage.setItem('telegram_real_id', userId);
+    }
 } else {
     localStorage.setItem('telegram_real_id', userId);
 }
@@ -201,7 +205,6 @@ let expenses = [];
 let isLocked = false;
 let lastReportText = '';
 
-/* ====== تنظیمات دقیق پلن رایگان و پریمیوم ====== */
 const PLAN_CONFIG = {
     free: { maxActiveGroups: 1, cooldownHours: 168, maxMembers: 3, maxSharedExp: 5, maxPersonalExp: 4, allowPersonalReport: false, showUpgradeBanner: true, autoLockHours: 24 },
     premium: { maxActiveGroups: 10, cooldownHours: 12, maxMembers: 10, maxSharedExp: 200, maxPersonalExp: 50, allowPersonalReport: true, showUpgradeBanner: false, autoLockHours: 168, maxStorageMB: 1.0 }
@@ -247,7 +250,6 @@ function setQuickTitle(title) {
     document.getElementById('expense-title').value = title;
 }
 
-/* ====== مدیریت پلن کاربر و بررسی شروط انقضا ====== */
 async function loadUserPlan() {
     document.getElementById("display-user-name").innerText = telegramFullName;
     document.getElementById("user-id-display").innerText = userId;
@@ -271,16 +273,7 @@ async function loadUserPlan() {
             premiumExpire = new Date(next30Days);
             showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
         }
-
-        if (userPlan === 'premium' && premiumExpire && premiumExpire < new Date()) {
-            await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free' });
-            userPlan = 'free';
-            await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`, 'PATCH', { is_locked: true });
-            showToast("⏳ اشتراک پریمیوم شما به پایان رسید. تمامی گروه‌ها قفل و پاک‌سازی شدند.", "danger", 6000);
-        }
     }
-
-    await runAutoGroupCleanup();
 
     const cfg = PLAN_CONFIG[userPlan];
     const banner = document.getElementById("premium-banner");
@@ -294,55 +287,21 @@ async function loadUserPlan() {
             banner.innerHTML = `🌟 اشتراک پریمیوم فعال است<br><span style="font-size:11px;font-weight:400">⏳ اعتبار تا: ${expFormatted}</span>`;
         } else {
             banner.className = "premium-free";
-            banner.innerHTML = `🔓 <strong>پلن رایگان</strong> (۱ گروه فعال | قفل ۲۴ ساعته)<br>
-            👥 <strong>دعوت از دوستان:</strong> ${referralCount}/15 نفر (ارتقای ۳۰ روزه رایگان)<br>
-            🔗 لینک دعوت شما: <code style="color:#fff">https://t.me/Dongi_MongiBot?start=${userId}</code>`;
+            banner.innerHTML = `🔓 <strong>پلن رایگان</strong> (۱ گروه فعال)<br>
+            👥 <strong>دعوت از دوستان:</strong> ${referralCount}/15 نفر<br>
+            🔗 لینک دعوت: <code style="color:#fff">https://t.me/Dongi_MongiBot?start=${userId}</code>`;
         }
     }
 
     if (hints) {
         hints.innerHTML = userPlan === 'free' 
-            ? `⚠️ پلن رایگان: <strong>۱ گروه فعال</strong> | هر <strong>۷ روز ۱ گروه</strong> | <strong>۳ عضو</strong> | قفل اتوماتیک سر <strong>۲۴ ساعت</strong>`
-            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong> | قفل در صورت <strong>۱ هفته عدم ثبت خرج</strong>`;
+            ? `⚠️ پلن رایگان: <strong>۱ گروه فعال</strong> | هر <strong>۷ روز ۱ گروه</strong> | <strong>۳ عضو</strong>`
+            : `🌟 پریمیوم: <strong>۱۰ گروه فعال</strong> | هر <strong>۱۲ ساعت ۱ گروه</strong> | <strong>۱۰ عضو</strong>`;
     }
 
     const personalSec = document.getElementById("personal-report-section");
     if (personalSec) {
         personalSec.style.display = cfg.allowPersonalReport ? "block" : "none";
-    }
-}
-
-async function runAutoGroupCleanup() {
-    let groups = await dbFetch(`groups?user_id=eq.${userId}`);
-    if (!groups || !Array.isArray(groups)) return;
-
-    let now = Date.now();
-    for (let g of groups) {
-        let createdTime = new Date(g.created_at).getTime();
-        let lastActivityTime = g.last_activity_at ? new Date(g.last_activity_at).getTime() : createdTime;
-
-        let ageHoursFromCreation = (now - createdTime) / (1000 * 3600);
-        let inactiveHours = (now - lastActivityTime) / (1000 * 3600);
-
-        if (!g.is_locked) {
-            if (userPlan === 'free' && ageHoursFromCreation >= 24) {
-                await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
-                g.is_locked = true;
-            } 
-            else if (userPlan === 'premium' && inactiveHours >= 168) {
-                await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
-                g.is_locked = true;
-            }
-        }
-
-        if (g.is_locked) {
-            await dbFetch(`expenses?group_id=eq.${g.id}`, 'DELETE');
-            await dbFetch(`groups?id=eq.${g.id}`, 'DELETE');
-            
-            let saved = JSON.parse(localStorage.getItem('saved_groups') || '[]');
-            saved = saved.filter(x => String(x.id) !== String(g.id));
-            localStorage.setItem('saved_groups', JSON.stringify(saved));
-        }
     }
 }
 
@@ -384,15 +343,14 @@ async function setupGroup() {
 
     let activeGroups = await dbFetch(`groups?user_id=eq.${userId}&is_locked=eq.false`);
     if (activeGroups && activeGroups.length >= cfg.maxActiveGroups) {
-        return showToast(`⚠️ شما ${activeGroups.length} گروه فعال دارید. سقف پلن شما ${cfg.maxActiveGroups} گروه است.`, "danger", 5000);
+        return showToast(`⚠️ سقف پلن شما ${cfg.maxActiveGroups} گروه فعال است.`, "danger", 5000);
     }
 
     if (lastGroupCreatedAt) {
         let diffHours = (Date.now() - new Date(lastGroupCreatedAt).getTime()) / (1000 * 3600);
         if (diffHours < cfg.cooldownHours) {
             let remain = Math.ceil(cfg.cooldownHours - diffHours);
-            let msg = userPlan === 'free' ? `⏳ پلن رایگان: هر ۷ روز ۱ گروه. ${Math.ceil(remain/24)} روز دیگر مجاز می‌شوید.` : `⏳ پریمیوم: هر ۱۲ ساعت ۱ گروه. ${remain} ساعت دیگر مجاز می‌شوید.`;
-            return showToast(msg, "danger", 5000);
+            return showToast(`⏳ محدودیت زمانی ساخت گروه. ${remain} ساعت دیگر مجاز می‌شوید.`, "danger", 5000);
         }
     }
 
@@ -458,18 +416,17 @@ function toggleParticipantBox() {
 }
 
 async function endTrip() {
-    if(confirm("با قفل کردن، امکان ثبت خرج جدید بسته شده و این گروه حذف خواهد شد. ادامه می‌دهید؟")) {
+    if(confirm("آیا از قفل کردن گروه مطمئن هستید؟")) {
         if (!currentGroupId) return;
         isLocked = true;
         await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { is_locked: true });
-        await runAutoGroupCleanup();
         resetAppUI();
-        showToast("گروه قفل و پاکسازی شد. 🔓", "success");
+        showToast("گروه قفل شد.", "success");
     }
 }
 
 async function addExpense() {
-    if (isLocked) return showToast("این سفر قفل شده است.", "danger");
+    if (isLocked) return showToast("این گروه قفل شده است.", "danger");
 
     let title = document.getElementById('expense-title').value.trim();
     let amountRaw = document.getElementById('expense-amount').value.trim();
@@ -486,10 +443,10 @@ async function addExpense() {
     let personalCount = expenses.filter(e => e.type === 'personal').length;
 
     if (type === 'shared' && sharedCount >= cfg.maxSharedExp) {
-        return showToast(`⚠️ سقف هزینه اشتراکی در پلن شما (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
+        return showToast(`⚠️ سقف هزینه اشتراکی (${cfg.maxSharedExp} عدد) پر شده است.`, "danger");
     }
     if (type === 'personal' && personalCount >= cfg.maxPersonalExp) {
-        return showToast(`⚠️ سقف هزینه شخصی در پلن شما (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
+        return showToast(`⚠️ سقف هزینه شخصی (${cfg.maxPersonalExp} عدد) پر شده است.`, "danger");
     }
 
     let participants = [];
@@ -514,19 +471,15 @@ async function addExpense() {
 
     await dbFetch('expenses', 'POST', exp);
     expenses.push(exp);
-
-    let nowIso = new Date().toISOString();
-    await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { last_activity_at: nowIso });
+    await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { last_activity_at: new Date().toISOString() });
 
     saveGroup();
-
     renderList();
     calculate();
 
     document.getElementById('expense-title').value = '';
     document.getElementById('expense-amount').value = '';
     document.getElementById('expense-note').value = '';
-
     showToast("فاکتور ثبت شد 👌", "success");
 }
 
@@ -566,12 +519,11 @@ function renderList() {
         div.innerHTML = `
           <div>
             <div style="font-weight:700;color:#fff">${e.title} <span style="font-size:11px;color:var(--accent-cyan)">(${e.type === 'shared' ? 'اشتراکی' : 'شخصی'})</span></div>
-            <div style="font-size:12px;color:var(--muted);margin-top:3px">👤 <strong>پرداخت‌کننده:</strong> <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
-            <div style="font-size:12px;color:var(--muted)">👥 <strong>شرکا:</strong> ${e.participants.join(', ')}</div>
-            ${e.note ? `<div style="font-size:12px;color:var(--muted)">💬 ${e.note}</div>` : ''}
+            <div style="font-size:12px;color:var(--muted);margin-top:3px">👤 پرداخت‌کننده: <span style="color:var(--accent-gold);font-weight:700">${e.payer}</span></div>
+            <div style="font-size:12px;color:var(--muted)">👥 شرکا: ${e.participants.join(', ')}</div>
           </div>
           <div>
-            <div style="font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left">${(e.amount||0).toLocaleString()} <span style="font-size:10px">تومان</span></div>
+            <div style="font-weight:800;font-size:15px;color:var(--accent-cyan);text-align:left">${(e.amount||0).toLocaleString()} ت</div>
             <button class="btn btn-danger btn-sm" style="margin-top:6px;width:100%" onclick="deleteExpense(${e.id})">حذف</button>
           </div>
         `;
@@ -617,7 +569,7 @@ function calculate() {
 }
 
 function prepareReportText(balances) {
-    let lines = [`🪙 **گزارش تسویه دنگیمنگی** 💸`, `📌 **سفر:** ${groupName}`, `👑 **مادرخرج:** ${treasurer}`, `-----------------------------------`];
+    let lines = [`🪙 **گزارش تسویه دنگیمنگی** 💸`, `📌 **گروه:** ${groupName}`, `👑 **مادرخرج:** ${treasurer}`, `-----------------------------------`];
     members.forEach(m => {
         let v = balances[m] || 0;
         lines.push(`${v >= 0 ? '🟢' : '🔴'} ${m}: ${v >= 0 ? '+' : ''}${Math.round(v).toLocaleString()} تومان`);
@@ -632,9 +584,7 @@ function copyReportToTelegram() {
 }
 
 function showPersonalReport() {
-    if (!PLAN_CONFIG[userPlan].allowPersonalReport) {
-        return showToast("⚠️ این ویژگی مخصوص کاربران پریمیوم است.", "danger");
-    }
+    if (!PLAN_CONFIG[userPlan].allowPersonalReport) return;
     const name = document.getElementById('personal-report-select').value;
     const el = document.getElementById('personal-result');
     if (!name) { el.innerHTML = ''; return; }
@@ -664,7 +614,7 @@ function updateDropdowns() {
     if(!payer || !personal) return;
     
     payer.innerHTML = '';
-    personal.innerHTML = '<option value="">👤 انتخاب فرد جهت گزارش شخصی</option>';
+    personal.innerHTML = '<option value="">👤 انتخاب فرد</option>';
     members.forEach(m => {
         payer.innerHTML += `<option value="${m}">${m}</option>`;
         personal.innerHTML += `<option value="${m}">${m}</option>`;
@@ -684,7 +634,7 @@ function saveGroup() {
 function loadSavedGroup() {
     let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
     if (!groups || groups.length === 0) return showToast('هیچ گروه ذخیره‌شده‌ای یافت نشد.', 'danger');
-    let promptText = "شماره گروه مورد نظر را وارد کنید:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
+    let promptText = "شماره گروه مورد نظر:\n" + groups.map((g, i) => `${i + 1}. ${g.group_name}`).join('\n');
     let choice = prompt(promptText);
     let index = parseInt(choice) - 1;
     if (!isNaN(index) && groups[index]) loadGroupObject(groups[index]);
@@ -723,14 +673,21 @@ function resetAppUI() {
     document.getElementById("step2").style.display = "none";
 }
 
-function resetApp() {
-    if (confirm("آیا از حذف کامل این گروه و شروع مجدد مطمئن هستید؟")) {
+// اصلاح دکمه حذف گروه تا هم از سوپابیس و هم لوکال استوریج پاک شود
+async function resetApp() {
+    if (confirm("⚠️ آیا از حذف کامل و دائم این گروه مطمئن هستید؟")) {
+        if (currentGroupId) {
+            await dbFetch(`expenses?group_id=eq.${currentGroupId}`, 'DELETE');
+            await dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
+            let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+            groups = groups.filter(x => String(x.id) !== String(currentGroupId));
+            localStorage.setItem('saved_groups', JSON.stringify(groups));
+        }
         resetAppUI();
-        showToast("گروه پاک شد.", "info");
+        showToast("گروه کاملاً حذف شد.", "success");
     }
 }
 
-// اجرای اولیه برنامه به محض لود صفحه
 window.addEventListener('DOMContentLoaded', async () => {
     await loadUserPlan();
     let savedGrpId = localStorage.getItem("current_group_id");
