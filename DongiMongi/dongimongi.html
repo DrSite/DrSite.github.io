@@ -32,7 +32,7 @@ html,body{height:100%;margin:0;font-family:Tahoma, 'Segoe UI', Geneva, Verdana, 
 
 #premium-banner{display:none;padding:10px 14px;border-radius:12px;font-size:12px;font-weight:700;margin-top:8px;text-align:center;line-height:1.6}
 .premium-active{background:rgba(16, 185, 129, 0.15);border:1px solid var(--success);color:#6ee7b7}
-.premium-free{background:rgba(246, 211, 101, 0.12);border:1px solid var(--accent-gold);color:var(--accent-gold)}
+.premium-free{background:rgba(246, 211, 101, 0.12);border:1px solid var(--accent-gold);color:#f6d365}
 
 .input, select{background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);padding:11px 14px;border-radius:12px;color:#fff;font-size:14px;width:100%;box-sizing:border-box}
 .input:focus, select:focus{outline:none;border-color:var(--accent-cyan);box-shadow:0 0 12px rgba(0,242,254,0.25)}
@@ -179,8 +179,14 @@ let tg = window.Telegram?.WebApp || {};
 try { tg.expand(); } catch(e) {}
 let tgUser = tg.initDataUnsafe?.user;
 let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
-let userId = tgUser?.id ? String(tgUser.id) : (localStorage.getItem('local_user_id') || ('local_' + Date.now()));
-if (!localStorage.getItem('local_user_id')) localStorage.setItem('local_user_id', userId);
+
+// رفع مشکل آیدی: اولویت با آیدی واقعی تلگرام
+let userId = tgUser?.id ? String(tgUser.id) : null;
+if (!userId) {
+    userId = localStorage.getItem('telegram_real_id') || ('local_' + Date.now());
+} else {
+    localStorage.setItem('telegram_real_id', userId);
+}
 
 let userPlan = "free";
 let premiumExpire = null;
@@ -248,7 +254,7 @@ async function loadUserPlan() {
 
     let users = await dbFetch(`users?id=eq.${userId}`);
     if (!users || users.length === 0) {
-        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', last_group_created_at: null, referral_count: 0 });
+        await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', referral_count: 0 });
         userPlan = 'free';
     } else {
         let u = users[0];
@@ -258,7 +264,6 @@ async function loadUserPlan() {
         let expStr = u.expire_at || u.premium_expire_at;
         premiumExpire = expStr ? new Date(expStr) : null;
 
-        // ارتقای اتوماتیک با دعوت ۱۵ نفر
         if (referralCount >= 15 && userPlan === 'free') {
             let next30Days = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'premium', expire_at: next30Days });
@@ -267,7 +272,6 @@ async function loadUserPlan() {
             showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
         }
 
-        // شرط اتمام اشتراک پریمیوم -> قفل همزمان تمام گروه‌های فعال
         if (userPlan === 'premium' && premiumExpire && premiumExpire < new Date()) {
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'free' });
             userPlan = 'free';
@@ -276,7 +280,6 @@ async function loadUserPlan() {
         }
     }
 
-    // پاکسازی و قفل خودکار بر اساس شروط زمانی
     await runAutoGroupCleanup();
 
     const cfg = PLAN_CONFIG[userPlan];
@@ -309,7 +312,6 @@ async function loadUserPlan() {
     }
 }
 
-/* ====== پاکسازی، قفل و حذف خودکار گروه‌ها ====== */
 async function runAutoGroupCleanup() {
     let groups = await dbFetch(`groups?user_id=eq.${userId}`);
     if (!groups || !Array.isArray(groups)) return;
@@ -322,21 +324,17 @@ async function runAutoGroupCleanup() {
         let ageHoursFromCreation = (now - createdTime) / (1000 * 3600);
         let inactiveHours = (now - lastActivityTime) / (1000 * 3600);
 
-        // ۱. قفل شدن بر اساس نوع پلن
         if (!g.is_locked) {
-            // رایگان: ۲۴ ساعت پس از ساخت
             if (userPlan === 'free' && ageHoursFromCreation >= 24) {
                 await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
                 g.is_locked = true;
             } 
-            // پریمیوم: ۱ هفته (۱۶۸ ساعت) عدم ثبت هزینه جدید
             else if (userPlan === 'premium' && inactiveHours >= 168) {
                 await dbFetch(`groups?id=eq.${g.id}`, 'PATCH', { is_locked: true });
                 g.is_locked = true;
             }
         }
 
-        // ۲. حذف فوری گروه‌های قفل‌شده و پاک‌سازی کامل حافظه
         if (g.is_locked) {
             await dbFetch(`expenses?group_id=eq.${g.id}`, 'DELETE');
             await dbFetch(`groups?id=eq.${g.id}`, 'DELETE');
@@ -517,7 +515,6 @@ async function addExpense() {
     await dbFetch('expenses', 'POST', exp);
     expenses.push(exp);
 
-    // بروزرسانی زمان آخرین فعالیت برای صفر شدن تایمر ۱ هفته‌ای پریمیوم
     let nowIso = new Date().toISOString();
     await dbFetch(`groups?id=eq.${currentGroupId}`, 'PATCH', { last_activity_at: nowIso });
 
@@ -706,36 +703,44 @@ function loadGroupObject(g) {
     document.getElementById("step2").style.display = "block";
     document.getElementById("display-group-title").innerText = "گروه: " + groupName;
     document.getElementById("display-treasurer-name").innerText = treasurer;
-
+    
     updateDropdowns();
     renderParticipantCheckboxes();
     renderList();
     calculate();
+    showToast("گروه بارگذاری شد.", "success");
+}
+
+function resetAppUI() {
+    currentGroupId = null;
+    groupName = "";
+    treasurer = "";
+    members = [];
+    expenses = [];
+    isLocked = false;
+    localStorage.removeItem("current_group_id");
+    document.getElementById("step1").style.display = "block";
+    document.getElementById("step2").style.display = "none";
 }
 
 function resetApp() {
-    if (confirm("آیا از پاک کردن کامل این گروه مطمئن هستید؟")) {
-        if (currentGroupId) {
-            dbFetch(`groups?id=eq.${currentGroupId}`, 'DELETE');
-            dbFetch(`expenses?group_id=eq.${currentGroupId}`, 'DELETE');
-        }
+    if (confirm("آیا از حذف کامل این گروه و شروع مجدد مطمئن هستید؟")) {
         resetAppUI();
         showToast("گروه پاک شد.", "info");
     }
 }
 
-function resetAppUI() {
-    currentGroupId = null;
-    localStorage.removeItem("current_group_id");
-    document.getElementById("step2").style.display = "none";
-    document.getElementById("step1").style.display = "block";
-    document.getElementById("group-name").value = "";
-    document.getElementById("member-count").value = "";
-    document.getElementById("members-inputs").innerHTML = "";
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    loadUserPlan();
+// اجرای اولیه برنامه به محض لود صفحه
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadUserPlan();
+    let savedGrpId = localStorage.getItem("current_group_id");
+    if (savedGrpId) {
+        let groups = JSON.parse(localStorage.getItem('saved_groups') || '[]');
+        let found = groups.find(x => String(x.id) === String(savedGrpId));
+        if (found && !found.is_locked) {
+            loadGroupObject(found);
+        }
+    }
 });
 </script>
 </body>
