@@ -10,6 +10,7 @@ from telegram.ext import (
     CallbackQueryHandler,
     filters
 )
+from telegram.request import HTTPXRequest
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
@@ -76,16 +77,15 @@ def check_and_update_user(tg_user):
             
     except Exception as e:
         logger.error(f"Error checking user in DB: {e}")
-        return 'free' # در صورت قطعی دیتابیس، فرض بر رایگان بودن است
+        return 'free'
 
 # --- دستور استارت و معرفی ربات ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     
-    # 1. همگام‌سازی کاربر با دیتابیس و پنل ادمین
+    # همگام‌سازی کاربر با دیتابیس و پنل ادمین
     user_plan = check_and_update_user(user)
     
-    # 2. نمایش پیام متناسب با پلن کاربر
     plan_text = "💎 حساب شما: **ویژه (Premium)**" if user_plan == 'premium' else "🆓 حساب شما: **رایگان (Free)**"
 
     keyboard = [
@@ -127,7 +127,7 @@ async def premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     
-    # ثبت کاربر در دیتابیس به محض ارسال عکس رسید
+    # ثبت کاربر در دیتابیس به محض ارسال رسید
     check_and_update_user(user)
     
     photo_file_id = update.message.photo[-1].file_id
@@ -157,18 +157,14 @@ async def handle_expense(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     if chat.type in ['group', 'supergroup']:
-        # چک کردن وضعیت کاربر فرستنده پیام قبل از ثبت هزینه
-        user_plan = check_and_update_user(user)
-        
-        if user_plan == 'free':
-            # اینجا می‌توانید منطق محدودیت برای کاربران رایگان را پیاده کنید
-            pass 
-
+        check_and_update_user(user)
         logger.info(f"Expense message in group {chat.title}: {text} by {user.username}")
-        # ادامه منطق ذخیره هزینه در دیتابیس ...
 
 if __name__ == '__main__':
-    application = ApplicationBuilder().token(BOT_TOKEN).build()
+    # تنظیم پروکسی برای PythonAnywhere جهت رفع خطای 503
+    custom_request = HTTPXRequest(proxy="http://proxy.server:3128")
+    
+    application = ApplicationBuilder().token(BOT_TOKEN).request(custom_request).build()
     
     # ثبت تمام هندلرهای ربات
     application.add_handler(CommandHandler('start', start))
@@ -176,5 +172,5 @@ if __name__ == '__main__':
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_expense))
     
-    print("🤖 DongiMongi Bot is running securely...")
+    print("🤖 DongiMongi Bot is running securely with PythonAnywhere proxy...")
     application.run_polling()
