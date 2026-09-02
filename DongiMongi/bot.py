@@ -102,6 +102,25 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         parse_mode="Markdown"
     )
 
+# --- دستور راهنما ---
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📖 **راهنمای استفاده از ربات دنگی‌مونگی:**\n\n"
+        "1️⃣ ربات را به گروه خود اضافه کنید.\n"
+        "2️⃣ هزینه‌ها را به صورت متنی در گروه بنویسید.\n"
+        "3️⃣ برای ارتقا به حساب پریمیوم، از منوی شروع اقدام کنید.",
+        parse_mode="Markdown"
+    )
+
+# --- دستور پشتیبانی ---
+async def support_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "📞 **پشتیبانی دنگی‌مونگی:**\n\n"
+        "برای ارتباط با پشتیبانی یا گزارش مشکل، به ادمین پیام دهید:\n"
+        "👤 @DrSiteofficial",
+        parse_mode="Markdown"
+    )
+
 # --- نمایش اطلاعات پرداخت ---
 async def premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -168,6 +187,8 @@ if __name__ == '__main__':
     
     # ثبت تمام هندلرهای ربات
     application.add_handler(CommandHandler('start', start))
+    application.add_handler(CommandHandler('help', help_command))
+    application.add_handler(CommandHandler('support', support_command))
     application.add_handler(CallbackQueryHandler(premium_callback))
     application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_expense))
