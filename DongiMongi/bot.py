@@ -117,7 +117,7 @@ async def support_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         "📞 **پشتیبانی دنگی‌مونگی:**\n\n"
         "برای ارتباط با پشتیبانی یا گزارش مشکل، به ادمین پیام دهید:\n"
-        "👤 @DrSiteofficial",
+        "👤 @DongiMongiofficial",
         parse_mode="Markdown"
     )
 
