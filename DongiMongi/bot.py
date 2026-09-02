@@ -105,6 +105,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- نمایش اطلاعات پرداخت ---
 async def premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
+    user = update.effective_user
+    
+    # ثبت کاربر در دیتابیس به محض کلیک روی دکمه خرید
+    check_and_update_user(user)
+    
     await query.answer()
     
     if query.data == "buy_premium":
@@ -121,6 +126,10 @@ async def premium_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- دریافت تصویر رسید و ارسال به پی‌وی ادمین ---
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
+    
+    # ثبت کاربر در دیتابیس به محض ارسال عکس رسید
+    check_and_update_user(user)
+    
     photo_file_id = update.message.photo[-1].file_id
     
     if ADMIN_CHAT_ID:
@@ -153,7 +162,6 @@ async def handle_expense(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         if user_plan == 'free':
             # اینجا می‌توانید منطق محدودیت برای کاربران رایگان را پیاده کنید
-            # مثلا اگر تعداد هزینه‌های گروه بیشتر از 10 تا شد، پیام زیر را بدهد:
             pass 
 
         logger.info(f"Expense message in group {chat.title}: {text} by {user.username}")
