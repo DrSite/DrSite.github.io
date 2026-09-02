@@ -258,10 +258,24 @@ async function loadUserPlan() {
     document.getElementById("display-user-name").innerText = telegramFullName;
     document.getElementById("user-id-display").innerText = userId;
 
-    let users = await dbFetch(`users?id=eq.${userId}`);
+    // ۱. خواندن سریع از کش محلی برای نمایش آنی رابط کاربری بدون معطلی
+    let cachedPlan = localStorage.getItem('cached_plan');
+    if (cachedPlan) {
+        userPlan = cachedPlan;
+        referralCount = parseInt(localStorage.getItem('cached_referral_count') || '0');
+        let expCache = localStorage.getItem('cached_expire');
+        premiumExpire = expCache ? new Date(expCache) : null;
+        updatePlanUI();
+    }
+
+    // ۲. دریافت اطلاعات تازه از سه‌پابیس در پس‌زمینه (با انتخاب دقیق و سبک ستون‌ها)
+    let users = await dbFetch(`users?id=eq.${userId}&select=plan,referral_count,last_group_created_at,expire_at,premium_expire_at`);
+    
     if (!users || users.length === 0) {
         await dbFetch('users', 'POST', { id: userId, full_name: telegramFullName, plan: 'free', referral_count: 0 });
         userPlan = 'free';
+        localStorage.setItem('cached_plan', 'free');
+        localStorage.setItem('cached_referral_count', 0);
     } else {
         let u = users[0];
         userPlan = u.plan || 'free';
@@ -270,15 +284,27 @@ async function loadUserPlan() {
         let expStr = u.expire_at || u.premium_expire_at;
         premiumExpire = expStr ? new Date(expStr) : null;
 
+        // ذخیره مقادیر جدید در کش برای دفعات بعدی
+        localStorage.setItem('cached_plan', userPlan);
+        localStorage.setItem('cached_referral_count', referralCount);
+        if (expStr) localStorage.setItem('cached_expire', expStr);
+        else localStorage.removeItem('cached_expire');
+
         if (referralCount >= 15 && userPlan === 'free') {
             let next30Days = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
             await dbFetch(`users?id=eq.${userId}`, 'PATCH', { plan: 'premium', expire_at: next30Days });
             userPlan = 'premium';
             premiumExpire = new Date(next30Days);
+            localStorage.setItem('cached_plan', 'premium');
+            localStorage.setItem('cached_expire', next30Days);
             showToast("🎉 تبریک! به دلیل دعوت ۱۵ نفر، ۳۰ روز اشتراک پریمیوم برای شما فعال شد.", "success", 6000);
         }
     }
 
+    updatePlanUI();
+}
+
+function updatePlanUI() {
     const cfg = PLAN_CONFIG[userPlan];
     const banner = document.getElementById("premium-banner");
     const hints = document.getElementById("plan-hints");
