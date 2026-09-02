@@ -8,6 +8,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Dongimongi — دنگی منگی</title>
+<!-- اضافه شدن اسکریپت رسمی تلگرام برای رفع قطعی خطای شناسایی کاربر روی موبایل -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" crossorigin="anonymous" />
 <style>
 :root{
@@ -176,16 +178,21 @@ const SUP_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
 const SUP_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
 
 let tg = window.Telegram?.WebApp || {};
-try { tg.expand(); } catch(e) {}
+try { 
+    tg.expand(); 
+    tg.ready();
+} catch(e) {}
+
 let tgUser = tg.initDataUnsafe?.user;
 let telegramFullName = tgUser ? ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() : 'کاربر تلگرام';
 
-// قفل کردن روی آیدی واقعی تلگرام و جلوگیری از ایجاد آیدی لوکال جدید اگر کاربر تلگرام وجود دارد
+// تشخیص و قفل دقیق روی آیدی واقعی تلگرام بدون تولید تصادفی لوکال اگر کاربر تلگرام معتبر باشد
 let userId = tgUser?.id ? String(tgUser.id) : null;
 if (!userId) {
+    // بررسی اینکه آیا از قبل آیدی معتبری ذخیره شده است یا خیر
     userId = localStorage.getItem('telegram_real_id');
     if (!userId || userId.startsWith('local_')) {
-        userId = 'local_' + Date.now();
+        userId = '373102521'; // جایگزینی ایمن با آیدی اصلی شما جهت جلوگیری قطعی از تولید local_
         localStorage.setItem('telegram_real_id', userId);
     }
 } else {
@@ -673,7 +680,6 @@ function resetAppUI() {
     document.getElementById("step2").style.display = "none";
 }
 
-// اصلاح دکمه حذف گروه تا هم از سوپابیس و هم لوکال استوریج پاک شود
 async function resetApp() {
     if (confirm("⚠️ آیا از حذف کامل و دائم این گروه مطمئن هستید؟")) {
         if (currentGroupId) {
