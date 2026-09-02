@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>پنل مدیریت و مینی‌اپ امن سیستم</title>
+  <title>پنل مدیریت و مینی‌اپ امن دنگی‌مونگی</title>
   
   <!-- Supabase JS Client & Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -85,7 +85,7 @@
     </div>
 
     <header class="header">
-      <h1>پنل مدیریت و تحلیل داده‌ها</h1>
+      <h1>پنل مدیریت و تحلیل داده‌ها - دنگی‌مونگی</h1>
       <div class="header-actions">
         <div class="small">زمان کنونی: <span id="now-time">—</span></div>
         <button class="btn btn-sm btn-danger" onclick="logout()">خروج از پنل</button>
@@ -148,7 +148,6 @@
             <button class="btn btn-sm" onclick="activatePremiumQuick()">فعالسازی ۳۰ روزه</button>
             <button class="btn btn-sm" onclick="extendPremiumQuick()">تمدید ۳۰ روزه</button>
             <button class="btn btn-sm btn-danger" onclick="removePremiumQuick()">حذف اشتراک</button>
-            <button class="btn btn-sm" onclick="lockAllGroupsQuick()">قفل همه گروه‌ها</button>
           </div>
         </div>
       </div>
@@ -198,9 +197,11 @@
   </div>
 
   <script>
-    /* ====== CONFIG ====== */
+    /* ====== CONFIGURATION ====== */
+    // در صورتی که کد را روی گیت‌هاب عمومی می‌گذارید، توکن و کلیدها را جایگزین کنید
     const SUPABASE_URL = 'https://xdghwghwakalwykkedgr.supabase.co';
     const SUPABASE_ANON_KEY = 'sb_publishable__8XU0DUFPkEC5d3b2v0yog_qdDUrDzw';
+    const BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'; // توکن ربات تلگرام خود را اینجا قرار دهید
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -362,7 +363,16 @@
         return;
       }
 
-      lastUsersResult = data || [];
+      let results = data || [];
+      if (q) {
+        results = results.filter(u => 
+          (u.full_name && u.full_name.toLowerCase().includes(q.toLowerCase())) ||
+          (u.username && u.username.toLowerCase().includes(q.toLowerCase())) ||
+          (String(u.id).includes(q))
+        );
+      }
+
+      lastUsersResult = results;
       renderUsersTable();
     }
 
@@ -380,7 +390,7 @@
           <td>${escapeHtml(u.full_name || '—')}</td>
           <td>${escapeHtml(String(u.id || '—'))}</td>
           <td>${u.username ? '@' + escapeHtml(u.username) : '—'}</td>
-          <td>${escapeHtml(u.plan || 'free')}</td>
+          <td><span style="color: ${u.plan === 'premium' ? '#38bdf8' : '#94a3b8'}; font-weight: bold;">${escapeHtml(u.plan || 'free')}</span></td>
           <td>${escapeHtml(expireStr)}</td>
           <td>
             <button class="btn btn-sm" data-uid="${encodeURIComponent(String(u.id))}" data-action="open">باز کردن</button>
@@ -396,13 +406,146 @@
             const uid = decodeURIComponent(btn.dataset.uid);
             const action = btn.dataset.action;
             if (action === 'open') openUser(uid);
-            else if (action === 'activate') activatePremium(uid);
-            else if (action === 'extend') extendPremium(uid);
+            else if (action === 'activate') activatePremium(uid, 30);
+            else if (action === 'extend') extendPremium(uid, 30);
             else if (action === 'remove') removePremium(uid);
           });
         });
       });
     }
+
+    /* ====== TELEGRAM NOTIFICATION HELPER ====== */
+    async function sendTelegramNotification(userId, text) {
+      if (!BOT_TOKEN || BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') {
+        console.warn('توکن ربات تنظیم نشده است. پیام تلگرام ارسال نشد.');
+        return false;
+      }
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: userId,
+            text: text,
+            parse_mode: 'Markdown'
+          })
+        });
+        const data = await res.json();
+        return data.ok;
+      } catch (err) {
+        console.error('خطا در ارسال پیام تلگرام:', err);
+        return false;
+      }
+    }
+
+    /* ====== PREMIUM SUBSCRIPTION ACTIONS ====== */
+    async function activatePremium(rawInput, daysCount = 30) {
+      const userId = String(await resolveUserId(rawInput));
+      if (!userId || userId === 'null') return alert('کاربر مورد نظر یافت نشد.');
+
+      const expireDate = new Date();
+      expireDate.setDate(expireDate.getDate() + parseInt(daysCount));
+      const expireAtISO = expireDate.toISOString();
+
+      const { error } = await supabaseClient
+        .from('users')
+        .update({ plan: 'premium', expire_at: expireAtISO })
+        .eq('id', userId);
+
+      if (error) {
+        alert('خطا در به‌روزرسانی دیتابیس: ' + error.message);
+        pushLog('ERROR', userId, 'خطا در فعال‌سازی اشتراک');
+        return;
+      }
+
+      const expireDatePersian = new Intl.DateTimeFormat('fa-IR', { dateStyle: 'full' }).format(expireDate);
+      const notifyMessage = `🎉 *اشتراک ویژه شما فعال شد!*
+
+کاربر عزیز، اشتراک پریمیوم ربات *دنگی‌مونگی* برای حساب شما با موفقیت فعال گردید.
+
+📅 *تاریخ انقضای اشتراک:* \`${expireDatePersian}\`
+
+✨ *مزایای اشتراک پریمیوم:*
+🔹 ثبت و مدیریت نامحدود گروه‌ها و هزینه‌ها
+🔹 محاسبات دقیق تسویه‌حساب و گزارش‌گیری پیشرفته
+🔹 امکان خروجی گرفتن از حساب‌کتاب‌ها
+🔹 دسترسی کامل به تمامی قابلیت‌های ربات
+🔹 پشتیبانی اختصاصی و اولویت‌دار
+
+از همراهی شما با دنگی‌مونگی سپاسگزاریم! 🚀`;
+
+      const msgSent = await sendTelegramNotification(userId, notifyMessage);
+      pushLog('PREMIUM', userId, `فعال‌سازی ۳۰ روزه (${msgSent ? 'پیام ارسال شد' : 'ارسال پیام ناموفق'})`);
+
+      alert(`اشتراک ویژه کاربر با موفقیت فعال شد.${msgSent ? '\nپیام تبریک در تلگرام برای کاربر ارسال گردید.' : ''}`);
+      searchUser();
+    }
+
+    async function extendPremium(rawInput, daysCount = 30) {
+      const userId = String(await resolveUserId(rawInput));
+      if (!userId || userId === 'null') return alert('کاربر مورد نظر یافت نشد.');
+
+      // بررسی تاریخ انقضای فعلی کاربر
+      const { data } = await supabaseClient.from('users').select('expire_at').eq('id', userId).single();
+      
+      let baseDate = new Date();
+      if (data && data.expire_at && new Date(data.expire_at) > baseDate) {
+        baseDate = new Date(data.expire_at); // اضافه کردن به تمدید قبلی
+      }
+      
+      baseDate.setDate(baseDate.getDate() + parseInt(daysCount));
+      const expireAtISO = baseDate.toISOString();
+
+      const { error } = await supabaseClient
+        .from('users')
+        .update({ plan: 'premium', expire_at: expireAtISO })
+        .eq('id', userId);
+
+      if (error) {
+        alert('خطا در تمدید اشتراک: ' + error.message);
+        return;
+      }
+
+      const expireDatePersian = new Intl.DateTimeFormat('fa-IR', { dateStyle: 'full' }).format(baseDate);
+      const notifyMessage = `🔄 *اشتراک ویژه شما تمدید شد!*
+
+کاربر عزیز، اشتراک پریمیوم شما در ربات *دنگی‌مونگی* تمدید گردید.
+
+📅 *تاریخ انقضای جدید:* \`${expireDatePersian}\`
+
+از همراهی مجدد شما سپاسگزاریم! 🚀`;
+
+      const msgSent = await sendTelegramNotification(userId, notifyMessage);
+      pushLog('EXTEND', userId, `تمدید ${daysCount} روزه اشتراک`);
+
+      alert(`اشتراک کاربر تمدید شد.${msgSent ? '\nپیام تمدید در تلگرام ارسال شد.' : ''}`);
+      searchUser();
+    }
+
+    async function removePremium(rawInput) {
+      const userId = String(await resolveUserId(rawInput));
+      if (!userId || userId === 'null') return alert('کاربر یافت نشد.');
+
+      if (!confirm(`آیا از لغو اشتراک پریمیوم کاربر ${userId} اطمینان دارید؟`)) return;
+
+      const { error } = await supabaseClient
+        .from('users')
+        .update({ plan: 'free', expire_at: null })
+        .eq('id', userId);
+
+      if (error) {
+        alert('خطا در حذف اشتراک: ' + error.message);
+        return;
+      }
+
+      pushLog('REMOVE', userId, 'حذف اشتراک پریمیوم و بازگشت به پلن رایگان');
+      alert('اشتراک کاربر با موفقیت لغو شد.');
+      searchUser();
+    }
+
+    function activatePremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) activatePremium(uid, 30); }
+    function extendPremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) extendPremium(uid, 30); }
+    function removePremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) removePremium(uid); }
 
     async function openUser(uid) {
       document.getElementById('g-user-id').value = uid;
@@ -471,25 +614,6 @@
       container.appendChild(table);
     }
 
-    async function activatePremium(rawInput) {
-      const userId = String(await resolveUserId(rawInput));
-      const expire = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
-      const { error } = await supabaseClient.from('users').update({ plan: 'premium', expire_at: expire }).eq('id', userId);
-      if (!error) { alert('اشتراک فعال شد.'); searchUser(); } else { alert('خطا در انجام عملیات'); }
-    }
-
-    async function extendPremium(rawInput) { activatePremium(rawInput); }
-    async function removePremium(rawInput) {
-      const userId = String(await resolveUserId(rawInput));
-      await supabaseClient.from('users').update({ plan: 'free', expire_at: null }).eq('id', userId);
-      searchUser();
-    }
-
-    function activatePremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) activatePremium(uid); }
-    function extendPremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) extendPremium(uid); }
-    function removePremiumQuick() { const uid = document.getElementById('quick-uid').value.trim(); if(uid) removePremium(uid); }
-    function lockAllGroupsQuick() {}
-
     async function generateFinancialReport() {
       const { data: payments } = await supabaseClient.from('payments').select('*');
       const container = document.getElementById('financial-report');
@@ -497,12 +621,31 @@
       container.innerHTML = `<div class="small">جمع کل پرداختی‌ها: <b>${total.toLocaleString('fa-IR')} تومان</b></div>`;
     }
 
+    function copyUserId() {
+      const uidEl = document.getElementById('tg-user-id');
+      if (uidEl && uidEl.innerText !== '—') {
+        navigator.clipboard.writeText(uidEl.innerText).then(() => {
+          alert('آیدی تلگرام کپی شد!');
+        });
+      }
+    }
+
     window.onload = function() {
       document.getElementById('now-time').innerText = new Date().toLocaleString('fa-IR');
+      
+      // شناسایی محیط مینی‌اپ تلگرام
       if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
+
+        const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+        if (tgUser) {
+          document.getElementById('tg-user-banner').style.display = 'block';
+          document.getElementById('tg-user-name').innerText = (tgUser.first_name || '') + ' ' + (tgUser.last_name || '');
+          document.getElementById('tg-user-id').innerText = tgUser.id;
+        }
       }
+
       checkAuth();
     };
   </script>
